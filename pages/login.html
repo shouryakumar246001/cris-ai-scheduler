@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HEX — Sign In</title>
+  <link rel="stylesheet" href="../src/styles/globals.css">
+  <style>
+    body { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: var(--bg-primary); }
+    .login-bg { position: fixed; inset: 0; background: radial-gradient(ellipse at 30% 50%, rgba(0,255,136,0.06) 0%, transparent 60%), radial-gradient(ellipse at 70% 50%, rgba(77,159,255,0.06) 0%, transparent 60%); pointer-events: none; }
+    .login-card { width: 100%; max-width: 420px; padding: 40px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 24px; box-shadow: 0 40px 100px rgba(0,0,0,0.6); position: relative; }
+    .otp-inputs { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; }
+    .otp-input { width: 48px; height: 56px; text-align: center; font-family: var(--font-mono); font-size: 22px; font-weight: 800; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--r-md); color: var(--text-primary); outline: none; transition: all var(--t-fast); }
+    .otp-input:focus { border-color: var(--green); box-shadow: 0 0 0 3px var(--green-glow); }
+    .tab-btn { flex: 1; padding: 10px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; border-bottom: 2px solid transparent; background: transparent; color: var(--text-muted); transition: all var(--t-fast); }
+    .tab-btn.active { color: var(--green); border-bottom-color: var(--green); }
+    .social-btn { width: 100%; padding: 11px; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--bg-secondary); color: var(--text-secondary); font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all var(--t-fast); margin-bottom: 10px; }
+    .social-btn:hover { border-color: var(--border-bright); color: var(--text-primary); }
+    .step { display: none; } .step.active { display: block; animation: fadeIn 0.3s ease; }
+  </style>
+</head>
+<body>
+<div class="login-bg"></div>
+
+<div class="login-card fade-in">
+  <!-- Logo -->
+  <div style="text-align:center;margin-bottom:28px">
+    <div style="display:inline-flex;align-items:center;gap:10px;margin-bottom:10px">
+      <div style="width:36px;height:36px;background:var(--green);clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%)"></div>
+      <span style="font-family:var(--font-mono);font-size:22px;font-weight:800;color:var(--green)">HEX</span>
+    </div>
+    <div style="font-size:14px;color:var(--text-muted)">Human Equity Exchange</div>
+  </div>
+
+  <!-- Tabs -->
+  <div style="display:flex;border-bottom:1px solid var(--border);margin-bottom:24px">
+    <button class="tab-btn active" id="tab-login" onclick="switchTab('login')">Sign In</button>
+    <button class="tab-btn" id="tab-signup" onclick="switchTab('signup')">Create Account</button>
+  </div>
+
+  <!-- Step 1: Credentials -->
+  <div class="step active" id="step-creds">
+    <div class="form-group" style="margin-bottom:14px">
+      <div class="form-label" style="font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-bottom:5px;display:block">Email Address</div>
+      <input class="input" id="login-email" type="email" placeholder="you@example.com" autocomplete="email">
+    </div>
+    <div class="form-group" style="margin-bottom:6px">
+      <div class="form-label" style="font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-bottom:5px;display:block">Password</div>
+      <input class="input" id="login-password" type="password" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-bottom:20px">
+      <a href="#" style="font-size:12px;color:var(--text-muted);text-decoration:none">Forgot password?</a>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:16px" onclick="proceedToMFA()">Continue →</button>
+    <div style="text-align:center;font-size:12px;color:var(--text-muted);margin-bottom:16px">or continue with</div>
+    <button class="social-btn" onclick="HEXComponents.toast('OAuth simulation — Demo only','info')">
+      <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      Continue with Google
+    </button>
+    <button class="social-btn" onclick="HEXComponents.toast('GitHub OAuth — Demo only','info')">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+      Continue with GitHub
+    </button>
+  </div>
+
+  <!-- Step 2: MFA -->
+  <div class="step" id="step-mfa">
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="font-size:32px;margin-bottom:8px">🔐</div>
+      <div style="font-size:16px;font-weight:700;margin-bottom:4px">Two-Factor Authentication</div>
+      <div style="font-size:12px;color:var(--text-muted)">Enter the 6-digit code from your authenticator app</div>
+    </div>
+    <div class="otp-inputs" id="otp-inputs">
+      <input class="otp-input" maxlength="1" id="otp-0" oninput="otpNext(0)">
+      <input class="otp-input" maxlength="1" id="otp-1" oninput="otpNext(1)">
+      <input class="otp-input" maxlength="1" id="otp-2" oninput="otpNext(2)">
+      <input class="otp-input" maxlength="1" id="otp-3" oninput="otpNext(3)">
+      <input class="otp-input" maxlength="1" id="otp-4" oninput="otpNext(4)">
+      <input class="otp-input" maxlength="1" id="otp-5" oninput="otpNext(5)">
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-bottom:12px" onclick="verifyMFA()">Verify & Sign In</button>
+    <button class="btn btn-ghost" style="width:100%" onclick="showStep('step-creds')">← Back</button>
+    <div style="text-align:center;margin-top:12px;font-size:11px;color:var(--text-muted)">Demo: any 6 digits will work</div>
+  </div>
+
+  <!-- Step 3: Success -->
+  <div class="step" id="step-success">
+    <div style="text-align:center;padding:20px 0">
+      <div style="font-size:48px;margin-bottom:12px">✅</div>
+      <div style="font-size:18px;font-weight:800;margin-bottom:6px">Welcome Back!</div>
+      <div style="font-size:13px;color:var(--text-muted);margin-bottom:24px">Redirecting to your terminal...</div>
+      <div class="progress-bar-track"><div class="progress-bar-fill" id="redirect-bar" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <!-- Bottom note -->
+  <div id="login-footer" style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);text-align:center;font-size:11px;color:var(--text-muted)">
+    Protected by MFA · KYC verified accounts only for IPO listing<br>
+    <span style="color:var(--amber)">⚠ Simulation platform — no real accounts</span>
+  </div>
+</div>
+
+<script src="../src/js/data.js"></script>
+<script src="../src/js/components.js"></script>
+<script>
+let activeTab = 'login';
+
+function switchTab(tab) {
+  activeTab = tab;
+  document.getElementById('tab-login').classList.toggle('active', tab==='login');
+  document.getElementById('tab-signup').classList.toggle('active', tab==='signup');
+}
+
+function showStep(id) {
+  document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.getElementById('login-footer').style.display = id==='step-success'?'none':'';
+}
+
+function proceedToMFA() {
+  const email = document.getElementById('login-email').value;
+  if (!email.includes('@')) { HEXComponents.toast('Please enter a valid email address','warn'); return; }
+  showStep('step-mfa');
+  setTimeout(()=>document.getElementById('otp-0').focus(),100);
+}
+
+function otpNext(i) {
+  const val = document.getElementById('otp-'+i).value;
+  if (val.length===1 && i<5) document.getElementById('otp-'+(i+1)).focus();
+  const all = Array.from({length:6},(_,j)=>document.getElementById('otp-'+j).value).join('');
+  if (all.length===6) verifyMFA();
+}
+
+function verifyMFA() {
+  const code = Array.from({length:6},(_,i)=>document.getElementById('otp-'+i).value).join('');
+  if (code.length<6) { HEXComponents.toast('Please enter all 6 digits','warn'); return; }
+  showStep('step-success');
+  let w=0;
+  const bar=document.getElementById('redirect-bar');
+  const iv=setInterval(()=>{ w+=5; if(bar) bar.style.width=w+'%'; if(w>=100){clearInterval(iv);window.location.href='market.html';} },60);
+}
+</script>
+</body>
+</html>

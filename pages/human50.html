@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HEX — Human 50 Index</title>
+  <link rel="stylesheet" href="../src/styles/globals.css">
+  <style>
+    .index-hero { padding: 32px 0 28px; background: radial-gradient(ellipse at 50% 0%, rgba(0,255,136,0.08) 0%, transparent 70%); border-bottom: 1px solid var(--border); margin-bottom: 28px; text-align: center; }
+    .constituent-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; }
+    .constituent-cell { background: var(--bg-card); padding: 14px 16px; transition: background var(--t-fast); cursor: pointer; }
+    .constituent-cell:hover { background: var(--bg-hover); }
+    .weight-bar { height: 3px; border-radius: 2px; margin-top: 6px; transition: width 0.5s ease; }
+    .sector-weight-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(30,30,48,0.4); }
+    .sector-pill { padding: 3px 10px; border-radius: 100px; font-size: 10px; font-weight: 700; font-family: var(--font-mono); }
+  </style>
+</head>
+<body>
+<div class="page">
+
+<!-- Hero -->
+<section class="index-hero">
+  <div class="container">
+    <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:10px">
+      <div class="live-dot"></div>
+      <span class="mono" style="font-size:11px;color:var(--text-muted);letter-spacing:2px">REAL-TIME INDEX</span>
+    </div>
+    <h1 style="font-size:14px;text-transform:uppercase;letter-spacing:4px;color:var(--text-muted);font-weight:600;margin-bottom:8px">Human Equity Exchange</h1>
+    <div style="font-size:60px;font-weight:900;font-family:var(--font-mono);color:var(--green)" id="h50-main">—</div>
+    <div style="display:flex;align-items:center;justify-content:center;gap:16px;margin-top:8px">
+      <span id="h50-change" style="font-size:18px;font-family:var(--font-mono)"></span>
+      <span id="h50-pct" style="font-size:16px;font-family:var(--font-mono)"></span>
+      <span class="badge badge-green">HUMAN 50</span>
+    </div>
+    <div style="display:flex;justify-content:center;gap:32px;margin-top:20px">
+      <div><div class="stat-label" style="text-align:center">Total Market Cap</div><div id="total-mcap" class="mono" style="font-size:16px;font-weight:700;color:var(--text-primary)">—</div></div>
+      <div><div class="stat-label" style="text-align:center">Constituents</div><div class="mono" style="font-size:16px;font-weight:700;color:var(--text-primary)">50</div></div>
+      <div><div class="stat-label" style="text-align:center">Base Value</div><div class="mono" style="font-size:16px;font-weight:700;color:var(--text-primary)">10,000</div></div>
+      <div><div class="stat-label" style="text-align:center">Rebalance</div><div class="mono" style="font-size:16px;font-weight:700;color:var(--amber)">Quarterly</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="container-wide">
+  <div style="display:grid;grid-template-columns:1fr 300px;gap:24px">
+    <div>
+      <!-- Index Chart -->
+      <div class="card" style="margin-bottom:24px">
+        <div class="section-header"><span class="section-title">Index Performance</span><span style="font-size:11px;color:var(--text-muted)">Human 50 · 90 Day History</span></div>
+        <div style="height:220px"><canvas id="index-chart" style="width:100%;height:220px"></canvas></div>
+      </div>
+
+      <!-- Constituents -->
+      <div class="card">
+        <div class="section-header"><span class="section-title">Index Constituents</span><span style="font-size:11px;color:var(--text-muted)">Weighted by Market Cap</span></div>
+        <div class="constituent-grid" id="constituents"></div>
+      </div>
+    </div>
+
+    <div>
+      <!-- Sector Weights -->
+      <div class="card" style="margin-bottom:18px">
+        <div class="section-header"><span class="section-title">Sector Weights</span></div>
+        <div style="height:180px;margin-bottom:16px"><canvas id="sector-chart" style="width:100%;height:180px"></canvas></div>
+        <div id="sector-weights"></div>
+      </div>
+
+      <!-- Top Performers -->
+      <div class="card" style="margin-bottom:18px">
+        <div class="section-header"><span class="section-title">Top Performers</span></div>
+        <div id="top-performers"></div>
+      </div>
+
+      <!-- Bottom Performers -->
+      <div class="card">
+        <div class="section-header"><span class="section-title">Worst Performers</span></div>
+        <div id="worst-performers"></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script src="../src/js/data.js"></script>
+<script src="../src/js/charts.js"></script>
+<script src="../src/js/components.js"></script>
+<script>
+HEXComponents.renderNav('human50');
+HEXComponents.renderTickerStrip();
+const { HUMAN_PROFILES, HUMAN50_INDEX, fmt, generatePriceHistory } = window.HEX;
+
+function updateIndexDisplay() {
+  const idx = HUMAN50_INDEX;
+  const up = idx.changePct >= 0;
+  document.getElementById('h50-main').textContent = idx.value.toLocaleString();
+  document.getElementById('h50-change').innerHTML = `<span style="color:${up?'var(--green)':'var(--red)'}">${up?'▲':'▼'} ${Math.abs(idx.change).toLocaleString()}</span>`;
+  document.getElementById('h50-pct').innerHTML = `<span style="color:${up?'var(--green)':'var(--red)'}">(${up?'+':''}${idx.changePct.toFixed(2)}%)</span>`;
+  const totalMcap = HUMAN_PROFILES.reduce((s,p)=>s+p.marketCap,0);
+  document.getElementById('total-mcap').textContent = fmt.currency(totalMcap,true);
+}
+updateIndexDisplay();
+setInterval(()=>{ window.HEX.simulatePriceTick(); updateIndexDisplay(); renderConstituents(); },2500);
+
+// Index chart
+const indexCanvas = document.getElementById('index-chart');
+indexCanvas.style.width='100%'; indexCanvas.style.height='220px';
+const indexChart = new HEXChart(indexCanvas, {padding:{top:16,right:60,bottom:36,left:68}});
+const indexHistory = generatePriceHistory(HUMAN50_INDEX.value, 90, 0.012).map(d=>({...d,close:d.close*100}));
+indexChart.drawLine(indexHistory,'close','#00ff88');
+
+// Constituents
+function renderConstituents() {
+  const totalMcap = HUMAN_PROFILES.reduce((s,p)=>s+p.marketCap,0);
+  const el = document.getElementById('constituents');
+  if (!el) return;
+  const sorted = [...HUMAN_PROFILES].sort((a,b)=>b.marketCap-a.marketCap);
+  el.innerHTML = sorted.map(p=>{
+    const weight = (p.marketCap/totalMcap*100).toFixed(1);
+    const up = p.change24h >= 0;
+    const barW = Math.max(5, parseFloat(weight)/8*100);
+    return `<div class="constituent-cell" onclick="window.location.href='terminal.html?id=${p.id}'">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+        <div style="display:flex;align-items:center;gap:6px">
+          <span style="font-size:14px">${p.avatar}</span>
+          <span style="font-weight:700;font-size:13px">${p.id}</span>
+        </div>
+        <span class="badge ${up?'badge-green':'badge-red'}" style="font-size:9px">${fmt.percent(p.change24h)}</span>
+      </div>
+      <div style="font-size:10px;color:var(--text-muted);margin-bottom:3px">${weight}% weight</div>
+      <div class="weight-bar" style="background:${up?'var(--green)':'var(--red)'};width:${barW}%"></div>
+    </div>`;
+  }).join('');
+}
+renderConstituents();
+
+// Sector weights
+const sectorMap = {};
+HUMAN_PROFILES.forEach(p=>{
+  sectorMap[p.sector]=(sectorMap[p.sector]||0)+p.marketCap;
+});
+const totalMcap = HUMAN_PROFILES.reduce((s,p)=>s+p.marketCap,0);
+const sectors = Object.entries(sectorMap).sort((a,b)=>b[1]-a[1]);
+const sectorColors = ['#00ff88','#4d9fff','#a855f7','#ff3355','#ffb800','#00e5ff','#ff7700'];
+const el = document.getElementById('sector-weights');
+el.innerHTML = sectors.map(([name,cap],i)=>{
+  const pct = (cap/totalMcap*100);
+  return `<div class="sector-weight-row">
+    <div class="sector-pill" style="background:${sectorColors[i%7]}22;color:${sectorColors[i%7]};border:1px solid ${sectorColors[i%7]}40;min-width:80px">${name.slice(0,10)}</div>
+    <div style="flex:1"><div class="progress-bar-track"><div class="progress-bar-fill" style="width:${pct*4}%;background:${sectorColors[i%7]}"></div></div></div>
+    <span class="mono" style="font-size:11px;min-width:36px;text-align:right">${pct.toFixed(1)}%</span>
+  </div>`;
+}).join('');
+
+// Sector bar chart
+const secCanvas = document.getElementById('sector-chart');
+secCanvas.style.width='100%'; secCanvas.style.height='180px';
+const secChart = new HEXChart(secCanvas, {padding:{top:10,right:10,bottom:36,left:10}});
+const barData = sectors.map(([name,cap])=>({sector:name.slice(0,8), weight:parseFloat((cap/totalMcap*100).toFixed(1))}));
+secChart.drawBar(barData,'sector','weight');
+
+// Top/Worst performers
+const sorted = [...HUMAN_PROFILES].sort((a,b)=>b.change24h-a.change24h);
+const perfHtml = (p,up)=>`
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(30,30,48,0.4);cursor:pointer" onclick="window.location.href='terminal.html?id=${p.id}'">
+    <div style="display:flex;align-items:center;gap:8px">
+      <span style="font-size:15px">${p.avatar}</span>
+      <div><div style="font-size:12px;font-weight:600">${p.name}</div><div class="mono" style="font-size:10px;color:var(--text-muted)">${fmt.currency(p.sharePrice)}</div></div>
+    </div>
+    <span class="badge ${up?'badge-green':'badge-red'}">${fmt.percent(p.change24h)}</span>
+  </div>`;
+document.getElementById('top-performers').innerHTML = sorted.slice(0,4).map(p=>perfHtml(p,true)).join('');
+document.getElementById('worst-performers').innerHTML = sorted.slice(-4).reverse().map(p=>perfHtml(p,false)).join('');
+</script>
+</body>
+</html>

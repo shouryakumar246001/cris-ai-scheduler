@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HEX — KYC Verification</title>
+  <link rel="stylesheet" href="../src/styles/globals.css">
+  <style>
+    .kyc-container { max-width: 640px; margin: 0 auto; padding: 40px 24px; }
+    .kyc-step { display: none; animation: fadeIn 0.35s ease; }
+    .kyc-step.active { display: block; }
+    .doc-upload { border: 2px dashed var(--border); border-radius: var(--r-lg); padding: 32px; text-align: center; cursor: pointer; transition: all var(--t-normal); background: var(--bg-secondary); }
+    .doc-upload:hover { border-color: var(--green); background: var(--green-glow); }
+    .doc-upload.uploading { border-color: var(--amber); }
+    .doc-upload.done { border-color: var(--green); background: rgba(0,255,136,0.06); }
+    .id-type-btn { padding: 14px 16px; border: 1px solid var(--border); border-radius: var(--r-md); cursor: pointer; transition: all var(--t-fast); background: var(--bg-card); text-align: center; }
+    .id-type-btn:hover, .id-type-btn.selected { border-color: var(--green); background: var(--green-glow); color: var(--green); }
+    .selfie-frame { width: 200px; height: 200px; border-radius: 50%; border: 3px solid var(--border); margin: 0 auto 16px; background: var(--bg-elevated); display: flex; align-items: center; justify-content: center; font-size: 60px; position: relative; overflow: hidden; }
+    .scan-line { position: absolute; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, var(--green), transparent); animation: scan 2s ease infinite; }
+    @keyframes scan { 0% { top: 0; } 50% { top: 100%; } 100% { top: 0; } }
+    .progress-steps { display: flex; justify-content: center; gap: 8px; margin-bottom: 32px; }
+    .progress-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); transition: background 0.3s; }
+    .progress-dot.active { background: var(--green); box-shadow: 0 0 8px var(--green); }
+    .progress-dot.done { background: var(--green); }
+  </style>
+</head>
+<body>
+<div class="page">
+<div class="kyc-container">
+
+<div style="text-align:center;margin-bottom:32px">
+  <div style="font-size:36px;margin-bottom:10px">🪪</div>
+  <h1 style="font-size:24px;font-weight:800;margin-bottom:6px">KYC Verification</h1>
+  <p style="color:var(--text-secondary);font-size:13px">Complete identity verification to unlock Personal IPO listing</p>
+  <div class="compliance-banner" style="margin-top:12px;text-align:left">⚠ Demo simulation. No real documents are collected or stored.</div>
+</div>
+
+<!-- Progress Dots -->
+<div class="progress-steps" id="progress-dots">
+  <div class="progress-dot active"></div>
+  <div class="progress-dot"></div>
+  <div class="progress-dot"></div>
+  <div class="progress-dot"></div>
+</div>
+
+<!-- Step 1: Personal Info -->
+<div class="kyc-step active" id="kyc-1">
+  <div class="card">
+    <div style="font-size:15px;font-weight:800;margin-bottom:4px">Step 1 of 4 — Personal Information</div>
+    <div style="font-size:12px;color:var(--text-muted);margin-bottom:20px">Provide your legal name and basic details</div>
+    <div class="grid-2" style="gap:14px">
+      <div><div class="form-label" style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:5px;display:block">Legal First Name</div><input class="input" id="kyc-fname" placeholder="First name"></div>
+      <div><div class="form-label" style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:5px;display:block">Legal Last Name</div><input class="input" id="kyc-lname" placeholder="Last name"></div>
+      <div><div class="form-label" style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:5px;display:block">Date of Birth</div><input class="input" id="kyc-dob" type="date"></div>
+      <div><div class="form-label" style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:5px;display:block">Nationality</div>
+        <select class="input" id="kyc-country">
+          <option>🇮🇳 India</option><option>🇺🇸 United States</option><option>🇬🇧 United Kingdom</option><option>🇩🇪 Germany</option><option>🇸🇬 Singapore</option>
+        </select>
+      </div>
+      <div style="grid-column:1/-1"><div class="form-label" style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:5px;display:block">Residential Address</div><input class="input" id="kyc-address" placeholder="Full address"></div>
+      <div><div class="form-label" style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:5px;display:block">PAN / SSN (last 4)</div><input class="input" id="kyc-tax" placeholder="****"></div>
+      <div><div class="form-label" style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:5px;display:block">Phone Number</div><input class="input" id="kyc-phone" type="tel" placeholder="+91 98765 43210"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Step 2: Document Upload -->
+<div class="kyc-step" id="kyc-2">
+  <div class="card">
+    <div style="font-size:15px;font-weight:800;margin-bottom:4px">Step 2 of 4 — Identity Document</div>
+    <div style="font-size:12px;color:var(--text-muted);margin-bottom:20px">Upload a government-issued photo ID</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px" id="id-types">
+      <div class="id-type-btn" onclick="selectIDType(this)"><div style="font-size:24px;margin-bottom:6px">🪪</div><div style="font-size:12px;font-weight:600">Aadhaar / ID Card</div></div>
+      <div class="id-type-btn" onclick="selectIDType(this)"><div style="font-size:24px;margin-bottom:6px">🛂</div><div style="font-size:12px;font-weight:600">Passport</div></div>
+      <div class="id-type-btn" onclick="selectIDType(this)"><div style="font-size:24px;margin-bottom:6px">🚗</div><div style="font-size:12px;font-weight:600">Driver's License</div></div>
+    </div>
+    <div class="doc-upload" id="doc-front" onclick="simulateUpload('doc-front','doc-front-status')">
+      <div style="font-size:32px;margin-bottom:8px">📄</div>
+      <div style="font-weight:700;margin-bottom:4px">Front of Document</div>
+      <div style="font-size:12px;color:var(--text-muted)">Click to upload · PNG, JPG, PDF · Max 5MB</div>
+      <div id="doc-front-status" style="margin-top:8px;font-size:11px;font-family:var(--font-mono)"></div>
+    </div>
+    <div style="height:12px"></div>
+    <div class="doc-upload" id="doc-back" onclick="simulateUpload('doc-back','doc-back-status')">
+      <div style="font-size:32px;margin-bottom:8px">📄</div>
+      <div style="font-weight:700;margin-bottom:4px">Back of Document</div>
+      <div style="font-size:12px;color:var(--text-muted)">Click to upload · PNG, JPG, PDF · Max 5MB</div>
+      <div id="doc-back-status" style="margin-top:8px;font-size:11px;font-family:var(--font-mono)"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Step 3: Selfie -->
+<div class="kyc-step" id="kyc-3">
+  <div class="card" style="text-align:center">
+    <div style="font-size:15px;font-weight:800;margin-bottom:4px">Step 3 of 4 — Liveness Check</div>
+    <div style="font-size:12px;color:var(--text-muted);margin-bottom:24px">Take a selfie to verify your identity. No data is captured in demo.</div>
+    <div class="selfie-frame" id="selfie-frame">
+      <div class="scan-line"></div>
+      <span id="selfie-icon">😐</span>
+    </div>
+    <div id="selfie-instructions" style="font-size:13px;color:var(--text-secondary);margin-bottom:20px">Position your face within the circle</div>
+    <button class="btn btn-primary" id="selfie-btn" onclick="takeSelfie()" style="min-width:160px">📸 Capture</button>
+    <div style="margin-top:16px">
+      <div class="compliance-banner" style="text-align:left;font-size:10px">🔒 Demo mode: no camera access requested, no images stored</div>
+    </div>
+  </div>
+</div>
+
+<!-- Step 4: Review -->
+<div class="kyc-step" id="kyc-4">
+  <div class="card" style="text-align:center">
+    <div style="font-size:48px;margin-bottom:12px">🔍</div>
+    <div style="font-size:18px;font-weight:800;margin-bottom:8px">KYC Under Review</div>
+    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:24px;max-width:400px;margin-left:auto;margin-right:auto">Your documents have been submitted for verification. This typically takes 24–48 hours in a live environment. For the demo, your account is instantly verified.</p>
+    <div style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;margin-bottom:24px;text-align:left">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;align-items:center;gap:10px"><div class="live-dot"></div><span style="font-size:13px">Identity documents received</span><span class="badge badge-green" style="margin-left:auto">DONE</span></div>
+        <div style="display:flex;align-items:center;gap:10px"><div class="live-dot"></div><span style="font-size:13px">Liveness check passed</span><span class="badge badge-green" style="margin-left:auto">DONE</span></div>
+        <div style="display:flex;align-items:center;gap:10px"><div class="live-dot pulse"></div><span style="font-size:13px">AML screening</span><span class="badge badge-amber" style="margin-left:auto">PROCESSING</span></div>
+        <div style="display:flex;align-items:center;gap:10px;opacity:0.5"><div style="width:7px;height:7px;border-radius:50%;background:var(--border)"></div><span style="font-size:13px">Final approval</span><span class="badge" style="margin-left:auto">PENDING</span></div>
+      </div>
+    </div>
+    <button class="btn btn-primary btn-lg" onclick="completeKYC()" style="width:100%">Complete Verification (Demo)</button>
+  </div>
+</div>
+
+<!-- Nav Buttons -->
+<div style="display:flex;justify-content:space-between;margin-top:20px" id="kyc-nav">
+  <button class="btn btn-ghost" id="kyc-prev" onclick="kycPrev()" style="display:none">← Back</button>
+  <button class="btn btn-primary" id="kyc-next" onclick="kycNext()" style="margin-left:auto">Continue →</button>
+</div>
+
+</div>
+</div>
+
+<script src="../src/js/data.js"></script>
+<script src="../src/js/components.js"></script>
+<script>
+HEXComponents.renderNav('');
+HEXComponents.renderTickerStrip();
+
+let currentStep=1;
+const totalSteps=4;
+
+function updateProgress(){
+  const dots=document.querySelectorAll('.progress-dot');
+  dots.forEach((d,i)=>{
+    d.className='progress-dot';
+    if(i<currentStep-1) d.classList.add('done');
+    else if(i===currentStep-1) d.classList.add('active');
+  });
+  document.getElementById('kyc-prev').style.display=currentStep>1?'':'none';
+  document.getElementById('kyc-next').style.display=currentStep<totalSteps?'':'none';
+}
+
+function showKYCStep(n){
+  document.querySelectorAll('.kyc-step').forEach(s=>s.classList.remove('active'));
+  document.getElementById('kyc-'+n).classList.add('active');
+  updateProgress();
+}
+
+function kycNext(){
+  if(currentStep<totalSteps){currentStep++;showKYCStep(currentStep);}
+}
+function kycPrev(){
+  if(currentStep>1){currentStep--;showKYCStep(currentStep);}
+}
+
+function selectIDType(el){
+  document.querySelectorAll('.id-type-btn').forEach(b=>b.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+let uploadDone={front:false,back:false};
+function simulateUpload(boxId,statusId){
+  const box=document.getElementById(boxId);
+  const status=document.getElementById(statusId);
+  box.classList.add('uploading');
+  status.innerHTML='<span style="color:var(--amber)">⏳ Uploading...</span>';
+  setTimeout(()=>{
+    box.classList.remove('uploading'); box.classList.add('done');
+    status.innerHTML='<span style="color:var(--green)">✓ Document verified</span>';
+    uploadDone[boxId.includes('front')?'front':'back']=true;
+  },1800);
+}
+
+let selfieDone=false;
+function takeSelfie(){
+  const icon=document.getElementById('selfie-icon');
+  const instr=document.getElementById('selfie-instructions');
+  const btn=document.getElementById('selfie-btn');
+  btn.disabled=true;
+  const emojis=['😐','🙂','😊'];
+  let i=0;
+  const iv=setInterval(()=>{
+    icon.textContent=emojis[i++%emojis.length];
+    if(i>6){
+      clearInterval(iv);
+      icon.textContent='✅';
+      instr.innerHTML='<span style="color:var(--green)">✓ Liveness verified</span>';
+      btn.textContent='Captured ✓'; btn.disabled=false;
+      selfieDone=true;
+    }
+  },350);
+}
+
+function completeKYC(){
+  HEXComponents.toast('KYC Verified! You can now launch your IPO.','success');
+  setTimeout(()=>window.location.href='ipo.html',1500);
+}
+</script>
+</body>
+</html>

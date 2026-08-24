@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HEX — Derivatives (F&O)</title>
+  <link rel="stylesheet" href="../src/styles/globals.css">
+  <style>
+    .deriv-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 20px; transition: all var(--t-normal); cursor: pointer; }
+    .deriv-card:hover { border-color: var(--border-bright); transform: translateY(-1px); }
+    .deriv-card.call { border-left: 3px solid var(--green); }
+    .deriv-card.put { border-left: 3px solid var(--red); }
+    .greek-pill { display: inline-flex; flex-direction: column; align-items: center; padding: 8px 12px; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--r-md); }
+    .greek-name { font-size: 10px; color: var(--text-muted); font-family: var(--font-mono); }
+    .greek-val { font-size: 14px; font-weight: 700; font-family: var(--font-mono); }
+    .position-row { display: grid; grid-template-columns: 1fr 80px 80px 80px 100px 100px; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(30,30,48,0.4); }
+    .payoff-chart { height: 160px; }
+  </style>
+</head>
+<body>
+<div class="page">
+<div class="container-wide">
+
+<div style="margin-bottom:24px">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+    <h1 style="font-size:26px;font-weight:800">⚡ Futures & Options</h1>
+    <span class="badge badge-purple">DERIVATIVES</span>
+  </div>
+  <p style="color:var(--text-secondary)">Long or Short an individual's career trajectory. Hedge your human capital exposure with options.</p>
+  <div class="compliance-banner" style="margin-top:10px">⚠ All derivative contracts are educational simulations. No real financial contracts are created.</div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 340px;gap:24px">
+  <div>
+    <!-- Options Chain -->
+    <div class="card" style="margin-bottom:24px">
+      <div class="section-header">
+        <span class="section-title">Options Chain</span>
+        <div style="display:flex;gap:6px">
+          <select id="expiry-select" class="input" style="width:auto;padding:5px 10px;font-size:12px">
+            <option>Jun 2026</option><option>Jul 2026</option><option>Sep 2026</option>
+          </select>
+          <select id="underlying-select" class="input" style="width:auto;padding:5px 10px;font-size:12px" onchange="renderChain()">
+            <option value="SVNL">SVNL — Savannah Lee</option>
+            <option value="DVKR">DVKR — Dev Kumar</option>
+            <option value="AERA">AERA — Aera Patel</option>
+            <option value="RMKV">RMKV — Rohan Mehta</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 10px 1fr;gap:0;font-family:var(--font-mono);font-size:11px">
+        <div style="padding:8px 12px;background:var(--bg-secondary);border-radius:8px 0 0 0">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:4px;font-size:10px;color:var(--text-muted);padding-bottom:6px;border-bottom:1px solid var(--border)">
+            <div>Bid</div><div>Ask</div><div>IV%</div><div>OI</div>
+          </div>
+          <div id="calls-chain"></div>
+        </div>
+        <div style="background:var(--border);display:flex;align-items:center;justify-content:center">
+          <div style="width:1px;height:100%"></div>
+        </div>
+        <div style="padding:8px 12px;background:var(--bg-secondary);border-radius:0 8px 0 0">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:4px;font-size:10px;color:var(--text-muted);padding-bottom:6px;border-bottom:1px solid var(--border)">
+            <div>Bid</div><div>Ask</div><div>IV%</div><div>OI</div>
+          </div>
+          <div id="puts-chain"></div>
+        </div>
+      </div>
+      <div style="text-align:center;padding:10px;font-size:12px;color:var(--text-muted);margin-top:8px">
+        <span style="margin-right:12px">CALLS</span>
+        <span id="chain-spot" style="font-weight:800;font-size:15px;color:var(--text-primary);padding:4px 12px;background:var(--bg-elevated);border-radius:6px;border:1px solid var(--border)"></span>
+        <span style="margin-left:12px">PUTS</span>
+      </div>
+    </div>
+
+    <!-- Available Contracts -->
+    <div>
+      <div class="section-header"><span class="section-title">Available Contracts</span></div>
+      <div class="grid-2" id="deriv-grid"></div>
+    </div>
+  </div>
+
+  <!-- Trade Panel -->
+  <div>
+    <div class="card" style="margin-bottom:18px;position:sticky;top:96px">
+      <div class="section-header"><span class="section-title">Options Trade</span></div>
+      
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:16px">
+        <button class="btn btn-outline-green btn-sm" id="long-btn" onclick="setDir('long')" style="border-color:var(--green);color:var(--green);background:var(--green-glow)">📈 LONG CALL</button>
+        <button class="btn btn-ghost btn-sm" id="short-btn" onclick="setDir('short')">📉 SHORT PUT</button>
+      </div>
+
+      <div style="margin-bottom:12px">
+        <div class="form-label" style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:5px">Underlying</div>
+        <select class="input" id="trade-underlying">
+          <option>SVNL — Savannah Lee ($42.50)</option>
+          <option>DVKR — Dev Kumar ($24.50)</option>
+          <option>AERA — Aera Patel ($31.20)</option>
+        </select>
+      </div>
+      <div class="grid-2" style="margin-bottom:12px">
+        <div><div class="form-label" style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:5px">Strike</div><input class="input" id="trade-strike" type="number" value="42.50" step="0.5"></div>
+        <div><div class="form-label" style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:5px">Contracts</div><input class="input" id="trade-contracts" type="number" value="1" min="1"></div>
+      </div>
+      <div style="margin-bottom:16px">
+        <div class="form-label" style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:5px">Expiry</div>
+        <select class="input" id="trade-expiry"><option>Jun 30, 2026</option><option>Jul 31, 2026</option><option>Sep 30, 2026</option></select>
+      </div>
+
+      <!-- Greeks Display -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:16px">
+        <div class="greek-pill"><span class="greek-name">Delta</span><span class="greek-val" style="color:var(--blue)">0.65</span></div>
+        <div class="greek-pill"><span class="greek-name">Gamma</span><span class="greek-val" style="color:var(--purple)">0.08</span></div>
+        <div class="greek-pill"><span class="greek-name">Theta</span><span class="greek-val" style="color:var(--red)">-0.12</span></div>
+        <div class="greek-pill"><span class="greek-name">IV</span><span class="greek-val" style="color:var(--amber)">28.5%</span></div>
+      </div>
+
+      <div style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--r-md);padding:12px;margin-bottom:14px">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-bottom:5px"><span>Premium</span><span class="mono" style="color:var(--text-primary)">$3.20 / share</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-bottom:5px"><span>Contract Size</span><span class="mono" style="color:var(--text-primary)">100 shares</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted)"><span>Max Loss</span><span class="mono" style="color:var(--red)">$320</span></div>
+        <hr class="divider" style="margin:8px 0">
+        <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700"><span>Total Premium</span><span class="mono" style="color:var(--green)">$320</span></div>
+      </div>
+
+      <!-- Payoff Chart -->
+      <div style="margin-bottom:14px">
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:6px">Payoff Diagram</div>
+        <div style="height:100px"><canvas id="payoff-chart" style="width:100%;height:100px"></canvas></div>
+      </div>
+
+      <button class="btn btn-primary" style="width:100%" onclick="submitDerivTrade()">Place Options Order</button>
+    </div>
+  </div>
+</div>
+
+<!-- Open Positions -->
+<div class="card" style="margin-top:24px">
+  <div class="section-header"><span class="section-title">Open Positions</span></div>
+  <div style="display:grid;grid-template-columns:1fr 80px 80px 80px 100px 100px;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);padding:8px 0;border-bottom:1px solid var(--border);font-family:var(--font-mono)">
+    <div>Contract</div><div>Type</div><div>Strike</div><div>Premium</div><div>P&amp;L</div><div>Status</div>
+  </div>
+  <div id="positions"></div>
+</div>
+
+</div>
+</div>
+
+<script src="../src/js/data.js"></script>
+<script src="../src/js/charts.js"></script>
+<script src="../src/js/components.js"></script>
+<script>
+HEXComponents.renderNav('derivatives');
+HEXComponents.renderTickerStrip();
+const { DERIVATIVES, HUMAN_PROFILES, fmt } = window.HEX;
+
+let tradeDir = 'long';
+function setDir(d) {
+  tradeDir=d;
+  document.getElementById('long-btn').style.background=d==='long'?'var(--green-glow)':'transparent';
+  document.getElementById('long-btn').style.borderColor=d==='long'?'var(--green)':'var(--border)';
+  document.getElementById('long-btn').style.color=d==='long'?'var(--green)':'var(--text-muted)';
+  document.getElementById('short-btn').style.background=d==='short'?'var(--red-glow)':'transparent';
+  document.getElementById('short-btn').style.borderColor=d==='short'?'var(--red)':'var(--border)';
+  document.getElementById('short-btn').style.color=d==='short'?'var(--red)':'var(--text-muted)';
+}
+
+// Derivatives Grid
+document.getElementById('deriv-grid').innerHTML = DERIVATIVES.map(d=>{
+  const isCall = d.type==='CALL';
+  const p = HUMAN_PROFILES.find(x=>x.id===d.underlying);
+  return `<div class="deriv-card ${isCall?'call':'put'}" onclick="selectContract('${d.id}')">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:18px">${d.avatar}</span>
+        <div><div style="font-weight:700;font-size:13px">${d.underlying}</div><div style="font-size:10px;color:var(--text-muted)">${d.name}</div></div>
+      </div>
+      <span class="badge ${isCall?'badge-green':'badge-red'}">${d.type}</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">
+      <div><div class="stat-label">Strike</div><div class="mono" style="font-weight:700">${fmt.currency(d.strike)}</div></div>
+      <div><div class="stat-label">Premium</div><div class="mono" style="font-weight:700;color:${isCall?'var(--green)':'var(--red)'}">${fmt.currency(d.premium)}</div></div>
+      <div><div class="stat-label">IV</div><div class="mono" style="font-weight:700;color:var(--amber)">${d.iv}%</div></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid var(--border)">
+      <span style="font-size:10px;color:var(--text-muted)">OI: ${fmt.number(d.openInterest)}</span>
+      <span style="font-size:10px;color:var(--text-muted)">Δ ${d.delta}</span>
+      <span style="font-size:10px;color:var(--text-muted)">${d.expiry}</span>
+    </div>
+  </div>`;
+}).join('');
+
+// Options Chain
+function renderChain() {
+  const id = document.getElementById('underlying-select').value;
+  const p = HUMAN_PROFILES.find(x=>x.id===id);
+  if (!p) return;
+  const spot = p.sharePrice;
+  document.getElementById('chain-spot').textContent = fmt.currency(spot);
+  const strikes = [-4,-3,-2,-1,0,1,2,3,4].map(i=>parseFloat((spot*(1+i*0.05)).toFixed(2)));
+  
+  const callRow = (strike)=>{
+    const itm = strike < spot;
+    const premium = Math.max(0.1, (spot-strike)*0.3+Math.random()*0.5).toFixed(2);
+    const iv = (20+Math.random()*20).toFixed(1);
+    const oi = Math.floor(Math.random()*50000+1000);
+    return `<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:4px;padding:5px 0;border-bottom:1px solid rgba(30,30,48,0.3);background:${itm?'rgba(0,255,136,0.04)':'transparent'}">
+      <div style="color:var(--green)">${premium}</div>
+      <div style="color:var(--text-secondary)">${(parseFloat(premium)+0.1).toFixed(2)}</div>
+      <div style="color:var(--amber)">${iv}%</div>
+      <div style="color:var(--text-muted);font-size:10px">${(oi/1000).toFixed(0)}K</div>
+    </div>`;
+  };
+  const putRow = (strike)=>{
+    const itm = strike > spot;
+    const premium = Math.max(0.1, (strike-spot)*0.3+Math.random()*0.5).toFixed(2);
+    const iv = (18+Math.random()*22).toFixed(1);
+    const oi = Math.floor(Math.random()*40000+500);
+    return `<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:4px;padding:5px 0;border-bottom:1px solid rgba(30,30,48,0.3);background:${itm?'rgba(255,51,85,0.04)':'transparent'}">
+      <div style="color:var(--red)">${premium}</div>
+      <div style="color:var(--text-secondary)">${(parseFloat(premium)+0.1).toFixed(2)}</div>
+      <div style="color:var(--amber)">${iv}%</div>
+      <div style="color:var(--text-muted);font-size:10px">${(oi/1000).toFixed(0)}K</div>
+    </div>`;
+  };
+  document.getElementById('calls-chain').innerHTML = strikes.map(s=>callRow(s)).join('');
+  document.getElementById('puts-chain').innerHTML = strikes.map(s=>putRow(s)).join('');
+}
+renderChain();
+
+// Payoff Chart (simplified canvas drawing)
+const payoffCanvas = document.getElementById('payoff-chart');
+payoffCanvas.style.width='100%'; payoffCanvas.style.height='100px';
+function drawPayoff() {
+  const canvas = payoffCanvas;
+  const dpr=window.devicePixelRatio||1;
+  const W=canvas.offsetWidth, H=canvas.offsetHeight;
+  canvas.width=W*dpr; canvas.height=H*dpr;
+  const ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
+  const strike=42.5, premium=3.2;
+  const prices=Array.from({length:50},(_,i)=>30+i*0.8);
+  const payoffs=prices.map(p=>Math.max(-premium,(tradeDir==='long'?p-strike:strike-p)-premium));
+  const minP=Math.min(...payoffs), maxP=Math.max(...payoffs);
+  const scaleY=v=>H-((v-minP)/(maxP-minP||1))*H*0.85-H*0.075;
+  const scaleX=(_,i)=>W*(i/49);
+  ctx.strokeStyle='rgba(255,255,255,0.1)'; ctx.lineWidth=0.5;
+  ctx.beginPath(); ctx.moveTo(0,scaleY(0)); ctx.lineTo(W,scaleY(0)); ctx.stroke();
+  ctx.beginPath();
+  payoffs.forEach((p,i)=>{ const x=scaleX(null,i),y=scaleY(p); i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
+  ctx.strokeStyle='#00ff88'; ctx.lineWidth=2; ctx.stroke();
+}
+drawPayoff();
+
+// Positions
+const mockPositions=[
+  {contract:'SVNL JUN42.5 CALL',type:'LONG CALL',strike:'$42.50',premium:'$3.20',pnl:'+$180',status:'OPEN',pnlUp:true},
+  {contract:'DVKR JUL25 CALL',type:'LONG CALL',strike:'$25.00',premium:'$5.80',pnl:'+$290',status:'OPEN',pnlUp:true},
+  {contract:'RMKV JUN38 PUT',type:'LONG PUT',strike:'$38.00',premium:'$2.10',pnl:'-$45',status:'OPEN',pnlUp:false},
+];
+document.getElementById('positions').innerHTML = mockPositions.map(pos=>`
+  <div class="position-row">
+    <div><div style="font-weight:600;font-size:12px">${pos.contract}</div><div style="font-size:10px;color:var(--text-muted)">${pos.type}</div></div>
+    <div class="mono" style="font-size:11px">${pos.strike}</div>
+    <div class="mono" style="font-size:11px;color:var(--text-secondary)">${pos.premium}</div>
+    <div class="mono" style="font-size:11px"></div>
+    <div class="mono ${pos.pnlUp?'text-green':'text-red'}" style="font-size:12px;font-weight:700">${pos.pnl}</div>
+    <div><span class="badge badge-blue" style="font-size:9px">${pos.status}</span></div>
+  </div>`).join('');
+
+function selectContract(id) {
+  HEXComponents.toast('Contract selected. Adjust parameters and place order.','info');
+}
+function submitDerivTrade() {
+  HEXComponents.showComplianceModal(()=>{
+    HEXComponents.toast(`Options order placed (${tradeDir.toUpperCase()}) — Demo simulation only`,'success');
+  });
+}
+</script>
+</body>
+</html>

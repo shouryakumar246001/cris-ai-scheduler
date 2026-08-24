@@ -1,0 +1,64 @@
+{
+  "protocol_version": "FOIS-ICMS-2.0",
+  "event_id": "c3e7a841-f2d9-4b03-9e16-7a2c4f8d1b55",
+  "created_at": "2024-08-15T00:28:00Z",
+  "source_system": "HYBRID",
+
+  "train_number": "12269",
+  "train_name": "Duronto Express",
+  "running_date": "2024-08-15",
+
+  "train_category": "DURONTO",
+  "is_coaching_service": true,
+  "regulatory_mandate": "NONE",
+
+  "passenger_metrics": {
+    "total_passengers": 1247,
+    "confirmed_reservations": 1189,
+    "waitlisted_passengers": 58,
+    "priority_passengers": 134,
+    "ticket_revenue_inr": 4821600,
+    "connecting_train_dependencies": 3,
+    "has_flight_connections": true
+  },
+
+  "freight_metrics": null,
+
+  "priority_weight": {
+    "P_i": 8.7,
+    "category_base_score": 3.8,
+    "load_factor_score": 1.9,
+    "cascade_factor_score": 1.8,
+    "mandate_factor_score": 0.0,
+    "coefficients": {
+      "alpha": 0.40,
+      "beta":  0.25,
+      "gamma": 0.25,
+      "delta": 0.10
+    },
+    "computed_at": "2024-08-15T00:20:00Z",
+    "is_manual_override": false,
+    "override_reason": null
+  },
+
+  "delay_threshold": {
+    "delta_d_i_minutes": 30,
+    "timetable_buffer_min": 20,
+    "current_running_margin_min": -7,
+    "already_delayed_min": 23,
+    "effective_remaining_budget_min": 7,
+    "sensitivity": "CRITICAL",
+    "escalation_on_breach": true,
+    "sla_penalty_per_min_inr": 12000
+  },
+
+  "upcoming_sections": [
+    "NGP-WR-042",
+    "SEG-BPQ-018",
+    "BPQ-BLAR-021",
+    "BLAR-KZJ-033"
+  ],
+  "section_entry_estimate": "2024-08-15T03:20:00Z",
+
+  "ttl_seconds": 900
+}

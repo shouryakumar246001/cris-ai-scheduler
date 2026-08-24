@@ -1,0 +1,121 @@
+{
+  "protocol_version": "COA-2.1",
+  "event_id": "7f3a1c2e-d4b8-4e91-a032-8d4f6c9e2a17",
+  "source_node": "COA-NGP-DIV-01",
+  "ingested_at": "2024-08-15T03:14:27.342Z",
+
+  "train_number": "12269",
+  "train_name": "Duronto Express",
+  "running_date": "2024-08-15",
+  "operational_status": "DELAYED",
+  "direction": "DOWN",
+  "origin_station": "NDLS",
+  "destination_station": "MAS",
+
+  "telemetry": {
+    "timestamp_ms": 1723688067000,
+    "latitude": 21.1458,
+    "longitude": 79.0882,
+    "speed_kmph": 112.4,
+    "heading_deg": 178,
+    "elevation_msl": 310.5,
+    "odometer_km": 1024.7,
+    "traction_current_A": 1420.0,
+    "brake_pressure_bar": 5.1,
+    "signal_aspect": "GREEN",
+    "atp_override_active": false
+  },
+
+  "current_section": {
+    "section_id": "NGP-WR-042",
+    "from_station": "NGP",
+    "to_station": "SEG",
+    "line_code": "MAIN_DOWN",
+    "length_km": 22.8,
+    "is_ctc_section": true,
+    "drm_zone": "CR-NGP"
+  },
+
+  "station_timestamps": [
+    {
+      "station_code": "NDLS",
+      "station_name": "New Delhi",
+      "scheduled_arrival": null,
+      "actual_arrival": null,
+      "arrival_delay_min": null,
+      "scheduled_departure": "2024-08-14T19:55:00Z",
+      "actual_departure": "2024-08-14T20:12:00Z",
+      "departure_delay_min": 17,
+      "crew_change": false,
+      "is_scheduled_halt": true
+    },
+    {
+      "station_code": "BPL",
+      "station_name": "Bhopal Junction",
+      "scheduled_arrival": "2024-08-15T02:00:00Z",
+      "actual_arrival": "2024-08-15T02:23:00Z",
+      "arrival_delay_min": 23,
+      "scheduled_departure": "2024-08-15T02:05:00Z",
+      "actual_departure": "2024-08-15T02:28:00Z",
+      "departure_delay_min": 23,
+      "crew_change": true,
+      "is_scheduled_halt": true
+    },
+    {
+      "station_code": "NGP",
+      "station_name": "Nagpur Junction",
+      "scheduled_arrival": "2024-08-15T05:10:00Z",
+      "actual_arrival": null,
+      "arrival_delay_min": null,
+      "scheduled_departure": "2024-08-15T05:20:00Z",
+      "actual_departure": null,
+      "departure_delay_min": null,
+      "crew_change": true,
+      "is_scheduled_halt": true
+    },
+    {
+      "station_code": "MAS",
+      "station_name": "Chennai Central",
+      "scheduled_arrival": "2024-08-15T17:55:00Z",
+      "actual_arrival": null,
+      "arrival_delay_min": null,
+      "scheduled_departure": null,
+      "actual_departure": null,
+      "departure_delay_min": null,
+      "crew_change": false,
+      "is_scheduled_halt": true
+    }
+  ],
+  "current_station_index": 1,
+
+  "berth_tracking": [
+    {
+      "berth_id": "NGP-042-B1",
+      "track_number": 1,
+      "status": "OCCUPIED",
+      "occupying_train_number": "12269",
+      "last_updated": "2024-08-15T03:14:20Z",
+      "expected_release": "2024-08-15T03:34:00Z"
+    },
+    {
+      "berth_id": "NGP-042-B2",
+      "track_number": 2,
+      "status": "FREE",
+      "occupying_train_number": null,
+      "last_updated": "2024-08-15T03:00:00Z",
+      "expected_release": null
+    },
+    {
+      "berth_id": "NGP-042-L1",
+      "track_number": 3,
+      "status": "BLOCKED",
+      "occupying_train_number": null,
+      "last_updated": "2024-08-15T01:00:00Z",
+      "expected_release": "2024-08-15T06:00:00Z"
+    }
+  ],
+
+  "sequence_number": 100842,
+  "latency_ms": 312,
+  "is_gap_filled": false
+}

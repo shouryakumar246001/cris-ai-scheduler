@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HEX — Live Markets</title>
+  <meta name="description" content="The world's first human capital market. Trade shares of individuals based on future earning potential.">
+  <link rel="stylesheet" href="../src/styles/globals.css">
+  <style>
+    .hero-section { padding: 40px 0 32px; background: linear-gradient(180deg, rgba(0,255,136,0.04) 0%, transparent 100%); border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+    .index-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; margin-bottom: 32px; }
+    .index-bar-item { background: var(--bg-card); padding: 16px 20px; transition: background var(--t-fast); }
+    .index-bar-item:hover { background: var(--bg-hover); }
+    .filter-btn { padding: 6px 14px; border-radius: 100px; font-size: 12px; font-weight: 600; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-secondary); cursor: pointer; transition: all var(--t-fast); font-family: var(--font-mono); }
+    .filter-btn:hover, .filter-btn.active { border-color: var(--green); color: var(--green); background: var(--green-glow); }
+    .leaderboard-row { display: grid; grid-template-columns: 40px 1.8fr 1fr 1fr 1fr 1fr 90px; align-items: center; padding: 12px 16px; border-bottom: 1px solid rgba(30,30,48,0.5); transition: background var(--t-fast); cursor: pointer; }
+    .leaderboard-row:hover { background: var(--bg-hover); }
+    .leaderboard-header { display: grid; grid-template-columns: 40px 1.8fr 1fr 1fr 1fr 1fr 90px; align-items: center; padding: 10px 16px; border-bottom: 1px solid var(--border); font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); font-family: var(--font-mono); font-weight: 600; }
+    .heatmap { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; }
+    .heatmap-cell { padding: 12px 8px; border-radius: 8px; text-align: center; cursor: pointer; transition: transform var(--t-fast); }
+    .heatmap-cell:hover { transform: scale(1.05); }
+    .news-item { padding: 12px 0; border-bottom: 1px solid var(--border); display: flex; gap: 12px; align-items: flex-start; }
+    .news-time { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); min-width: 40px; margin-top: 2px; }
+  </style>
+</head>
+<body>
+<div class="page">
+<section class="hero-section">
+  <div class="container">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+          <div class="live-dot"></div>
+          <span class="mono" style="font-size:11px;color:var(--text-muted);letter-spacing:2px">LIVE MARKET SESSION</span>
+          <span id="market-clock" class="mono" style="font-size:11px;color:var(--green)"></span>
+        </div>
+        <h1 style="font-size:32px;font-weight:800;margin-bottom:6px">Human Equity Exchange</h1>
+        <p style="color:var(--text-secondary);font-size:15px">Trade human potential. The world's first <span style="color:var(--green)">personal capital marketplace.</span></p>
+      </div>
+      <div id="nav-index-value" style="display:flex;align-items:center;gap:10px;font-size:20px;background:var(--bg-card);padding:14px 20px;border-radius:var(--r-lg);border:1px solid var(--border)"></div>
+    </div>
+    <div class="index-bar">
+      <div class="index-bar-item"><div class="stat-label">Human 50</div><div id="h50-val" class="stat-value mono">—</div><div id="h50-chg" class="stat-change">—</div></div>
+      <div class="index-bar-item"><div class="stat-label">Total Market Cap</div><div id="total-mcap" class="stat-value mono">—</div><div class="stat-change" style="color:var(--text-muted)">All individuals</div></div>
+      <div class="index-bar-item"><div class="stat-label">24h Volume</div><div id="total-vol" class="stat-value mono">—</div><div class="stat-change up">▲ active</div></div>
+      <div class="index-bar-item"><div class="stat-label">Active IPOs</div><div class="stat-value mono">3</div><div class="stat-change up">▲ 1 new today</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="container-wide">
+  <div style="display:grid;grid-template-columns:1fr 310px;gap:24px">
+    <div>
+      <div class="card" style="margin-bottom:24px">
+        <div class="section-header"><span class="section-title">Market Heatmap</span><span style="font-size:11px;color:var(--text-muted)">Size=Market Cap · Color=24h Δ</span></div>
+        <div class="heatmap" id="heatmap"></div>
+      </div>
+      <div class="card">
+        <div class="section-header">
+          <span class="section-title">Live Rankings</span>
+          <div style="display:flex;gap:6px;flex-wrap:wrap" id="filters">
+            <div class="filter-btn active" data-filter="all">All</div>
+            <div class="filter-btn" data-filter="Technology">Tech</div>
+            <div class="filter-btn" data-filter="Sports">Sports</div>
+            <div class="filter-btn" data-filter="Finance">Finance</div>
+            <div class="filter-btn" data-filter="Medicine">Medicine</div>
+          </div>
+        </div>
+        <div class="leaderboard-header"><div>#</div><div>Individual</div><div>Price</div><div>Mkt Cap</div><div>24h Δ</div><div>Volume</div><div>Trend</div></div>
+        <div id="leaderboard"></div>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:18px;border-color:rgba(0,255,136,0.25)">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px"><span>🚀</span><span style="font-weight:700;font-size:13px;color:var(--green)">Hot IPO — Closing Soon</span></div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+          <div style="width:36px;height:36px;background:var(--bg-elevated);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px">🚀</div>
+          <div><div style="font-weight:700">Dev Kumar</div><div style="font-size:11px;color:var(--text-muted)">DVKR · Serial Founder</div></div>
+        </div>
+        <div style="margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="font-size:11px;color:var(--text-muted)">Raised</span><span class="mono" style="font-size:11px;color:var(--green)">$8.2M / $12.25M</span></div>
+          <div class="progress-bar-track"><div class="progress-bar-fill" style="width:67%"></div></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-bottom:12px"><span>2,841 investors</span><span class="text-amber">⏱ 4 days left</span></div>
+        <button class="btn btn-primary" style="width:100%" onclick="HEXComponents.showComplianceModal(()=>window.location.href='ipo.html')">Invest Now</button>
+      </div>
+      <div class="card" style="margin-bottom:18px">
+        <div class="section-header"><span class="section-title">Top Movers</span></div>
+        <div id="top-movers"></div>
+      </div>
+      <div class="card">
+        <div class="section-header"><span class="section-title">Market Intel</span></div>
+        <div id="news-feed"></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script src="../src/js/data.js"></script>
+<script src="../src/js/charts.js"></script>
+<script src="../src/js/components.js"></script>
+<script>
+HEXComponents.renderNav('market');
+HEXComponents.renderTickerStrip();
+const { HUMAN_PROFILES, HUMAN50_INDEX, fmt } = window.HEX;
+
+function updateClock() { const e=document.getElementById('market-clock'); if(e) e.textContent=new Date().toLocaleTimeString('en-US',{hour12:false}); }
+setInterval(updateClock,1000); updateClock();
+
+function updateStats() {
+  const idx=HUMAN50_INDEX, up=idx.changePct>=0;
+  const totalMcap=HUMAN_PROFILES.reduce((s,p)=>s+p.marketCap,0);
+  const totalVol=HUMAN_PROFILES.reduce((s,p)=>s+p.volume,0);
+  document.getElementById('h50-val').textContent=idx.value.toLocaleString();
+  document.getElementById('h50-chg').innerHTML=`<span class="${up?'up':'down'}">${up?'▲':'▼'} ${Math.abs(idx.changePct).toFixed(2)}%</span>`;
+  document.getElementById('h50-chg').className='stat-change '+(up?'up':'down');
+  document.getElementById('total-mcap').textContent=fmt.currency(totalMcap,true);
+  document.getElementById('total-vol').textContent=fmt.currency(totalVol,true);
+  const ni=document.getElementById('nav-index-value');
+  if(ni) ni.innerHTML=`<span style="color:var(--text-secondary);font-size:11px">H50</span><span class="mono" style="font-weight:700;font-size:20px">${idx.value.toLocaleString()}</span><span style="color:${up?'var(--green)':'var(--red)'}">${up?'▲':'▼'}${Math.abs(idx.changePct).toFixed(2)}%</span>`;
+}
+updateStats(); setInterval(updateStats,2000);
+
+function renderHeatmap() {
+  const el=document.getElementById('heatmap'); if(!el) return;
+  const maxMcap=Math.max(...HUMAN_PROFILES.map(p=>p.marketCap));
+  el.innerHTML=HUMAN_PROFILES.map(p=>{
+    const up=p.change24h>=0, intensity=Math.abs(p.change24h)/8;
+    const bg=up?`rgba(0,255,136,${0.1+intensity*0.4})`:`rgba(255,51,85,${0.1+intensity*0.4})`;
+    return `<div class="heatmap-cell" style="background:${bg}" onclick="window.location.href='terminal.html?id=${p.id}'" onmouseover="this.style.transform='scale(1.06)'" onmouseout="this.style.transform='scale(1)'">
+      <div style="font-size:18px;margin-bottom:3px">${p.avatar}</div>
+      <div style="font-weight:700;font-size:10px;color:${up?'var(--green)':'var(--red)'}">${p.id}</div>
+      <div style="font-size:9px;color:${up?'var(--green)':'var(--red)'}">${fmt.percent(p.change24h)}</div>
+    </div>`;
+  }).join('');
+}
+renderHeatmap();
+
+let activeFilter='all';
+function renderLeaderboard() {
+  const el=document.getElementById('leaderboard'); if(!el) return;
+  const profiles=activeFilter==='all'?HUMAN_PROFILES:HUMAN_PROFILES.filter(p=>p.sector===activeFilter);
+  const sorted=[...profiles].sort((a,b)=>b.marketCap-a.marketCap);
+  el.innerHTML=sorted.map((p,i)=>{
+    const up=p.change24h>=0;
+    return `<div class="leaderboard-row" onclick="window.location.href='terminal.html?id=${p.id}'">
+      <div class="mono" style="color:var(--text-muted);font-size:12px">${i+1}</div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:32px;height:32px;background:var(--bg-elevated);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px">${p.avatar}</div>
+        <div><div style="font-weight:600;font-size:13px">${p.name}</div><div style="font-size:10px;color:var(--text-muted)">${p.id} · ${p.sector}</div></div>
+      </div>
+      <div class="mono" style="font-weight:700">${fmt.currency(p.sharePrice)}</div>
+      <div class="mono" style="color:var(--text-secondary)">${fmt.currency(p.marketCap,true)}</div>
+      <div class="mono ${up?'text-green':'text-red'}">${fmt.percent(p.change24h)}</div>
+      <div class="mono" style="color:var(--text-muted)">${fmt.currency(p.volume,true)}</div>
+      <canvas width="80" height="32" data-sparkline="${p.id}"></canvas>
+    </div>`;
+  }).join('');
+  HEXComponents.renderSparklines();
+}
+renderLeaderboard();
+
+document.getElementById('filters').querySelectorAll('.filter-btn').forEach(btn=>{
+  btn.addEventListener('click',function(){
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    this.classList.add('active'); activeFilter=this.dataset.filter; renderLeaderboard();
+  });
+});
+
+function renderTopMovers() {
+  const el=document.getElementById('top-movers'); if(!el) return;
+  const sorted=[...HUMAN_PROFILES].sort((a,b)=>Math.abs(b.change24h)-Math.abs(a.change24h)).slice(0,5);
+  el.innerHTML=sorted.map(p=>{
+    const up=p.change24h>=0;
+    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(30,30,48,0.4);cursor:pointer" onclick="window.location.href='terminal.html?id=${p.id}'">
+      <div style="display:flex;align-items:center;gap:8px"><span style="font-size:16px">${p.avatar}</span>
+        <div><div style="font-size:12px;font-weight:600">${p.name}</div><div class="mono" style="font-size:10px;color:var(--text-muted)">${fmt.currency(p.sharePrice)}</div></div>
+      </div>
+      <span class="badge ${up?'badge-green':'badge-red'}">${fmt.percent(p.change24h)}</span>
+    </div>`;
+  }).join('');
+}
+renderTopMovers(); setInterval(renderTopMovers,3000);
+
+const NEWS=[
+  {time:'21:14',text:'Dev Kumar closes Series B at $45M, DVKR surges +5.7%',tag:'DVKR',up:true},
+  {time:'20:58',text:'Savannah Lee loses Wimbledon qualifier, SVNL down -2.1%',tag:'SVNL',up:false},
+  {time:'20:31',text:'Aera Patel paper accepted at NeurIPS 2026, AERA +3.4%',tag:'AERA',up:true},
+  {time:'19:45',text:'Human 50 Index hits all-time high of 18,420',tag:'H50',up:true},
+  {time:'19:22',text:'Zane Xu IPO 87% subscribed with 2 days remaining',tag:'ZNXU',up:true},
+  {time:'18:55',text:'New ISA compliance update: 8% cap enforced platform-wide',tag:'COMPLY',up:null},
+];
+document.getElementById('news-feed').innerHTML=NEWS.map(n=>`
+  <div class="news-item">
+    <div class="news-time">${n.time}</div>
+    <div style="flex:1"><span class="badge ${n.up===true?'badge-green':n.up===false?'badge-red':'badge-amber'}" style="margin-bottom:4px">${n.tag}</span>
+      <div style="font-size:12px;color:var(--text-secondary);line-height:1.4;margin-top:3px">${n.text}</div>
+    </div>
+  </div>`).join('');
+
+setInterval(()=>{ renderLeaderboard(); renderHeatmap(); },4000);
+</script>
+</body>
+</html>

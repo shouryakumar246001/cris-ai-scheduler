@@ -1,0 +1,46 @@
+# Netlify Configuration for CRIS AI Block Scheduler
+
+[build]
+  publish = "."
+  command = "npm run build"
+
+# Pretty URL Redirects & Clean Multi-Page Routing
+[[redirects]]
+  from = "/coa"
+  to = "/pages/coa.html"
+  status = 200
+
+[[redirects]]
+  from = "/bdms"
+  to = "/pages/bdms.html"
+  status = 200
+
+[[redirects]]
+  from = "/fois"
+  to = "/pages/fois.html"
+  status = 200
+
+[[redirects]]
+  from = "/milp"
+  to = "/pages/milp.html"
+  status = 200
+
+[[redirects]]
+  from = "/analytics"
+  to = "/pages/analytics.html"
+  status = 200
+
+[[redirects]]
+  from = "/data"
+  to = "/pages/analytics.html"
+  status = 200
+
+# HTTP Headers for Security and Performance
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Access-Control-Allow-Origin = "*"

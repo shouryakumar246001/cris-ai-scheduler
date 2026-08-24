@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FOIS & ICMS Priority Matrix — CRIS AI Block Scheduler</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="/src/dashboard/styles.css" />
+</head>
+<body>
+
+  <!-- Shared Navigation -->
+  <div id="shared-header"></div>
+
+  <div class="page-container">
+    <!-- Page Hero -->
+    <div class="page-hero">
+      <div class="hero-left">
+        <h1>
+          <span>📦 FOIS & ICMS Dynamic Priority Intelligence</span>
+          <span class="hero-badge purple">PROTOCOL 3 (FOIS-ICMS-2.0)</span>
+        </h1>
+        <p class="hero-sub">
+          Dynamic train priority weighting (\(P_i \in [1, 10]\)) and cascading delay budget (\(\Delta d_i\)) dynamically calibrated against 10-year historical delay volatility.
+        </p>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat-card">
+          <div class="hstat-label">Highest Priority P_i</div>
+          <div class="hstat-val purple">7.2 (Vivek Exp)</div>
+        </div>
+        <div class="hero-stat-card">
+          <div class="hstat-label">Critical Coaching SLA</div>
+          <div class="hstat-val orange">₹15,000/min</div>
+        </div>
+        <div class="hero-stat-card">
+          <div class="hstat-label">Formula Coefficients</div>
+          <div class="hstat-val cyan">&alpha; + &beta; + &gamma; + &delta; = 1.0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Interactive Priority Explorer for Selected Train -->
+    <div class="card" style="padding: 14px 20px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 0.8rem; font-weight: 700; color: var(--purple);">Select Train for Priority Deep Dive:</span>
+          <select id="fois-train-selector" class="form-select" style="min-width: 340px; font-weight: 600;">
+            <!-- Populated via JS -->
+          </select>
+        </div>
+        <button id="btn-copy-fois-json" class="btn" style="font-size: 0.75rem;">📋 Copy FOIS/ICMS Payload JSON</button>
+      </div>
+    </div>
+
+    <!-- Priority Weight & Delay Budget Grid -->
+    <div class="grid-2">
+      <!-- Left: P_i Mathematical Decomposition -->
+      <div class="card">
+        <div class="card-title-bar">
+          <h3>⚖️ Dynamic Priority Weight P<sub>i</sub> Decomposition</h3>
+          <span class="badge purple" id="pi-badge-val">P_i = 6.9 / 10.0</span>
+        </div>
+
+        <div style="text-align: center; margin: 12px 0;">
+          <div style="font-family: var(--font-mono); font-size: 2.8rem; font-weight: 800; color: var(--purple); text-shadow: 0 0 20px rgba(168,85,247,0.5);" id="pi-display-val">
+            6.9
+          </div>
+          <div style="font-size: 0.72rem; color: var(--text-secondary); font-family: var(--font-mono);">
+            Formula: P<sub>i</sub> = &alpha;·B<sub>cat</sub> + &beta;·L<sub>dist</sub> + &gamma;·V<sub>vol</sub> + &delta;·C<sub>casc</sub>
+          </div>
+        </div>
+
+        <!-- 4 Component Bars -->
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.72rem; margin-bottom: 3px;">
+              <span>&alpha; · Category Base (Rajdhani / Shatabdi / SF)</span>
+              <strong style="color:var(--purple);" id="score-cat">4.0</strong>
+            </div>
+            <div style="height: 8px; background: rgba(0,0,0,0.3); border-radius: 4px; overflow:hidden;">
+              <div id="bar-cat" style="width: 100%; height: 100%; background: var(--purple);"></div>
+            </div>
+          </div>
+
+          <div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.72rem; margin-bottom: 3px;">
+              <span>&beta; · Distance & Load Factor (Up to 4,198 km)</span>
+              <strong style="color:var(--cyan);" id="score-dist">0.82</strong>
+            </div>
+            <div style="height: 8px; background: rgba(0,0,0,0.3); border-radius: 4px; overflow:hidden;">
+              <div id="bar-dist" style="width: 41%; height: 100%; background: var(--cyan);"></div>
+            </div>
+          </div>
+
+          <div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.72rem; margin-bottom: 3px;">
+              <span>&gamma; · 10-Yr Delay Volatility Risk (&sigma; = 24.2 min)</span>
+              <strong style="color:var(--orange);" id="score-vol">0.85</strong>
+            </div>
+            <div style="height: 8px; background: rgba(0,0,0,0.3); border-radius: 4px; overflow:hidden;">
+              <div id="bar-vol" style="width: 42%; height: 100%; background: var(--orange);"></div>
+            </div>
+          </div>
+
+          <div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.72rem; margin-bottom: 3px;">
+              <span>&delta; · Interlocking & Junction Cascade Factor</span>
+              <strong style="color:var(--green);" id="score-casc">1.90</strong>
+            </div>
+            <div style="height: 8px; background: rgba(0,0,0,0.3); border-radius: 4px; overflow:hidden;">
+              <div id="bar-casc" style="width: 95%; height: 100%; background: var(--green);"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Cascading Delay Threshold Δd_i & SLA Exposure -->
+      <div class="card">
+        <div class="card-title-bar">
+          <h3>⏱️ Cascading Delay Budget &Delta;d<sub>i</sub> (Tolerance Limit)</h3>
+          <span class="badge green" id="budget-badge-val">20 min budget</span>
+        </div>
+
+        <div style="text-align: center; margin: 12px 0;">
+          <div style="font-family: var(--font-mono); font-size: 2.8rem; font-weight: 800; color: var(--green); text-shadow: 0 0 20px rgba(46,204,113,0.5);" id="delta-d-val">
+            20 <span style="font-size: 1.2rem; color: var(--text-dim);">min</span>
+          </div>
+          <div style="font-size: 0.72rem; color: var(--text-secondary);">
+            Delays beyond &Delta;d<sub>i</sub> trigger exponential penalty in MILP cost function
+          </div>
+        </div>
+
+        <div class="grid-2" style="gap: 10px;">
+          <div class="hero-stat-card" style="text-align:center;">
+            <div class="hstat-label">Passenger On Board</div>
+            <div class="hstat-val cyan" id="fois-pax">1,200 pax</div>
+          </div>
+          <div class="hero-stat-card" style="text-align:center;">
+            <div class="hstat-label">Estimated PNR Revenue</div>
+            <div class="hstat-val green" id="fois-rev">₹58.5 Lakhs</div>
+          </div>
+          <div class="hero-stat-card" style="text-align:center;">
+            <div class="hstat-label">SLA Breach Penalty</div>
+            <div class="hstat-val orange" id="fois-sla">₹15,000 / min</div>
+          </div>
+          <div class="hero-stat-card" style="text-align:center;">
+            <div class="hstat-label">Sensitivity Class</div>
+            <div class="hstat-val red" id="fois-sens">CRITICAL</div>
+          </div>
+        </div>
+
+        <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border); margin-top: auto;">
+          <div style="font-size: 0.65rem; color: var(--text-dim); text-transform: uppercase;">Regulatory Mandate & Protection</div>
+          <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 4px;" id="mandate-text">
+            Coaching service operates under Indian Railways Punctuality Directive 2023. Top priority clearance enforced at block interfaces.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Priority Comparison Across All 10 Real Trains -->
+    <div class="card">
+      <div class="card-title-bar">
+        <h3>📊 All 10 Train Services — Priority Spectrum</h3>
+        <span class="card-subtitle">Derived from 2016–2025 Historical Train Delay Dataset</span>
+      </div>
+      <div style="height: 260px; position: relative;">
+        <canvas id="foisPriorityComparisonChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Live FOIS/ICMS JSON Output -->
+    <div class="card">
+      <div class="card-title-bar">
+        <h3>📄 Real-Time FOISICMSPriorityPayload JSON (`cris.fois-icms.priority-metadata.v2`)</h3>
+        <span class="badge purple">JSON Stream</span>
+      </div>
+      <pre id="json-fois-stream" style="background: #02050c; border: 1px solid var(--border); padding: 16px; border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: 0.75rem; color: #bb9af7; overflow-x: auto; max-height: 280px;"></pre>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <span>CRIS Protocol 3 — Freight Operations & Coaching Priority Layer (FOIS-ICMS-2.0)</span>
+      <span>Dynamic Weight Formula Calibrated to Winter Fog & Disruption Profiles</span>
+    </div>
+  </footer>
+
+  <script src="/src/dashboard/shared.js"></script>
+  <script>
+    renderSharedNav("fois");
+
+    const sel = document.getElementById("fois-train-selector");
+    sel.innerHTML = TRAIN_PROFILES.map(p => `
+      <option value="${p.train_no}">${p.train_no} — ${p.train_name} (P_i = ${p.P_i})</option>
+    `).join("");
+
+    let activeProf = TRAIN_PROFILES[0];
+
+    sel.addEventListener("change", (e) => {
+      activeProf = TRAIN_PROFILE_MAP.get(e.target.value) || TRAIN_PROFILES[0];
+      updateView();
+    });
+
+    document.getElementById("btn-copy-fois-json").addEventListener("click", () => {
+      const text = document.getElementById("json-fois-stream").textContent;
+      navigator.clipboard.writeText(text);
+      alert("FOIS/ICMS JSON Payload copied to clipboard!");
+    });
+
+    function updateView() {
+      document.getElementById("pi-badge-val").textContent = `P_i = ${activeProf.P_i} / 10.0`;
+      document.getElementById("pi-display-val").textContent = activeProf.P_i;
+      document.getElementById("budget-badge-val").textContent = `${activeProf.delta_d_i} min budget`;
+      document.getElementById("delta-d-val").innerHTML = `${activeProf.delta_d_i} <span style="font-size:1.2rem; color:var(--text-dim);">min</span>`;
+
+      document.getElementById("score-cat").textContent = activeProf.category_base.toFixed(1);
+      document.getElementById("bar-cat").style.width = `${(activeProf.category_base / 4.0) * 100}%`;
+
+      document.getElementById("score-dist").textContent = activeProf.distance_factor.toFixed(2);
+      document.getElementById("bar-dist").style.width = `${(activeProf.distance_factor / 2.0) * 100}%`;
+
+      document.getElementById("score-vol").textContent = activeProf.volatility_factor.toFixed(2);
+      document.getElementById("bar-vol").style.width = `${(activeProf.volatility_factor / 2.0) * 100}%`;
+
+      document.getElementById("score-casc").textContent = activeProf.cascade_factor.toFixed(2);
+      document.getElementById("bar-casc").style.width = `${(activeProf.cascade_factor / 2.0) * 100}%`;
+
+      document.getElementById("fois-pax").textContent = `${activeProf.passenger_capacity.toLocaleString("en-IN")} pax`;
+      document.getElementById("fois-rev").textContent = formatINR(activeProf.pnr_revenue_inr);
+      document.getElementById("fois-sla").textContent = activeProf.category === "RAJDHANI" || activeProf.category === "SHATABDI" ? "₹15,000 / min" : "₹8,000 / min";
+      document.getElementById("fois-sens").textContent = activeProf.sensitivity;
+
+      const payload = {
+        protocol_version: "FOIS-ICMS-2.0",
+        event_id: "c3e7a841-f2d9-4b03-9e16-7a2c4f8d1b55",
+        created_at: new Date().toISOString(),
+        source_system: "HYBRID",
+        train_number: activeProf.train_no,
+        train_name: activeProf.train_name,
+        train_category: activeProf.category,
+        priority_weight: {
+          P_i: activeProf.P_i,
+          category_base_score: activeProf.category_base,
+          distance_load_factor: activeProf.distance_factor,
+          volatility_risk_factor: activeProf.volatility_factor,
+          cascade_network_factor: activeProf.cascade_factor
+        },
+        delay_threshold: {
+          delta_d_i_minutes: activeProf.delta_d_i,
+          sensitivity: activeProf.sensitivity,
+          mean_10yr_delay_min: activeProf.mean_delay,
+          sla_penalty_per_min_inr: activeProf.category === "RAJDHANI" ? 15000 : 8000
+        },
+        passenger_metrics: {
+          total_passengers: activeProf.passenger_capacity,
+          ticket_revenue_inr: activeProf.pnr_revenue_inr
+        }
+      };
+
+      document.getElementById("json-fois-stream").textContent = JSON.stringify(payload, null, 2);
+    }
+
+    updateView();
+
+    // Render 10-train comparison chart
+    new Chart(document.getElementById("foisPriorityComparisonChart").getContext("2d"), {
+      type: "bar",
+      data: {
+        labels: TRAIN_PROFILES.map(p => `${p.train_no} (${p.train_name.split(" ")[0]})`),
+        datasets: [
+          {
+            label: "Priority Weight P_i",
+            data: TRAIN_PROFILES.map(p => p.P_i),
+            backgroundColor: "rgba(168, 85, 247, 0.7)",
+            borderColor: "rgba(168, 85, 247, 1)",
+            borderWidth: 1.5,
+            borderRadius: 4,
+            yAxisID: "y",
+          },
+          {
+            label: "Allowed Threshold Δd_i (min)",
+            data: TRAIN_PROFILES.map(p => p.delta_d_i),
+            backgroundColor: "rgba(46, 204, 113, 0.5)",
+            borderColor: "rgba(46, 204, 113, 1)",
+            borderWidth: 1.5,
+            borderRadius: 4,
+            yAxisID: "y1",
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: { ticks: { color: "#7a9bb5", font: { size: 9, family: "Space Mono" } }, grid: { color: "rgba(255,255,255,0.04)" } },
+          y: { type: "linear", position: "left", title: { display: true, text: "P_i (1-10)", color: "#a855f7" }, ticks: { color: "#a855f7" }, grid: { color: "rgba(255,255,255,0.05)" } },
+          y1: { type: "linear", position: "right", title: { display: true, text: "Δd_i (min)", color: "#2ecc71" }, ticks: { color: "#2ecc71" }, grid: { drawOnChartArea: false } }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

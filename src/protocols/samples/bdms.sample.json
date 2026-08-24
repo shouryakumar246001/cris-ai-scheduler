@@ -1,0 +1,107 @@
+{
+  "protocol_version": "BDMS-3.0",
+  "event_id": "a9f2d3b1-88c4-4d07-b5e1-3f7c9a1e4d82",
+  "created_at": "2024-08-15T00:30:00Z",
+
+  "request_id": "BR-NGP-20240815-042",
+  "status": "MERGED",
+  "priority": 3,
+
+  "section_id": "NGP-WR-042",
+  "from_station": "NGP",
+  "to_station": "SEG",
+  "track_config": "DOUBLE_LINE",
+  "km_from": 882.4,
+  "km_to": 898.7,
+
+  "primary_department": "TRACK",
+  "co_departments": ["OHE", "SIGNALING"],
+
+  "work_details": {
+    "work_type": "BALLAST_TAMPING",
+    "work_description": "Deep screening and ballast tamping of Down Main between 882/4 – 898/7 km using CSM-09/3X tamping machine. Includes rail joint inspection and 12 defective fish plate replacements. OHE team to inspect overhead equipment masts 14–22 simultaneously. S&T team to test and certify track circuit TC-NGP-042-D post ballast work.",
+    "staff_count": 38,
+    "equipment_required": [
+      "CSM-09/3X Tamping Machine",
+      "Ballast Regulator",
+      "OHE Tower Wagon TWD-14",
+      "S&T Section Car",
+      "Emergency Tool Van",
+      "Medical First Aid Van"
+    ],
+    "min_block_duration_min": 150,
+    "is_splittable": false,
+    "min_split_duration_min": null,
+    "safety_permit_ref": "SP-CR-NGP-2024-0815-042",
+    "completion_deadline": "2024-09-30T00:00:00Z"
+  },
+
+  "requested_time_windows": [
+    {
+      "window_id": "W-001",
+      "start_time": "2024-08-15T01:30:00Z",
+      "end_time": "2024-08-15T05:00:00Z",
+      "duration_min": 210,
+      "preference_rank": 1,
+      "trains_affected_estimate": 4,
+      "overlaps_adjacent_block": false
+    },
+    {
+      "window_id": "W-002",
+      "start_time": "2024-08-15T23:00:00Z",
+      "end_time": "2024-08-16T03:00:00Z",
+      "duration_min": 240,
+      "preference_rank": 2,
+      "trains_affected_estimate": 3,
+      "overlaps_adjacent_block": false
+    },
+    {
+      "window_id": "W-003",
+      "start_time": "2024-08-16T13:00:00Z",
+      "end_time": "2024-08-16T16:00:00Z",
+      "duration_min": 180,
+      "preference_rank": 3,
+      "trains_affected_estimate": 11,
+      "overlaps_adjacent_block": true
+    }
+  ],
+
+  "approval_chain": {
+    "raised_by_designation": "DE/Track/NGP",
+    "raised_by_emp_id": "CR-EMP-084321",
+    "drm_approved": true,
+    "ce_approved": null,
+    "crs_concurrence": null,
+    "final_approval_timestamp": "2024-08-14T22:15:00Z"
+  },
+
+  "shadow_block": {
+    "shadow_block_id": "SB-CR-20240815-007",
+    "merged_request_ids": [
+      "BR-NGP-20240815-042",
+      "BR-NGP-20240815-044",
+      "BR-NGP-20240815-051"
+    ],
+    "merged_count": 3,
+    "optimized_start_time": "2024-08-15T01:30:00Z",
+    "optimized_end_time": "2024-08-15T04:15:00Z",
+    "optimized_duration_min": 165,
+    "sync_flags": {
+      "track_synced": true,
+      "ohe_synced": true,
+      "signaling_synced": true,
+      "traction_synced": false,
+      "telecom_synced": false,
+      "conflicted_departments": [],
+      "power_block_required": true,
+      "caution_order_on_adjacent": true
+    },
+    "efficiency_gain_train_minutes": 840,
+    "optimizer_confidence": 0.91,
+    "generated_at": "2024-08-15T00:35:12Z"
+  },
+
+  "record_version": 3,
+  "is_resubmission": false,
+  "previous_request_id": null
+}

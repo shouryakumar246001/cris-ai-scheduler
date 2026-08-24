@@ -1,0 +1,30 @@
+{
+  "name": "cris-ai-block-scheduler",
+  "version": "1.0.0",
+  "description": "Indian Railways AI-driven block scheduling system integrated with CRIS frameworks (COA, BDMS, TDMS, TMS, FOIS, and ICMS) with real 2016-2025 delay dataset modeling and MILP optimizer.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "validate": "ts-node --project tsconfig.json src/run.ts",
+    "build": "tsc"
+  },
+  "keywords": [
+    "indian-railways",
+    "cris",
+    "coa",
+    "bdms",
+    "fois",
+    "icms",
+    "milp",
+    "xai",
+    "block-scheduling"
+  ],
+  "author": "CRIS AI Systems Architecture",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.19.43",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  }
+}

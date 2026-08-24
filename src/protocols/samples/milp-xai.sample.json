@@ -1,0 +1,217 @@
+{
+  "protocol_version": "MILP-XAI-1.0",
+  "event_id": "e8b4c2f7-9a3d-4e01-b7f2-1d6c8e5a3b90",
+  "block_candidate_id": "SB-CR-20240815-007",
+  "generated_at": "2024-08-15T00:36:44Z",
+
+  "planning_horizon": {
+    "start": "2024-08-15T00:00:00Z",
+    "end":   "2024-08-15T06:00:00Z"
+  },
+
+  "decision_variable": {
+    "block_candidate_id": "SB-CR-20240815-007",
+    "x_j": 1,
+    "x_j_relaxed": 0.94,
+    "sensitivity_range": 12.8,
+    "decision": "APPROVED",
+    "conditions_applied": [
+      "Caution order must be issued on NGP-WR-041 (adjacent section) from 01:15 to 04:30 UTC",
+      "Power block (OHE off) enforced from 01:30 to 04:15 UTC",
+      "Loco pilot of 12269 Duronto notified via COA caution advisory"
+    ]
+  },
+
+  "maintenance_yield": {
+    "M_j": 72.5,
+    "track_quality_index_gain": 29.4,
+    "safety_risk_reduction": 22.8,
+    "asset_life_extension_value": 14.3,
+    "msai_compliance_score": 6.0,
+    "urgency_multiplier": 1.21,
+    "M_j_effective": 87.73,
+    "asset_remaining_life_if_skipped_months": 3
+  },
+
+  "penalty_cost": {
+    "lambda": 1.5,
+    "raw_penalty_sum": 39.15,
+    "total_penalty_cost": 58.73,
+    "total_financial_penalty_inr": 168000,
+    "trains_affected_count": 6,
+    "sla_breach_count": 1,
+    "penalty_exceeds_yield": false,
+    "per_train_breakdown": [
+      {
+        "train_number": "12269",
+        "train_name": "Duronto Express",
+        "P_i": 8.7,
+        "estimated_delay_min": 12,
+        "exceeds_threshold": false,
+        "delta_d_i_minutes": 30,
+        "penalty_contribution": 104.4,
+        "financial_penalty_inr": 0
+      },
+      {
+        "train_number": "11045",
+        "train_name": "Lokmanya Tilak Express",
+        "P_i": 5.2,
+        "estimated_delay_min": 18,
+        "exceeds_threshold": false,
+        "delta_d_i_minutes": 45,
+        "penalty_contribution": 93.6,
+        "financial_penalty_inr": 0
+      },
+      {
+        "train_number": "58114",
+        "train_name": "Gondia Passenger",
+        "P_i": 1.8,
+        "estimated_delay_min": 35,
+        "exceeds_threshold": true,
+        "delta_d_i_minutes": 30,
+        "penalty_contribution": 63.0,
+        "financial_penalty_inr": 168000
+      },
+      {
+        "train_number": "BOXN-NR-7721",
+        "train_name": "Coal Goods Special",
+        "P_i": 2.4,
+        "estimated_delay_min": 40,
+        "exceeds_threshold": false,
+        "delta_d_i_minutes": 120,
+        "penalty_contribution": 96.0,
+        "financial_penalty_inr": 0
+      },
+      {
+        "train_number": "22138",
+        "train_name": "Solapur SF Express",
+        "P_i": 4.1,
+        "estimated_delay_min": 8,
+        "exceeds_threshold": false,
+        "delta_d_i_minutes": 25,
+        "penalty_contribution": 32.8,
+        "financial_penalty_inr": 0
+      },
+      {
+        "train_number": "12109",
+        "train_name": "Panchavati Express",
+        "P_i": 3.9,
+        "estimated_delay_min": 10,
+        "exceeds_threshold": false,
+        "delta_d_i_minutes": 35,
+        "penalty_contribution": 39.0,
+        "financial_penalty_inr": 0
+      }
+    ]
+  },
+
+  "net_objective_value": 29.0,
+
+  "xai_audit_log": {
+    "decision_summary": "Shadow Block SB-CR-20240815-007 APPROVED — M_j_effective (87.73) exceeds total penalty (58.73); block scheduled in low-traffic window 01:30–04:15 UTC with 3 departments co-synced. Net MILP benefit: +29.0 units.",
+
+    "primary_reason": "HIGH_MAINTENANCE_YIELD",
+    "secondary_reasons": [
+      "LOW_TRAFFIC_WINDOW",
+      "SHADOW_BLOCK_EFFICIENT"
+    ],
+
+    "explanation_depth": "STANDARD",
+
+    "narrative": "The MILP optimizer evaluated Shadow Block SB-CR-20240815-007 as a candidate covering section NGP-WR-042 (Nagpur–Selu, 882/4–898/7 km) for the window 01:30–04:15 UTC on 2024-08-15. This Shadow Block merges three engineering requests: Track (ballast tamping), OHE (mast inspection), and S&T (track circuit certification), achieving a 3-department synchronized block of 165 minutes against the alternative of 3 separate blocks totalling 630 minutes.\n\nThe maintenance yield M_j was assessed at 72.5 with an urgency multiplier of 1.21 (the section is approaching end-of-maintenance-cycle at only 3 months residual life without intervention), yielding M_j_effective = 87.73. The chosen time window (01:30–04:15 UTC) falls in the daily traffic trough on the CR Nagpur Division, with only 6 trains in the affected section during this period.\n\nOf the 6 trains affected, only 58114 Gondia Passenger breaches its Δd_i threshold of 30 minutes (estimated delay: 35 minutes), contributing a financial SLA penalty of ₹1,68,000. The high-priority 12269 Duronto Express (P_i = 8.7) is estimated to accumulate only 12 minutes of additional delay — well within its effective remaining budget of 7 minutes above schedule — and has been proactively notified via the COA caution advisory system.\n\nThe total penalty cost λ·Σ(P_i·Δd_i) = 1.5 × 39.15 = 58.73, which is significantly below M_j_effective (87.73), resulting in a net positive MILP objective contribution of +29.0 units. The optimizer's LP relaxation assigned x_j = 0.94, indicating strong confidence in the approval decision. The sensitivity analysis shows that M_j would need to drop by 12.8 units before the decision would flip to rejection.",
+
+    "feature_importances": [
+      {
+        "feature": "M_j_effective (Maintenance Yield)",
+        "contribution": 0.48,
+        "explanation": "High track quality index gain (29.4) and safety risk reduction (22.8) drive the primary benefit. Urgency multiplier of 1.21 applied due to 3-month residual asset life."
+      },
+      {
+        "feature": "Traffic Trough Window (01:30–04:15 UTC)",
+        "contribution": 0.28,
+        "explanation": "FOIS traffic analysis shows only 6 trains in section during the requested window, compared to 18 trains during peak hours. This minimises the penalty term significantly."
+      },
+      {
+        "feature": "Shadow Block Merge Efficiency",
+        "contribution": 0.15,
+        "explanation": "Merging 3 departments into one 165-minute block saves 840 train-minutes versus sequential individual blocks, contributing a large operational efficiency gain."
+      },
+      {
+        "feature": "12269 Duronto Delay (P_i = 8.7)",
+        "contribution": -0.12,
+        "explanation": "Duronto's high P_i makes its delay costly. However, estimated delay (12 min) is within remaining budget, limiting its penalty contribution. This was the most constraining factor."
+      },
+      {
+        "feature": "58114 Gondia Passenger SLA Breach",
+        "contribution": -0.07,
+        "explanation": "Only train to breach Δd_i; financial penalty ₹1,68,000 incurred. Low P_i (1.8) means limited overall impact on decision."
+      }
+    ],
+
+    "counterfactuals": [
+      {
+        "scenario_label": "If block shifted 2 hours later (03:30–06:15 UTC)",
+        "alternative_x_j": 1,
+        "objective_delta": -14.2,
+        "trains_delayed_alternative": 9,
+        "breaches_safety": false,
+        "reason_not_chosen": "Three additional Superfast express trains (P_i avg 6.1) enter the section after 03:30, increasing penalty cost by 14.2 units and causing 2 additional SLA breaches."
+      },
+      {
+        "scenario_label": "If block is rejected (x_j = 0)",
+        "alternative_x_j": 0,
+        "objective_delta": -87.73,
+        "trains_delayed_alternative": 0,
+        "breaches_safety": true,
+        "reason_not_chosen": "Skipping the block allows section to operate beyond residual maintenance life (3 months), creating an elevated risk of track geometry defect. M_j_effective is forfeited entirely. Safety constraint violation flagged."
+      },
+      {
+        "scenario_label": "If only Track block approved (OHE/S&T excluded)",
+        "alternative_x_j": 1,
+        "objective_delta": -31.5,
+        "trains_delayed_alternative": 4,
+        "breaches_safety": false,
+        "reason_not_chosen": "Partial merge would require two additional separate blocks for OHE and S&T within the next 72 hours, consuming 420 additional train-minutes. Shadow Block merge is 31.5 units more efficient."
+      }
+    ],
+
+    "key_trains_cited": [
+      "12269 Duronto Express (P_i=8.7, remaining budget=7min, estimated delay=12min — within threshold)",
+      "58114 Gondia Passenger (P_i=1.8, Δd_i=30min, estimated delay=35min — SLA BREACH, ₹1,68,000 penalty)"
+    ],
+
+    "human_review_recommended": false,
+    "human_review_reason": null,
+
+    "compliance_statement": "This decision complies with Indian Railway Block Rules 2022 (Rule 9.3: Shadow Block approval authority vested in AI scheduler with DRM concurrence), CRIS BDMS operational guidelines v3.1, and Safety Circular SC-2024-047 (minimum block window for tamping operations). Power block authorization obtained per OHE Maintenance Manual Chapter 14. Caution order dispatch procedure follows GR-SR 3.68.",
+
+    "generated_at": "2024-08-15T00:36:40Z",
+    "xai_model_version": "CRIS-XAI-Scheduler-v2.4.1"
+  },
+
+  "solver_metadata": {
+    "solver_engine": "HIGHS",
+    "solver_version": "1.7.1",
+    "solve_time_ms": 847,
+    "num_binary_variables": 24,
+    "num_constraints": 118,
+    "objective_value": 29.0,
+    "optimality_gap_pct": 0.0,
+    "is_globally_optimal": true,
+    "bb_nodes_explored": 7,
+    "warm_start_used": true
+  },
+
+  "downstream_actions": {
+    "caution_order_dispatched": true,
+    "bdms_updated": true,
+    "tms_path_advisory_sent": true,
+    "audit_log_persisted": true,
+    "action_timestamps": {
+      "caution_order_dispatched": "2024-08-15T00:36:50Z",
+      "bdms_updated":             "2024-08-15T00:36:52Z",
+      "tms_path_advisory_sent":   "2024-08-15T00:36:53Z",
+      "audit_log_persisted":      "2024-08-15T00:36:55Z"
+    }
+  }
+}

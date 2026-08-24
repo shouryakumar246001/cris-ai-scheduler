@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HEX — IPO Launchpad</title>
+  <link rel="stylesheet" href="../src/styles/globals.css">
+  <style>
+    .wizard-steps { display: flex; align-items: center; gap: 0; margin-bottom: 40px; }
+    .wizard-step { display: flex; align-items: center; gap: 8px; flex: 1; }
+    .wizard-step:last-child { flex: none; }
+    .step-circle { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; font-family: var(--font-mono); border: 2px solid var(--border); color: var(--text-muted); background: var(--bg-card); transition: all 0.3s; flex-shrink: 0; }
+    .step-circle.active { border-color: var(--green); color: var(--green); background: var(--green-glow); box-shadow: 0 0 16px var(--green-glow); }
+    .step-circle.done { border-color: var(--green); color: #000; background: var(--green); }
+    .step-label { font-size: 11px; color: var(--text-muted); font-weight: 600; letter-spacing: 0.5px; }
+    .step-label.active { color: var(--green); }
+    .step-line { flex: 1; height: 1px; background: var(--border); margin: 0 8px; }
+    .step-line.done { background: var(--green); }
+    .form-section { animation: fadeIn 0.3s ease; }
+    .form-group { margin-bottom: 18px; }
+    .form-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); font-weight: 600; margin-bottom: 6px; display: block; }
+    .form-hint { font-size: 11px; color: var(--text-muted); margin-top: 4px; font-family: var(--font-mono); }
+    .sector-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .sector-card { padding: 12px; border: 1px solid var(--border); border-radius: var(--r-md); text-align: center; cursor: pointer; transition: all var(--t-fast); background: var(--bg-card); }
+    .sector-card:hover, .sector-card.selected { border-color: var(--green); background: var(--green-glow); color: var(--green); }
+    .valuation-result { background: linear-gradient(135deg, rgba(0,255,136,0.08), rgba(0,255,136,0.03)); border: 1px solid rgba(0,255,136,0.25); border-radius: var(--r-lg); padding: 24px; text-align: center; }
+    .slider-group { display: flex; flex-direction: column; gap: 6px; }
+    .slider { width: 100%; accent-color: var(--green); }
+    .compliance-check { display: flex; align-items: flex-start; gap: 12px; padding: 12px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--r-md); margin-bottom: 10px; }
+    .compliance-check input[type=checkbox] { accent-color: var(--green); margin-top: 2px; }
+  </style>
+</head>
+<body>
+<div class="page">
+<div class="container" style="max-width:800px">
+
+<div style="margin-bottom:32px">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+    <span style="font-size:20px">🚀</span>
+    <h1 style="font-size:26px;font-weight:800">IPO Launchpad</h1>
+  </div>
+  <p style="color:var(--text-secondary)">Tokenize your future earning potential and raise capital from investors worldwide.</p>
+  <div class="compliance-banner" style="margin-top:12px">⚠️ All IPOs on HEX are educational simulations. No real securities are issued.</div>
+</div>
+
+<!-- Wizard Steps -->
+<div class="wizard-steps" id="wizard-steps">
+  <div class="wizard-step">
+    <div class="step-circle active" id="sc-1">1</div>
+    <div class="step-label active" id="sl-1">Profile</div>
+  </div>
+  <div class="step-line" id="line-1"></div>
+  <div class="wizard-step">
+    <div class="step-circle" id="sc-2">2</div>
+    <div class="step-label" id="sl-2">Financials</div>
+  </div>
+  <div class="step-line" id="line-2"></div>
+  <div class="wizard-step">
+    <div class="step-circle" id="sc-3">3</div>
+    <div class="step-label" id="sl-3">Share Structure</div>
+  </div>
+  <div class="step-line" id="line-3"></div>
+  <div class="wizard-step">
+    <div class="step-circle" id="sc-4">4</div>
+    <div class="step-label" id="sl-4">Compliance</div>
+  </div>
+  <div class="step-line" id="line-4"></div>
+  <div class="wizard-step">
+    <div class="step-circle" id="sc-5">5</div>
+    <div class="step-label" id="sl-5">Launch</div>
+  </div>
+</div>
+
+<!-- Step Content -->
+<div class="card" id="step-content">
+  <!-- Steps injected by JS -->
+</div>
+
+<!-- Nav Buttons -->
+<div style="display:flex;justify-content:space-between;margin-top:20px">
+  <button class="btn btn-ghost" id="prev-btn" onclick="prevStep()" style="display:none">← Back</button>
+  <button class="btn btn-primary" id="next-btn" onclick="nextStep()" style="margin-left:auto">Continue →</button>
+</div>
+
+</div>
+</div>
+
+<script src="../src/js/data.js"></script>
+<script src="../src/js/charts.js"></script>
+<script src="../src/js/components.js"></script>
+<script>
+HEXComponents.renderNav('ipo');
+HEXComponents.renderTickerStrip();
+const { fmt, calculateHumanMarketCap, COMPLIANCE } = window.HEX;
+
+let currentStep = 1;
+const totalSteps = 5;
+const formData = {
+  name:'', role:'', sector:'', bio:'',
+  income:0, burnRate:0, netWorth:0, growthRate:0.12, discountRate:0.09, careerYears:25,
+  sharesOffered:500000, earningsPct:5, pricePerShare:0, targetRaise:0,
+  checks: [false,false,false,false],
+};
+
+const STEPS = {
+  1: () => `
+    <div class="form-section">
+      <div style="font-size:16px;font-weight:700;margin-bottom:20px">Personal Profile</div>
+      <div class="grid-2">
+        <div class="form-group"><label class="form-label">Full Name</label><input class="input" id="f-name" value="${formData.name}" placeholder="Your full name"></div>
+        <div class="form-group"><label class="form-label">Professional Role</label><input class="input" id="f-role" value="${formData.role}" placeholder="e.g. AI Researcher"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Sector</label>
+        <div class="sector-grid" id="sector-grid">
+          ${['Technology','Finance','Sports','Medicine','Entertainment','Law','Education','Entrepreneurship'].map(s=>
+            `<div class="sector-card ${formData.sector===s?'selected':''}" onclick="selectSector('${s}',this)">${s}</div>`
+          ).join('')}
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Bio (Investment Thesis)</label>
+        <textarea class="input" id="f-bio" rows="3" placeholder="What makes you a compelling investment? Your career trajectory, achievements, and future plans...">${formData.bio}</textarea>
+      </div>
+    </div>`,
+  2: () => `
+    <div class="form-section">
+      <div style="font-size:16px;font-weight:700;margin-bottom:20px">Financial Fundamentals</div>
+      <div class="grid-2">
+        <div class="form-group"><label class="form-label">Current Annual Income ($)</label><input class="input" id="f-income" type="number" value="${formData.income||''}" placeholder="e.g. 150000"><div class="form-hint">Total gross annual earnings</div></div>
+        <div class="form-group"><label class="form-label">Annual Burn Rate ($)</label><input class="input" id="f-burn" type="number" value="${formData.burnRate||''}" placeholder="e.g. 60000"><div class="form-hint">Total annual expenses</div></div>
+        <div class="form-group"><label class="form-label">Net Worth ($)</label><input class="input" id="f-networth" type="number" value="${formData.netWorth||''}" placeholder="e.g. 500000"><div class="form-hint">Assets minus liabilities</div></div>
+        <div class="form-group"><label class="form-label">Career Years Remaining</label><input class="input" id="f-years" type="number" value="${formData.careerYears}" placeholder="25" min="1" max="50"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Expected Growth Rate: <span id="growth-display" style="color:var(--green)">${(formData.growthRate*100).toFixed(0)}%</span></label>
+        <div class="slider-group"><input type="range" class="slider" id="f-growth" min="1" max="50" value="${formData.growthRate*100}" oninput="document.getElementById('growth-display').textContent=this.value+'%'"></div>
+        <div class="form-hint">Expected annual income growth percentage</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Discount Rate: <span id="discount-display" style="color:var(--blue)">${(formData.discountRate*100).toFixed(0)}%</span></label>
+        <div class="slider-group"><input type="range" class="slider" id="f-discount" min="3" max="25" value="${formData.discountRate*100}" oninput="document.getElementById('discount-display').textContent=this.value+'%'" style="accent-color:var(--blue)"></div>
+        <div class="form-hint">Risk-adjusted discount rate (higher = riskier career)</div>
+      </div>
+    </div>`,
+  3: () => {
+    const mc = calculateHumanMarketCap(formData.income||100000, formData.growthRate, formData.discountRate, formData.careerYears);
+    const pps = mc / (formData.sharesOffered) * (formData.earningsPct/100) * 100;
+    return `
+    <div class="form-section">
+      <div style="font-size:16px;font-weight:700;margin-bottom:20px">Share Structure & Tokenomics</div>
+      <div class="valuation-result" style="margin-bottom:24px">
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--text-muted);margin-bottom:8px">DCF Valuation Engine Result</div>
+        <div style="font-size:40px;font-weight:800;color:var(--green);font-family:var(--font-mono)">${fmt.currency(mc,true)}</div>
+        <div style="font-size:13px;color:var(--text-secondary);margin-top:6px">Estimated Human Market Cap</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px;font-family:var(--font-mono)">DCF(income=${fmt.currency(formData.income||100000,true)}, g=${(formData.growthRate*100).toFixed(0)}%, r=${(formData.discountRate*100).toFixed(0)}%, T=${formData.careerYears}yrs)</div>
+      </div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">Shares to Issue: <span id="shares-display" style="color:var(--amber)">${fmt.number(formData.sharesOffered)}</span></label>
+          <input type="range" class="slider" id="f-shares" min="100000" max="10000000" step="100000" value="${formData.sharesOffered}" style="accent-color:var(--amber)" oninput="updateShareCalc(this.value)">
+          <div class="form-hint">Total token supply offered to investors</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Earnings Share %: <span id="pct-display" style="color:var(--purple)">${formData.earningsPct}%</span></label>
+          <input type="range" class="slider" id="f-pct" min="1" max="15" step="0.5" value="${formData.earningsPct}" style="accent-color:var(--purple)" oninput="updatePctCalc(this.value)">
+          <div class="form-hint">% of future income shared with token holders</div>
+        </div>
+      </div>
+      <div id="share-calcs" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+        <div class="fund-card" style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--r-md);padding:14px">
+          <div class="stat-label">Price Per Share</div><div id="pps-val" class="stat-value" style="font-size:18px;color:var(--green)">${fmt.currency(pps)}</div>
+        </div>
+        <div class="fund-card" style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--r-md);padding:14px">
+          <div class="stat-label">Target Raise</div><div id="raise-val" class="stat-value" style="font-size:18px;color:var(--blue)">${fmt.currency(pps*formData.sharesOffered,true)}</div>
+        </div>
+        <div class="fund-card" style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--r-md);padding:14px">
+          <div class="stat-label">ISA Cap Status</div><div id="isa-status" class="stat-value" style="font-size:13px">${formData.earningsPct<=8?'<span class="badge badge-green">✓ COMPLIANT</span>':'<span class="badge badge-red">✕ EXCEEDS 8%</span>'}</div>
+        </div>
+      </div>
+    </div>`;
+  },
+  4: () => `
+    <div class="form-section">
+      <div style="font-size:16px;font-weight:700;margin-bottom:8px">Compliance Review</div>
+      <p style="color:var(--text-secondary);font-size:13px;margin-bottom:20px">Review and acknowledge all regulatory requirements before launching your IPO.</p>
+      <div class="compliance-banner" style="margin-bottom:20px">📋 Based on SEC rules, SEBI §11AA, Illinois ISA Law 2025, and India DPDPA 2023</div>
+      ${[
+        ['ISA Cap Compliance','I confirm my earnings share percentage does not exceed 8% of projected monthly income, in compliance with Illinois ISA Law (2025).'],
+        ['Securities Disclosure','I understand that this IPO is a simulation. In a real scenario, I would need to comply with SEC registration requirements or qualify for an exemption (Reg CF, Reg D).'],
+        ['No Compulsion of Labor','I acknowledge that token holders cannot legally compel me to perform services. This token represents a voluntary income-sharing agreement only.'],
+        ['Data Consent (DPDPA)','I consent to HEX processing my financial and professional data for the purpose of investor visibility, in compliance with India\'s Digital Personal Data Protection Act 2023.'],
+      ].map((c,i)=>`
+        <div class="compliance-check">
+          <input type="checkbox" id="check-${i}" onchange="updateChecks()">
+          <div><div style="font-size:12px;font-weight:700;margin-bottom:4px">${c[0]}</div><div style="font-size:11px;color:var(--text-muted);line-height:1.5;font-family:var(--font-mono)">${c[1]}</div></div>
+        </div>`).join('')}
+      <div id="compliance-warning" style="display:none" class="compliance-banner" style="margin-top:12px">⚠ Please acknowledge all compliance items to proceed.</div>
+    </div>`,
+  5: () => `
+    <div class="form-section" style="text-align:center;padding:20px 0">
+      <div style="font-size:60px;margin-bottom:20px">🚀</div>
+      <h2 style="font-size:24px;font-weight:800;margin-bottom:8px">IPO Ready to Launch!</h2>
+      <p style="color:var(--text-secondary);margin-bottom:28px">Your profile has passed all compliance checks. Review the final terms before going live.</p>
+      <div style="text-align:left;background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;margin-bottom:24px">
+        <div class="section-header"><span class="section-title">IPO Summary</span></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          ${[['Individual',formData.name||'Your Name'],['Sector',formData.sector||'—'],['DCF Market Cap','Calculated'],['Earnings Share',formData.earningsPct+'%'],['Shares Offered',fmt.number(formData.sharesOffered)],['Status','PENDING KYC']].map(([k,v])=>
+            `<div style="padding:10px;background:var(--bg-card);border-radius:var(--r-sm)"><div style="font-size:10px;color:var(--text-muted);margin-bottom:4px">${k}</div><div class="mono" style="font-size:13px;font-weight:700">${v}</div></div>`
+          ).join('')}
+        </div>
+      </div>
+      <div class="compliance-banner" style="margin-bottom:24px;text-align:left">⚠ SIMULATION: This IPO will be listed in Demo Mode. No real capital is raised.</div>
+      <button class="btn btn-primary btn-lg" onclick="launchIPO()" style="width:100%">🚀 Launch My Personal IPO</button>
+    </div>`,
+};
+
+function renderStep() {
+  document.getElementById('step-content').innerHTML = STEPS[currentStep]();
+  // Update wizard UI
+  for (let i=1;i<=totalSteps;i++) {
+    const sc=document.getElementById('sc-'+i), sl=document.getElementById('sl-'+i);
+    if (i<currentStep) { sc.className='step-circle done'; sc.textContent='✓'; }
+    else if (i===currentStep) { sc.className='step-circle active'; sc.textContent=i; sl.className='step-label active'; }
+    else { sc.className='step-circle'; sc.textContent=i; sl.className='step-label'; }
+    const line=document.getElementById('line-'+i);
+    if (line) line.className='step-line'+(i<currentStep?' done':'');
+  }
+  document.getElementById('prev-btn').style.display=currentStep>1?'':'none';
+  const nextBtn=document.getElementById('next-btn');
+  nextBtn.textContent=currentStep<totalSteps?'Continue →':'Review';
+  nextBtn.style.display=currentStep===5?'none':'';
+}
+
+function selectSector(s,el) {
+  document.querySelectorAll('.sector-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected'); formData.sector=s;
+}
+
+function saveStep() {
+  if (currentStep===1) {
+    formData.name=document.getElementById('f-name')?.value||'';
+    formData.role=document.getElementById('f-role')?.value||'';
+    formData.bio=document.getElementById('f-bio')?.value||'';
+  } else if (currentStep===2) {
+    formData.income=parseFloat(document.getElementById('f-income')?.value)||0;
+    formData.burnRate=parseFloat(document.getElementById('f-burn')?.value)||0;
+    formData.netWorth=parseFloat(document.getElementById('f-networth')?.value)||0;
+    formData.careerYears=parseInt(document.getElementById('f-years')?.value)||25;
+    formData.growthRate=parseFloat(document.getElementById('f-growth')?.value||12)/100;
+    formData.discountRate=parseFloat(document.getElementById('f-discount')?.value||9)/100;
+  } else if (currentStep===3) {
+    formData.sharesOffered=parseInt(document.getElementById('f-shares')?.value)||500000;
+    formData.earningsPct=parseFloat(document.getElementById('f-pct')?.value)||5;
+  }
+}
+
+function nextStep() { saveStep(); if(currentStep<totalSteps){currentStep++;renderStep();} }
+function prevStep() { saveStep(); if(currentStep>1){currentStep--;renderStep();} }
+
+function updateShareCalc(val) {
+  const s=parseInt(val); formData.sharesOffered=s;
+  document.getElementById('shares-display').textContent=fmt.number(s);
+  recalcShares();
+}
+function updatePctCalc(val) {
+  const p=parseFloat(val); formData.earningsPct=p;
+  document.getElementById('pct-display').textContent=p+'%';
+  const check=COMPLIANCE.checkIPO(p);
+  document.getElementById('isa-status').innerHTML=check.ok?'<span class="badge badge-green">✓ COMPLIANT</span>':'<span class="badge badge-red">✕ EXCEEDS 8%</span>';
+  recalcShares();
+}
+function recalcShares() {
+  const mc=calculateHumanMarketCap(formData.income||100000,formData.growthRate,formData.discountRate,formData.careerYears);
+  const pps=mc/formData.sharesOffered*(formData.earningsPct/100)*100;
+  document.getElementById('pps-val').textContent=fmt.currency(pps);
+  document.getElementById('raise-val').textContent=fmt.currency(pps*formData.sharesOffered,true);
+}
+
+function updateChecks() {
+  for(let i=0;i<4;i++) formData.checks[i]=document.getElementById('check-'+i)?.checked||false;
+}
+
+function launchIPO() {
+  HEXComponents.toast('🚀 IPO launched in Demo Mode! Listing active.','success');
+  setTimeout(()=>window.location.href='market.html',2000);
+}
+
+renderStep();
+</script>
+</body>
+</html>

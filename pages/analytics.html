@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dataset & Historical Delay Analytics — CRIS AI Block Scheduler</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="/src/dashboard/styles.css" />
+</head>
+<body>
+
+  <!-- Shared Navigation -->
+  <div id="shared-header"></div>
+
+  <div class="page-container">
+    <!-- Page Hero -->
+    <div class="page-hero">
+      <div class="hero-left">
+        <h1>
+          <span>📊 Real Dataset & Historical Delay Analytics (2016–2025)</span>
+          <span class="hero-badge cyan">100 OBSERVATIONS</span>
+        </h1>
+        <p class="hero-sub">
+          Comprehensive 10-year Indian Railways historical delay dataset tracking 10 distinct train services over winter operating seasons to benchmark reliability and calibrate optimization parameters.
+        </p>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat-card">
+          <div class="hstat-label">Total Observations</div>
+          <div class="hstat-val cyan">100 Records</div>
+        </div>
+        <div class="hero-stat-card">
+          <div class="hstat-label">Overall Fleet Mean Delay</div>
+          <div class="hstat-val orange">38.4 min</div>
+        </div>
+        <div class="hero-stat-card">
+          <div class="hstat-label">Most Punctual Service</div>
+          <div class="hstat-val green">Lucknow Mail (80%)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters & Actions -->
+    <div class="card" style="padding: 14px 20px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+          <input type="text" id="dataset-search" class="form-input" placeholder="🔍 Search train name, number, or route..." style="min-width: 280px;" />
+          <select id="dataset-year-filter" class="form-select">
+            <option value="ALL">All Years (2016–2025)</option>
+            <option value="2016">2016</option>
+            <option value="2017">2017</option>
+            <option value="2018">2018</option>
+            <option value="2019">2019</option>
+            <option value="2020">2020</option>
+            <option value="2021">2021</option>
+            <option value="2022">2022</option>
+            <option value="2023">2023</option>
+            <option value="2024">2024</option>
+            <option value="2025">2025</option>
+          </select>
+        </div>
+        <button id="btn-export-csv" class="btn" style="font-size: 0.75rem;">
+          📥 Download Real CSV Dataset
+        </button>
+      </div>
+    </div>
+
+    <!-- Chart: 10-Year Year-over-Year Trajectory -->
+    <div class="card">
+      <div class="card-title-bar">
+        <h3>📈 10-Year Delay Trajectory (2016–2025) Across Trains</h3>
+        <span class="card-subtitle">Winter Season Delay (Minutes)</span>
+      </div>
+      <div style="height: 320px; position: relative;">
+        <canvas id="yoyDelayChart"></canvas>
+      </div>
+    </div>
+
+    <!-- 100-Record Raw Historical Data Table -->
+    <div class="card">
+      <div class="card-title-bar">
+        <h3>🗃️ Historical Observations Explorer</h3>
+        <span class="card-subtitle" id="table-record-count">Showing 100 of 100 records</span>
+      </div>
+
+      <div class="table-wrap" style="max-height: 460px; overflow-y: auto;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Train No</th>
+              <th>Train Name</th>
+              <th>Route</th>
+              <th>Year</th>
+              <th>Distance</th>
+              <th>Sched Arr</th>
+              <th>Act Arr</th>
+              <th>Delay (Minutes)</th>
+              <th>Punctuality Class</th>
+            </tr>
+          </thead>
+          <tbody id="raw-data-table-body">
+            <!-- Populated via JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <span>Indian Railways Historical Delay Dataset · 10 Services · 2016–2025 Winter Observations</span>
+      <span>Used for Dynamic P_i & Δd_i Machine Calibration</span>
+    </div>
+  </footer>
+
+  <script src="/src/dashboard/shared.js"></script>
+  <script>
+    renderSharedNav("data");
+
+    // Flatten all 100 records
+    const allRecords = [];
+    TRAIN_PROFILES.forEach(p => {
+      p.delays_2016_2025.forEach((delayMin, idx) => {
+        const year = 2016 + idx;
+        const code = p.train_name.slice(0, 1).toUpperCase() + (idx + 1);
+        allRecords.push({
+          id: code,
+          train_no: p.train_no,
+          train_name: p.train_name,
+          route: `${p.source} → ${p.destination}`,
+          year: year,
+          distance_km: p.distance_km,
+          scheduled_arrival: p.scheduled_arrival,
+          actual_arrival: calculateActualTime(p.scheduled_arrival, delayMin),
+          delay_minutes: delayMin,
+        });
+      });
+    });
+
+    function calculateActualTime(sch, delay) {
+      if (!sch) return "--:--";
+      const parts = sch.split(":").map(Number);
+      let total = parts[0] * 60 + parts[1] + delay;
+      let h = Math.floor(total / 60) % 24;
+      let m = total % 60;
+      return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:00`;
+    }
+
+    function renderTable(records) {
+      document.getElementById("table-record-count").textContent = `Showing ${records.length} of ${allRecords.length} records`;
+      document.getElementById("raw-data-table-body").innerHTML = records.map(r => {
+        let bClass = "badge green";
+        let status = "On-Time";
+        if (r.delay_minutes > 60) {
+          bClass = "badge red";
+          status = "Severe Delay (>1h)";
+        } else if (r.delay_minutes > 15) {
+          bClass = "badge orange";
+          status = "Moderate Delay";
+        }
+
+        return `
+          <tr>
+            <td style="font-family:var(--font-mono); color:var(--text-dim);">${r.id}</td>
+            <td style="font-family:var(--font-mono); font-weight:700; color:var(--cyan);">${r.train_no}</td>
+            <td><strong>${r.train_name}</strong></td>
+            <td style="color:var(--text-secondary); font-size:0.7rem;">${r.route}</td>
+            <td style="font-family:var(--font-mono); font-weight:700;">${r.year}</td>
+            <td style="font-family:var(--font-mono);">${r.distance_km} km</td>
+            <td style="font-family:var(--font-mono); color:var(--text-secondary);">${r.scheduled_arrival}</td>
+            <td style="font-family:var(--font-mono); color:var(--text-primary);">${r.actual_arrival}</td>
+            <td style="font-family:var(--font-mono); font-weight:800; color:${r.delay_minutes > 30 ? 'var(--orange)' : 'var(--green)'};">${r.delay_minutes} min</td>
+            <td><span class="${bClass}">${status}</span></td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    renderTable(allRecords);
+
+    // Search and filter handlers
+    const searchInput = document.getElementById("dataset-search");
+    const yearFilter = document.getElementById("dataset-year-filter");
+
+    function applyFilter() {
+      const q = searchInput.value.toLowerCase().trim();
+      const yr = yearFilter.value;
+
+      const filtered = allRecords.filter(r => {
+        const matchesQ = !q || r.train_name.toLowerCase().includes(q) || r.train_no.includes(q) || r.route.toLowerCase().includes(q);
+        const matchesYr = yr === "ALL" || String(r.year) === yr;
+        return matchesQ && matchesYr;
+      });
+
+      renderTable(filtered);
+    }
+
+    searchInput.addEventListener("input", applyFilter);
+    yearFilter.addEventListener("change", applyFilter);
+
+    // CSV Download
+    document.getElementById("btn-export-csv").addEventListener("click", () => {
+      let csv = "Train_id,Train_name,Train_no,Source,Destitnation,Date,Distance(Km),Sc_arr__time,Act_arr_time,Dealy_min,Season,Run_frequency\n";
+      allRecords.forEach(r => {
+        const tr = TRAIN_PROFILE_MAP.get(r.train_no);
+        csv += `${r.id},"${r.train_name}",${r.train_no},"${tr?.source ?? ''}","${tr?.destination ?? ''}","01-01-${r.year} 00:00",${r.distance_km},"${r.scheduled_arrival}","${r.actual_arrival}","${String(Math.floor(r.delay_minutes/60)).padStart(2,'0')}:${String(r.delay_minutes%60).padStart(2,'0')}:00",Winter,${tr?.frequency ?? 'Daily'}\n`;
+      });
+
+      const blob = new Blob([csv], { type: "text/csv" });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.setAttribute("href", url);
+      a.setAttribute("download", "train_delays_2016_2025.csv");
+      a.click();
+    });
+
+    // 10-Year YoY Line Chart
+    const years = [2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025];
+    const colors = [
+      "#00d4ff", "#a855f7", "#2ecc71", "#f39c12", "#e74c3c",
+      "#38bdf8", "#ec4899", "#84cc16", "#eab308", "#6366f1"
+    ];
+
+    new Chart(document.getElementById("yoyDelayChart").getContext("2d"), {
+      type: "line",
+      data: {
+        labels: years,
+        datasets: TRAIN_PROFILES.map((p, i) => ({
+          label: `${p.train_name.split(" ")[0]} (${p.train_no})`,
+          data: p.delays_2016_2025,
+          borderColor: colors[i % colors.length],
+          backgroundColor: colors[i % colors.length] + "22",
+          borderWidth: 2,
+          pointRadius: 3,
+          tension: 0.25,
+        }))
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: "top",
+            labels: { color: "#7a9bb5", font: { size: 10 }, boxWidth: 12 }
+          }
+        },
+        scales: {
+          x: { ticks: { color: "#7a9bb5", font: { family: "Space Mono" } }, grid: { color: "rgba(255,255,255,0.04)" } },
+          y: { title: { display: true, text: "Delay (Minutes)", color: "#7a9bb5" }, ticks: { color: "#7a9bb5" }, grid: { color: "rgba(255,255,255,0.05)" } }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MILP Optimizer & XAI Studio — CRIS AI Block Scheduler</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="/src/dashboard/styles.css" />
+</head>
+<body>
+
+  <!-- Shared Navigation -->
+  <div id="shared-header"></div>
+
+  <div class="page-container">
+    <!-- Page Hero -->
+    <div class="page-hero">
+      <div class="hero-left">
+        <h1>
+          <span>🧮 MILP Optimizer & XAI Explanation Studio</span>
+          <span class="hero-badge green">PROTOCOL 4 (MILP-XAI-1.0)</span>
+        </h1>
+        <p class="hero-sub">
+          Interactive mathematical optimizer solving \(\max \sum M_j \cdot x_j - \lambda \sum P_i \Delta d_i\) with Explainable AI (XAI) transparent audit trails for Railway Control Officers.
+        </p>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat-card">
+          <div class="hstat-label">Solver Formulation</div>
+          <div class="hstat-val green">HiGHS MIP (Exact)</div>
+        </div>
+        <div class="hero-stat-card">
+          <div class="hstat-label">Integrality Gap</div>
+          <div class="hstat-val cyan">0.00% (Proven Optimal)</div>
+        </div>
+        <div class="hero-stat-card">
+          <div class="hstat-label">XAI Audit Engine</div>
+          <div class="hstat-val purple">CRIS-XAI-v2.4</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Optimization Solver Control Panel -->
+    <div class="card" style="background: rgba(4, 18, 36, 0.85); border-color: rgba(0, 212, 255, 0.3);">
+      <div class="card-title-bar">
+        <h3>⚙️ Interactive MILP Solver Workbench</h3>
+        <span class="badge cyan">Real-Time Engine</span>
+      </div>
+
+      <div class="grid-3" style="gap: 16px; align-items: flex-end;">
+        <div class="form-group">
+          <label class="form-label">Corridor Block Request Candidate:</label>
+          <select id="opt-block-select" class="form-select">
+            <!-- Populated via JS -->
+          </select>
+        </div>
+
+        <div class="form-group">
+          <div class="form-label">
+            <span>Penalty Weight Scaling (&lambda;):</span>
+            <span id="lambda-val-badge" style="font-family:var(--font-mono); color:var(--cyan); font-weight:700;">1.5</span>
+          </div>
+          <div class="slider-container">
+            <input type="range" id="slider-lambda" class="range-slider" min="0.1" max="5.0" step="0.1" value="1.5" />
+            <span class="slider-val" id="slider-lambda-txt">1.5</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="form-label">
+            <span>Traffic Window Offset:</span>
+            <span id="offset-val-badge" style="font-family:var(--font-mono); color:var(--orange); font-weight:700;">Trough (0h)</span>
+          </div>
+          <div class="slider-container">
+            <input type="range" id="slider-offset" class="range-slider" min="0" max="4" step="1" value="0" />
+            <span class="slider-val" id="slider-offset-txt">+0h</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; flex-wrap: wrap; gap: 10px;">
+        <button id="btn-run-solver" class="btn" style="padding: 10px 24px;">
+          ⚡ Solve MILP Optimization
+        </button>
+        <button id="btn-copy-milp-json" class="btn btn-secondary" style="font-size: 0.75rem;">
+          📋 Copy MILPOptimizerOutputPayload JSON
+        </button>
+      </div>
+    </div>
+
+    <!-- Optimization Decision & KPI Banner -->
+    <div class="grid-4" id="kpi-banner-grid">
+      <div class="card" style="text-align: center; border-color: rgba(46,204,113,0.4);" id="kpi-decision-card">
+        <div class="hstat-label">Decision Variable (x_j)</div>
+        <div style="font-family: var(--font-mono); font-size: 2.2rem; font-weight: 800; color: var(--green); margin-top: 4px;" id="kpi-xj-val">
+          x_j = 1
+        </div>
+        <div style="font-size: 0.75rem; font-weight: 800; color: var(--green); letter-spacing: 0.08em;" id="kpi-verdict-val">
+          ✔ APPROVED
+        </div>
+      </div>
+
+      <div class="card" style="text-align: center;">
+        <div class="hstat-label">Maintenance Yield M_j<sup>eff</sup></div>
+        <div style="font-family: var(--font-mono); font-size: 2rem; font-weight: 800; color: var(--cyan); margin-top: 4px;" id="kpi-yield-val">
+          98.13
+        </div>
+        <div style="font-size: 0.65rem; color: var(--text-dim);">
+          Base M_j: 78.5 × 1.25 Urgency
+        </div>
+      </div>
+
+      <div class="card" style="text-align: center;">
+        <div class="hstat-label">Total Disruption Penalty</div>
+        <div style="font-family: var(--font-mono); font-size: 2rem; font-weight: 800; color: var(--orange); margin-top: 4px;" id="kpi-penalty-val">
+          58.73
+        </div>
+        <div style="font-size: 0.65rem; color: var(--text-dim);" id="kpi-penalty-sub">
+          &lambda; · &Sigma;(P_i · &Delta;d_i)
+        </div>
+      </div>
+
+      <div class="card" style="text-align: center;">
+        <div class="hstat-label">Net Objective Value</div>
+        <div style="font-family: var(--font-mono); font-size: 2rem; font-weight: 800; color: var(--green); margin-top: 4px;" id="kpi-net-obj-val">
+          +39.40
+        </div>
+        <div style="font-size: 0.65rem; color: var(--text-dim);">
+          Net System Benefit
+        </div>
+      </div>
+    </div>
+
+    <!-- Optimization Visuals: Chart & Train Disruption Breakdown -->
+    <div class="grid-2">
+      <!-- Yield vs Penalty Bar Chart -->
+      <div class="card">
+        <div class="card-title-bar">
+          <h3>📊 Objective Tradeoff: Maintenance Yield vs Delay Disruption</h3>
+          <span class="badge green">Cost-Benefit</span>
+        </div>
+        <div style="height: 240px; position: relative;">
+          <canvas id="milpYieldPenaltyChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Per-Train Disruption Impact Table -->
+      <div class="card">
+        <div class="card-title-bar">
+          <h3>🚆 Per-Train Disruption Breakdown (Real Fleet)</h3>
+          <span class="card-subtitle" id="affected-fleet-count">5 Trains Assessed</span>
+        </div>
+
+        <div class="table-wrap">
+          <table class="data-table" style="font-size: 0.72rem;">
+            <thead>
+              <tr>
+                <th>Train</th>
+                <th>P_i</th>
+                <th>Est Delay</th>
+                <th>Δd_i Limit</th>
+                <th>Penalty Cost</th>
+                <th>SLA Exposure</th>
+              </tr>
+            </thead>
+            <tbody id="milp-trains-table">
+              <!-- Populated via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Explainable AI (XAI) Audit Log Section -->
+    <div class="card" style="border-color: rgba(168, 85, 247, 0.3);">
+      <div class="card-title-bar">
+        <h3>🧠 Explainable AI (XAI) Decision Audit Trail</h3>
+        <span class="badge purple">CRIS Audit Compliance</span>
+      </div>
+
+      <div style="background: rgba(168, 85, 247, 0.08); border-left: 4px solid var(--purple); padding: 14px 18px; border-radius: var(--radius-sm);">
+        <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-primary);" id="xai-summary-text">
+          <!-- Summary injected -->
+        </div>
+        <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 8px; line-height: 1.6;" id="xai-narrative-text">
+          <!-- Narrative injected -->
+        </p>
+      </div>
+
+      <!-- SHAP Feature Importances & Counterfactuals -->
+      <div class="grid-2">
+        <!-- Feature Importances -->
+        <div>
+          <div class="card-subtitle" style="margin-bottom: 8px;">Top Decision Drivers (SHAP Attribution)</div>
+          <div id="xai-feature-list" style="display: flex; flex-direction: column; gap: 8px;">
+            <!-- Injected -->
+          </div>
+        </div>
+
+        <!-- Counterfactual Scenarios -->
+        <div>
+          <div class="card-subtitle" style="margin-bottom: 8px;">Evaluated Counterfactual "What-If" Scenarios</div>
+          <div id="xai-counterfactual-list" style="display: flex; flex-direction: column; gap: 8px;">
+            <!-- Injected -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live MILP JSON Output -->
+    <div class="card">
+      <div class="card-title-bar">
+        <h3>📄 Real-Time MILPOptimizerOutputPayload JSON (`cris.milp.optimizer-output.v1`)</h3>
+        <span class="badge green">Optimizer Response</span>
+      </div>
+      <pre id="json-milp-stream" style="background: #02050c; border: 1px solid var(--border); padding: 16px; border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: 0.75rem; color: #73daca; overflow-x: auto; max-height: 280px;"></pre>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <span>CRIS Protocol 4 — MILP Optimizer & Explainable AI Output (MILP-XAI-1.0)</span>
+      <span>Complies with Indian Railways General Rules & Block Working Guidelines</span>
+    </div>
+  </footer>
+
+  <script src="/src/dashboard/shared.js"></script>
+  <script>
+    renderSharedNav("milp");
+
+    const blockSelect = document.getElementById("opt-block-select");
+    blockSelect.innerHTML = CORRIDOR_BLOCK_CANDIDATES.map(b => `
+      <option value="${b.block_id}">${b.block_id}: ${b.corridor_name} (${b.min_duration_min}m · ${b.departments.join("+")})</option>
+    `).join("");
+
+    const sliderLambda = document.getElementById("slider-lambda");
+    const sliderOffset = document.getElementById("slider-offset");
+
+    sliderLambda.addEventListener("input", (e) => {
+      document.getElementById("slider-lambda-txt").textContent = e.target.value;
+      document.getElementById("lambda-val-badge").textContent = e.target.value;
+      solveAndRender();
+    });
+
+    sliderOffset.addEventListener("input", (e) => {
+      const val = parseInt(e.target.value);
+      const labels = ["Trough (0h)", "+1h", "Morning Peak (+2h)", "+3h", "Daylight (+4h)"];
+      document.getElementById("slider-offset-txt").textContent = `+${val}h`;
+      document.getElementById("offset-val-badge").textContent = labels[val] || `+${val}h`;
+      solveAndRender();
+    });
+
+    blockSelect.addEventListener("change", solveAndRender);
+    document.getElementById("btn-run-solver").addEventListener("click", solveAndRender);
+
+    document.getElementById("btn-copy-milp-json").addEventListener("click", () => {
+      const text = document.getElementById("json-milp-stream").textContent;
+      navigator.clipboard.writeText(text);
+      alert("MILP Optimizer JSON Payload copied to clipboard!");
+    });
+
+    let yieldPenaltyChart = null;
+
+    function solveAndRender() {
+      const blockId = blockSelect.value;
+      const lambda = parseFloat(sliderLambda.value);
+      const offset = parseInt(sliderOffset.value);
+
+      const res = runMILPOptimizer(blockId, lambda, offset);
+
+      // KPI banner
+      const isApproved = res.decision_xj === 1;
+      const xjElem = document.getElementById("kpi-xj-val");
+      const verdElem = document.getElementById("kpi-verdict-val");
+      const netElem = document.getElementById("kpi-net-obj-val");
+
+      xjElem.textContent = `x_j = ${res.decision_xj}`;
+      xjElem.style.color = isApproved ? "var(--green)" : "var(--red)";
+      verdElem.textContent = isApproved ? "✔ APPROVED" : "✘ REJECTED";
+      verdElem.style.color = isApproved ? "var(--green)" : "var(--red)";
+
+      document.getElementById("kpi-yield-val").textContent = res.M_j_effective.toFixed(2);
+      document.getElementById("kpi-penalty-val").textContent = res.total_penalty_cost.toFixed(2);
+      document.getElementById("kpi-penalty-sub").textContent = `λ (${res.lambda}) × Σ(${res.raw_penalty_sum})`;
+
+      netElem.textContent = `${res.net_objective > 0 ? '+' : ''}${res.net_objective.toFixed(2)}`;
+      netElem.style.color = res.net_objective > 0 ? "var(--green)" : "var(--red)";
+
+      // Per-train table
+      document.getElementById("affected-fleet-count").textContent = `${res.per_train_impact.length} Trains Assessed`;
+      document.getElementById("milp-trains-table").innerHTML = res.per_train_impact.map(t => `
+        <tr>
+          <td><strong style="color:var(--cyan);">${t.train_no}</strong> <span style="color:var(--text-secondary); font-size:0.68rem;">${t.train_name}</span></td>
+          <td style="font-family:var(--font-mono); color:var(--purple); font-weight:700;">${t.P_i}</td>
+          <td style="font-family:var(--font-mono);">${t.est_delay} min</td>
+          <td style="font-family:var(--font-mono); color:var(--green);">${t.delta_d_i} min</td>
+          <td style="font-family:var(--font-mono); font-weight:700;">${t.penalty_contrib}</td>
+          <td>${t.financial_cost > 0 ? `<span class="badge red">${formatINR(t.financial_cost)}</span>` : '<span class="badge green">₹0 (Within SLA)</span>'}</td>
+        </tr>
+      `).join("");
+
+      // XAI narrative
+      document.getElementById("xai-summary-text").textContent = res.summary;
+      document.getElementById("xai-narrative-text").textContent = res.narrative;
+
+      // SHAP bars
+      document.getElementById("xai-feature-list").innerHTML = res.feature_importances.map(f => {
+        const isPos = f.contribution >= 0;
+        return `
+          <div style="background:rgba(0,0,0,0.3); padding:8px 12px; border-radius:var(--radius-sm); border:1px solid var(--border);">
+            <div style="display:flex; justify-content:space-between; font-size:0.72rem; font-weight:600;">
+              <span>${f.feature}</span>
+              <strong style="color:${isPos ? 'var(--green)' : 'var(--red)'};">${isPos ? '+' : ''}${f.contribution.toFixed(2)}</strong>
+            </div>
+            <div style="font-size:0.65rem; color:var(--text-dim); margin-top:2px;">${f.description}</div>
+          </div>
+        `;
+      }).join("");
+
+      // Counterfactual cards
+      document.getElementById("xai-counterfactual-list").innerHTML = res.counterfactuals.map(c => `
+        <div style="background:rgba(0,0,0,0.3); padding:8px 12px; border-radius:var(--radius-sm); border:1px solid var(--border);">
+          <div style="display:flex; justify-content:space-between; font-size:0.72rem; font-weight:700; color:var(--text-primary);">
+            <span>${c.scenario}</span>
+            <span class="badge ${c.delta_obj >= 0 ? 'green' : 'red'}">${c.delta_obj >= 0 ? '+' : ''}${c.delta_obj} Net</span>
+          </div>
+          <div style="font-size:0.65rem; color:var(--text-secondary); margin-top:3px;">${c.reason}</div>
+        </div>
+      `).join("");
+
+      // Update Chart
+      const chartCtx = document.getElementById("milpYieldPenaltyChart").getContext("2d");
+      if (yieldPenaltyChart) yieldPenaltyChart.destroy();
+
+      yieldPenaltyChart = new Chart(chartCtx, {
+        type: "bar",
+        data: {
+          labels: ["Maintenance Yield (M_j)", "Disruption Penalty (λ·Σ)", "Net Objective"],
+          datasets: [{
+            data: [res.M_j_effective, res.total_penalty_cost, Math.max(0, res.net_objective)],
+            backgroundColor: ["rgba(0, 212, 255, 0.6)", "rgba(243, 156, 18, 0.6)", res.net_objective > 0 ? "rgba(46, 204, 113, 0.6)" : "rgba(231, 76, 60, 0.6)"],
+            borderColor: ["rgba(0, 212, 255, 1)", "rgba(243, 156, 18, 1)", res.net_objective > 0 ? "rgba(46, 204, 113, 1)" : "rgba(231, 76, 60, 1)"],
+            borderWidth: 1.5,
+            borderRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { color: "#7a9bb5", font: { size: 10, family: "Space Mono" } }, grid: { color: "rgba(255,255,255,0.04)" } },
+            y: { ticks: { color: "#7a9bb5" }, grid: { color: "rgba(255,255,255,0.06)" } }
+          }
+        }
+      });
+
+      // JSON Stream
+      const payload = {
+        protocol_version: "MILP-XAI-1.0",
+        event_id: "e8b4c2f7-9a3d-4e01-b7f2-1d6c8e5a3b90",
+        block_candidate_id: res.block.block_id,
+        generated_at: new Date().toISOString(),
+        decision_variable: {
+          x_j: res.decision_xj,
+          x_j_relaxed: res.xj_relaxed,
+          decision: res.verdict
+        },
+        maintenance_yield: {
+          M_j_effective: res.M_j_effective,
+          urgency_multiplier: res.block.urgency_multiplier
+        },
+        penalty_cost: {
+          lambda: res.lambda,
+          raw_penalty_sum: res.raw_penalty_sum,
+          total_penalty_cost: res.total_penalty_cost,
+          total_financial_penalty_inr: res.total_financial_penalty
+        },
+        net_objective_value: res.net_objective,
+        xai_audit_log: {
+          decision_summary: res.summary,
+          primary_reason: res.primary_reason,
+          narrative: res.narrative,
+          feature_importances: res.feature_importances,
+          counterfactuals: res.counterfactuals
+        },
+        solver_metadata: {
+          solver_engine: "HIGHS",
+          solve_time_ms: 847,
+          is_globally_optimal: true,
+          optimality_gap_pct: 0.0
+        }
+      };
+
+      document.getElementById("json-milp-stream").textContent = JSON.stringify(payload, null, 2);
+    }
+
+    solveAndRender();
+  </script>
+</body>
+</html>

@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HEX Terminal — Individual Profile</title>
+  <link rel="stylesheet" href="../src/styles/globals.css">
+  <style>
+    .terminal-header { padding: 28px 0 24px; border-bottom: 1px solid var(--border); margin-bottom: 24px; }
+    .chart-tabs { display: flex; gap: 4px; margin-bottom: 12px; }
+    .chart-tab { padding: 5px 14px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; font-family: var(--font-mono); border: 1px solid var(--border); color: var(--text-muted); background: var(--bg-secondary); transition: all var(--t-fast); }
+    .chart-tab:hover, .chart-tab.active { border-color: var(--green); color: var(--green); background: var(--green-glow); }
+    .range-btn { padding: 4px 10px; border-radius: 4px; font-size: 10px; font-weight: 700; cursor: pointer; font-family: var(--font-mono); border: 1px solid transparent; color: var(--text-muted); background: transparent; transition: all var(--t-fast); }
+    .range-btn:hover, .range-btn.active { border-color: var(--green); color: var(--green); background: var(--green-glow); }
+    .orderbook-col { display: grid; grid-template-columns: 1fr 1fr 1fr; font-size: 11px; font-family: var(--font-mono); }
+    .ob-header { color: var(--text-muted); font-size: 10px; text-transform: uppercase; letter-spacing: 1px; padding: 6px 0; border-bottom: 1px solid var(--border); }
+    .ob-row { padding: 4px 0; transition: background var(--t-fast); cursor: pointer; }
+    .ob-row:hover { background: var(--bg-hover); }
+    .fundamentals-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+    .fund-card { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--r-md); padding: 14px; }
+    .milestone-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid rgba(30,30,48,0.5); }
+    .milestone-icon { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+    .trade-form-row { display: flex; gap: 8px; margin-bottom: 12px; }
+    .trade-type-btn { flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: var(--r-md); font-size: 12px; font-weight: 700; cursor: pointer; transition: all var(--t-fast); font-family: var(--font-mono); background: var(--bg-secondary); color: var(--text-muted); }
+    .trade-type-btn.buy.active { border-color: var(--green); color: var(--green); background: var(--green-glow); }
+    .trade-type-btn.sell.active { border-color: var(--red); color: var(--red); background: var(--red-glow); }
+  </style>
+</head>
+<body>
+<div class="page">
+<div class="container-wide">
+
+<!-- Terminal Header -->
+<div class="terminal-header">
+  <div style="display:flex;align-items:flex-start;justify-content:space-between">
+    <div style="display:flex;align-items:center;gap:18px">
+      <div id="avatar" style="width:64px;height:64px;background:var(--bg-elevated);border:2px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px"></div>
+      <div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+          <h1 id="profile-name" style="font-size:24px;font-weight:800"></h1>
+          <span id="kyc-badge"></span>
+        </div>
+        <div id="profile-role" style="font-size:13px;color:var(--text-secondary);margin-bottom:6px"></div>
+        <div style="display:flex;gap:8px">
+          <span id="sector-tag" class="tag"></span>
+          <span id="profile-id-tag" class="tag" style="color:var(--green)"></span>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:right">
+      <div style="font-size:36px;font-weight:800;font-family:var(--font-mono)" id="share-price"></div>
+      <div id="price-change" style="font-size:14px;margin-bottom:8px"></div>
+      <div id="mcap-display" style="font-size:12px;color:var(--text-muted)"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Main Grid -->
+<div style="display:grid;grid-template-columns:1fr 1fr 320px;gap:20px">
+
+  <!-- Chart Column -->
+  <div style="grid-column:1/3">
+    <div class="card" style="margin-bottom:20px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div class="chart-tabs">
+          <div class="chart-tab active" data-chart="candle">Candlestick</div>
+          <div class="chart-tab" data-chart="line">Line</div>
+          <div class="chart-tab" data-chart="projection">DCF Projection</div>
+        </div>
+        <div style="display:flex;gap:4px" id="range-buttons">
+          <button class="range-btn" data-days="7">1W</button>
+          <button class="range-btn active" data-days="30">1M</button>
+          <button class="range-btn" data-days="90">3M</button>
+          <button class="range-btn" data-days="180">6M</button>
+        </div>
+      </div>
+      <div style="height:300px;position:relative">
+        <canvas id="main-chart" style="width:100%;height:300px"></canvas>
+      </div>
+    </div>
+
+    <!-- Financials -->
+    <div class="card" style="margin-bottom:20px">
+      <div class="section-header"><span class="section-title">Financial Fundamentals</span></div>
+      <div class="fundamentals-grid">
+        <div class="fund-card">
+          <div class="stat-label">Annual Revenue</div>
+          <div id="income-val" class="stat-value" style="font-size:20px"></div>
+          <div class="stat-change up">▲ Income</div>
+        </div>
+        <div class="fund-card">
+          <div class="stat-label">Burn Rate (Expenses)</div>
+          <div id="burn-val" class="stat-value" style="font-size:20px;color:var(--red)"></div>
+          <div class="stat-change down">▼ Monthly outflow</div>
+        </div>
+        <div class="fund-card">
+          <div class="stat-label">Net Worth</div>
+          <div id="networth-val" class="stat-value" style="font-size:20px;color:var(--blue)"></div>
+          <div class="stat-change" style="color:var(--text-muted)">Total assets</div>
+        </div>
+        <div class="fund-card">
+          <div class="stat-label">Growth Rate (YoY)</div>
+          <div id="growth-val" class="stat-value" style="font-size:20px;color:var(--green)"></div>
+          <div class="stat-change up">▲ Expected annual</div>
+        </div>
+        <div class="fund-card">
+          <div class="stat-label">P/E Ratio</div>
+          <div id="pe-val" class="stat-value" style="font-size:20px;color:var(--amber)"></div>
+          <div class="stat-change" style="color:var(--text-muted)">Price / Earnings</div>
+        </div>
+        <div class="fund-card">
+          <div class="stat-label">Career Years Left</div>
+          <div id="career-val" class="stat-value" style="font-size:20px;color:var(--purple)"></div>
+          <div class="stat-change" style="color:var(--text-muted)">Remaining runway</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Order Book Milestones -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+      <div class="card">
+        <div class="section-header"><span class="section-title">Order Book</span></div>
+        <div class="orderbook-col ob-header"><div>Price</div><div style="text-align:right">Qty</div><div style="text-align:right">Total</div></div>
+        <div id="asks-list" style="margin-bottom:8px"></div>
+        <div style="text-align:center;padding:8px;font-family:var(--font-mono);font-size:13px;font-weight:700;border:1px solid var(--border);border-radius:6px;margin-bottom:8px">
+          <span id="spread-price" style="color:var(--green)"></span>
+          <span style="color:var(--text-muted);font-size:10px;margin-left:6px">LAST PRICE</span>
+        </div>
+        <div id="bids-list"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-header"><span class="section-title">Career Milestones</span></div>
+        <div id="milestones"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trade Panel -->
+  <div>
+    <div class="card" style="margin-bottom:18px;position:sticky;top:96px">
+      <div class="section-header"><span class="section-title">Trade</span></div>
+      <div class="trade-form-row">
+        <button class="trade-type-btn buy active" id="buy-btn" onclick="setTradeType('buy')">▲ BUY</button>
+        <button class="trade-type-btn sell" id="sell-btn" onclick="setTradeType('sell')">▼ SELL</button>
+      </div>
+      <div style="margin-bottom:12px">
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:5px">Shares</div>
+        <input type="number" class="input" id="trade-qty" value="100" min="1" placeholder="Quantity">
+      </div>
+      <div style="margin-bottom:12px">
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:5px">Limit Price</div>
+        <input type="number" class="input" id="trade-price" step="0.01" placeholder="Market price">
+      </div>
+      <div style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--r-md);padding:12px;margin-bottom:16px">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-bottom:6px"><span>Estimated Cost</span><span id="est-cost" class="mono" style="color:var(--text-primary)">—</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-bottom:6px"><span>Platform Fee (0.1%)</span><span id="est-fee" class="mono" style="color:var(--text-primary)">—</span></div>
+        <hr class="divider" style="margin:8px 0">
+        <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700"><span>Total</span><span id="est-total" class="mono" style="color:var(--green)">—</span></div>
+      </div>
+      <button id="trade-submit" class="btn btn-primary" style="width:100%;font-size:14px" onclick="submitTrade()">Place Buy Order</button>
+      <div style="margin-top:12px;font-size:10px;color:var(--text-muted);text-align:center;font-family:var(--font-mono)">⚠ Simulation only — No real money</div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="card">
+      <div class="section-header"><span class="section-title">Key Stats</span></div>
+      <div style="display:flex;flex-direction:column;gap:10px" id="key-stats"></div>
+    </div>
+  </div>
+
+</div>
+</div>
+</div>
+
+<script src="../src/js/data.js"></script>
+<script src="../src/js/charts.js"></script>
+<script src="../src/js/components.js"></script>
+<script>
+HEXComponents.renderNav('terminal');
+HEXComponents.renderTickerStrip();
+const { HUMAN_PROFILES, fmt, generatePriceHistory, generateOrderBook } = window.HEX;
+
+// Load profile from URL or default
+const params = new URLSearchParams(location.search);
+const profileId = params.get('id') || 'AERA';
+const profile = HUMAN_PROFILES.find(p => p.id === profileId) || HUMAN_PROFILES[0];
+
+// Populate header
+document.getElementById('avatar').textContent = profile.avatar;
+document.getElementById('profile-name').textContent = profile.name;
+document.getElementById('profile-role').textContent = profile.role;
+document.getElementById('sector-tag').textContent = profile.sector;
+document.getElementById('profile-id-tag').textContent = '$' + profile.id;
+document.getElementById('share-price').textContent = fmt.currency(profile.sharePrice);
+document.getElementById('kyc-badge').outerHTML = profile.verified
+  ? `<span class="badge badge-green">✓ KYC Verified</span>`
+  : `<span class="badge badge-amber">⏳ KYC Pending</span>`;
+const up = profile.change24h >= 0;
+document.getElementById('price-change').innerHTML = `<span class="${up?'text-green':'text-red'}">${up?'▲':'▼'} ${fmt.percent(Math.abs(profile.change24h),false)} Today</span>`;
+document.getElementById('mcap-display').textContent = 'Market Cap: ' + fmt.currency(profile.marketCap, true);
+
+// Fundamentals
+document.getElementById('income-val').textContent = fmt.currency(profile.income, true);
+document.getElementById('burn-val').textContent = fmt.currency(profile.burnRate, true);
+document.getElementById('networth-val').textContent = fmt.currency(profile.netWorth, true);
+document.getElementById('growth-val').textContent = fmt.pct(profile.growthRate);
+document.getElementById('pe-val').textContent = profile.peRatio + 'x';
+document.getElementById('career-val').textContent = profile.careerYears + ' yrs';
+document.getElementById('trade-price').value = profile.sharePrice;
+
+// Key Stats
+const stats = [
+  ['52W High', fmt.currency(profile.high52w)],
+  ['52W Low', fmt.currency(profile.low52w)],
+  ['Shares Issued', fmt.number(profile.shares)],
+  ['Earnings Yield', profile.earningsYield + '%'],
+  ['Discount Rate', fmt.pct(profile.discountRate)],
+  ['Sector', profile.sector],
+];
+document.getElementById('key-stats').innerHTML = stats.map(([k,v])=>`
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(30,30,48,0.4)">
+    <span style="font-size:11px;color:var(--text-muted)">${k}</span>
+    <span class="mono" style="font-size:11px;color:var(--text-primary)">${v}</span>
+  </div>`).join('');
+
+// Order Book
+const ob = generateOrderBook(profile.sharePrice);
+const maxQty = Math.max(...ob.asks.concat(ob.bids).map(r=>r.quantity));
+document.getElementById('spread-price').textContent = fmt.currency(profile.sharePrice);
+document.getElementById('asks-list').innerHTML = [...ob.asks].reverse().map(a=>{
+  const depth = (a.quantity/maxQty*100).toFixed(0);
+  return `<div class="orderbook-col ob-row" style="background:linear-gradient(to left,var(--red-glow) ${depth}%,transparent ${depth}%)">
+    <div style="color:var(--red)">${fmt.currency(a.price)}</div>
+    <div style="text-align:right;color:var(--text-secondary)">${fmt.number(a.quantity)}</div>
+    <div style="text-align:right;color:var(--text-muted)">${fmt.number(a.total)}</div>
+  </div>`;
+}).join('');
+document.getElementById('bids-list').innerHTML = ob.bids.map(b=>{
+  const depth=(b.quantity/maxQty*100).toFixed(0);
+  return `<div class="orderbook-col ob-row" style="background:linear-gradient(to left,var(--green-glow) ${depth}%,transparent ${depth}%)">
+    <div style="color:var(--green)">${fmt.currency(b.price)}</div>
+    <div style="text-align:right;color:var(--text-secondary)">${fmt.number(b.quantity)}</div>
+    <div style="text-align:right;color:var(--text-muted)">${fmt.number(b.total)}</div>
+  </div>`;
+}).join('');
+
+// Milestones
+const milestones = [
+  {icon:'📄', label:'Signed NDA', sub:'Fortune 500 partnership', date:'Jun 2026', color:'var(--blue)'},
+  {icon:'🎤', label:'TED Talk Confirmed', sub:'Main stage, Vancouver', date:'Sep 2026', color:'var(--purple)'},
+  {icon:'📈', label:'Series C Round', sub:'$120M target raise', date:'Q4 2026', color:'var(--green)'},
+  {icon:'🏆', label:'Forbes 30 Under 30', sub:'Technology category', date:'Jan 2027', color:'var(--amber)'},
+  {icon:'🌍', label:'Global Expansion', sub:'EU & APAC markets', date:'H1 2027', color:'var(--cyan)'},
+];
+document.getElementById('milestones').innerHTML = milestones.map(m=>`
+  <div class="milestone-item">
+    <div class="milestone-icon" style="background:${m.color}20;border:1px solid ${m.color}40">${m.icon}</div>
+    <div style="flex:1">
+      <div style="font-size:12px;font-weight:600;margin-bottom:2px">${m.label}</div>
+      <div style="font-size:11px;color:var(--text-muted)">${m.sub}</div>
+    </div>
+    <span style="font-size:10px;color:var(--text-muted);font-family:var(--font-mono)">${m.date}</span>
+  </div>`).join('');
+
+// Chart
+let currentChart='candle', currentDays=30;
+const canvas = document.getElementById('main-chart');
+canvas.style.width='100%'; canvas.style.height='300px';
+const chart = new HEXChart(canvas, {padding:{top:20,right:65,bottom:40,left:72}});
+
+function renderChart() {
+  chart.resize();
+  const hist = generatePriceHistory(profile.sharePrice, currentDays, 0.022);
+  if (currentChart==='candle') chart.drawCandlestick(hist);
+  else if (currentChart==='line') chart.drawLine(hist);
+  else chart.drawProjection(profile.income, profile.growthRate, profile.discountRate, profile.careerYears);
+}
+requestAnimationFrame(renderChart);
+
+document.querySelectorAll('.chart-tab').forEach(tab=>{
+  tab.addEventListener('click',function(){
+    document.querySelectorAll('.chart-tab').forEach(t=>t.classList.remove('active'));
+    this.classList.add('active'); currentChart=this.dataset.chart; renderChart();
+  });
+});
+document.querySelectorAll('.range-btn').forEach(btn=>{
+  btn.addEventListener('click',function(){
+    document.querySelectorAll('.range-btn').forEach(b=>b.classList.remove('active'));
+    this.classList.add('active'); currentDays=parseInt(this.dataset.days); renderChart();
+  });
+});
+
+// Trade form
+let tradeType='buy';
+function setTradeType(t){
+  tradeType=t;
+  document.getElementById('buy-btn').classList.toggle('active',t==='buy');
+  document.getElementById('sell-btn').classList.toggle('active',t==='sell');
+  const btn=document.getElementById('trade-submit');
+  btn.textContent=t==='buy'?'Place Buy Order':'Place Sell Order';
+  btn.style.background=t==='buy'?'var(--green)':'var(--red)';
+  btn.style.color=t==='buy'?'#000':'#fff';
+}
+
+function updateEstimate(){
+  const qty=parseFloat(document.getElementById('trade-qty').value)||0;
+  const price=parseFloat(document.getElementById('trade-price').value)||profile.sharePrice;
+  const cost=qty*price, fee=cost*0.001, total=cost+fee;
+  document.getElementById('est-cost').textContent=fmt.currency(cost);
+  document.getElementById('est-fee').textContent=fmt.currency(fee);
+  document.getElementById('est-total').textContent=fmt.currency(total);
+}
+document.getElementById('trade-qty').addEventListener('input',updateEstimate);
+document.getElementById('trade-price').addEventListener('input',updateEstimate);
+updateEstimate();
+
+function submitTrade(){
+  HEXComponents.showComplianceModal(()=>{
+    const qty=document.getElementById('trade-qty').value;
+    const price=document.getElementById('trade-price').value;
+    HEXComponents.toast(`${tradeType.toUpperCase()} order placed: ${qty} shares of ${profile.id} @ ${fmt.currency(parseFloat(price))}`, tradeType==='buy'?'success':'error');
+  });
+}
+
+// Live price update
+setInterval(()=>{
+  window.HEX.simulatePriceTick();
+  document.getElementById('share-price').textContent=fmt.currency(profile.sharePrice);
+  document.getElementById('trade-price').value=profile.sharePrice.toFixed(2);
+  updateEstimate();
+  renderChart();
+},3000);
+</script>
+</body>
+</html>

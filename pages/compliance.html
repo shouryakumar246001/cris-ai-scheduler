@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HEX — Compliance & Legal Framework</title>
+  <link rel="stylesheet" href="../src/styles/globals.css">
+  <style>
+    .compliance-section { margin-bottom: 32px; }
+    .law-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 20px; margin-bottom: 12px; transition: border-color var(--t-fast); }
+    .law-card:hover { border-color: var(--border-bright); }
+    .law-card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .law-icon { width: 42px; height: 42px; border-radius: var(--r-md); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+    .guardrail-item { display: flex; align-items: flex-start; gap: 12px; padding: 14px 0; border-bottom: 1px solid rgba(30,30,48,0.4); }
+    .guardrail-status { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+    .status-active { background: var(--green); box-shadow: 0 0 8px var(--green); }
+    .status-warn   { background: var(--amber); }
+    .status-info   { background: var(--blue); }
+    .country-tab { padding: 8px 18px; border-radius: var(--r-sm); font-size: 13px; font-weight: 600; cursor: pointer; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-secondary); transition: all var(--t-fast); }
+    .country-tab:hover, .country-tab.active { border-color: var(--green); color: var(--green); background: var(--green-glow); }
+    .timeline-item { display: flex; gap: 16px; padding-bottom: 20px; position: relative; }
+    .timeline-item::after { content:''; position:absolute; left:15px; top:34px; bottom:0; width:1px; background:var(--border); }
+    .timeline-dot { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+<div class="page">
+<div class="container">
+
+<div style="margin-bottom:32px">
+  <h1 style="font-size:28px;font-weight:800;margin-bottom:8px">⚖️ Compliance & Legal Framework</h1>
+  <p style="color:var(--text-secondary);max-width:700px;line-height:1.6">HEX operates as an educational simulation platform. This page documents the real-world regulatory landscape governing human capital tokenization and income share agreements.</p>
+</div>
+
+<!-- Master Disclaimer -->
+<div style="background:linear-gradient(135deg,rgba(255,184,0,0.08),rgba(255,184,0,0.03));border:1px solid rgba(255,184,0,0.3);border-radius:var(--r-xl);padding:28px;margin-bottom:32px">
+  <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+    <span style="font-size:36px">⚠️</span>
+    <div>
+      <div style="font-size:18px;font-weight:800;color:var(--amber)">Platform-Wide Disclaimer</div>
+      <div style="font-size:12px;color:var(--text-muted)">Required reading for all users</div>
+    </div>
+  </div>
+  <p style="font-family:var(--font-mono);font-size:12px;color:var(--text-secondary);line-height:1.8;margin-bottom:12px">
+    HUMAN EQUITY EXCHANGE (HEX) IS A SIMULATION PLATFORM FOR EDUCATIONAL PURPOSES ONLY. ALL VALUATIONS, TRADES, IPO LISTINGS, 
+    DERIVATIVE CONTRACTS, AND FUND INVESTMENTS ARE FICTIONAL AND DO NOT REPRESENT REAL FINANCIAL INSTRUMENTS OR LEGALLY BINDING AGREEMENTS. 
+    NO REAL MONEY IS RAISED, TRANSFERRED, OR INVESTED ON THIS PLATFORM.
+  </p>
+  <p style="font-family:var(--font-mono);font-size:12px;color:var(--text-secondary);line-height:1.8">
+    In a real-world implementation, personal tokenization and income-sharing arrangements would be subject to extensive 
+    regulatory compliance requirements including but not limited to: SEC securities registration, SEBI approval, KYC/AML obligations, 
+    consumer protection laws, and jurisdiction-specific ISA regulations.
+  </p>
+</div>
+
+<!-- Country Tabs -->
+<div style="display:flex;gap:8px;margin-bottom:24px">
+  <div class="country-tab active" data-country="us" onclick="switchCountry('us',this)">🇺🇸 United States</div>
+  <div class="country-tab" data-country="in" onclick="switchCountry('in',this)">🇮🇳 India</div>
+  <div class="country-tab" data-country="eu" onclick="switchCountry('eu',this)">🇪🇺 European Union</div>
+</div>
+
+<div id="country-content"></div>
+
+<!-- Active Guardrails -->
+<div class="card" style="margin-bottom:24px">
+  <div class="section-header"><span class="section-title">Active Compliance Guardrails</span><span class="badge badge-green">7 ACTIVE</span></div>
+  <div id="guardrails-list"></div>
+</div>
+
+<!-- ISA Calculator -->
+<div class="card" style="margin-bottom:24px">
+  <div class="section-header"><span class="section-title">ISA Compliance Calculator</span><span style="font-size:11px;color:var(--text-muted)">Illinois Law 2025 — 8% Cap</span></div>
+  <div class="grid-2">
+    <div>
+      <div style="margin-bottom:14px">
+        <div class="form-label" style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:5px">Annual Income ($)</div>
+        <input class="input" id="isa-income" type="number" placeholder="100000" oninput="calcISA()">
+      </div>
+      <div style="margin-bottom:14px">
+        <div class="form-label" style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:5px">Proposed Earnings Share (%)</div>
+        <input class="input" id="isa-pct" type="number" placeholder="5" max="20" step="0.5" oninput="calcISA()">
+      </div>
+    </div>
+    <div id="isa-result" style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--r-md);padding:20px;display:flex;flex-direction:column;justify-content:center">
+      <div style="text-align:center;color:var(--text-muted);font-size:12px">Enter values to see ISA compliance check</div>
+    </div>
+  </div>
+</div>
+
+<!-- Regulatory Timeline -->
+<div class="card">
+  <div class="section-header"><span class="section-title">Regulatory Evolution Timeline</span></div>
+  <div id="timeline"></div>
+</div>
+
+</div>
+</div>
+
+<script src="../src/js/data.js"></script>
+<script src="../src/js/components.js"></script>
+<script>
+HEXComponents.renderNav('compliance');
+HEXComponents.renderTickerStrip();
+const { fmt, COMPLIANCE } = window.HEX;
+
+const COUNTRY_DATA = {
+  us: {
+    title: '🇺🇸 United States Regulatory Framework',
+    laws: [
+      { icon: '🏛️', color: '#4d9fff', name: 'Securities Act of 1933', status: 'HIGH RISK', statusColor: 'var(--red)', body: 'Personal tokens representing fractional future earnings will likely be classified as investment contracts under the Howey Test, requiring SEC registration or a valid exemption (Reg CF: max $5M/12mo; Reg D: accredited investors only). Operating without compliance exposes issuers to criminal liability.' },
+      { icon: '📋', color: '#00ff88', name: 'Consumer Financial Protection Bureau (CFPB)', status: 'MONITORING', statusColor: 'var(--amber)', body: 'The CFPB treats ISAs as analogous to student loans under TILA (Truth in Lending Act). Required disclosures include APR equivalent, total payment caps, and income thresholds below which no payments are due.' },
+      { icon: '🗺️', color: '#a855f7', name: 'Illinois ISA Student Protection Act (2025)', status: 'ACTIVE', statusColor: 'var(--green)', body: 'Illinois became the first state to explicitly regulate ISAs. Key provisions: (1) Monthly payments cannot exceed 8% of gross income; (2) Minimum income threshold: $30,000/year; (3) Maximum payment term: 10 years; (4) ISA voided if borrower becomes permanently disabled.' },
+    ]
+  },
+  in: {
+    title: '🇮🇳 India (SEBI) Regulatory Framework',
+    laws: [
+      { icon: '⚖️', color: '#ff3355', name: 'SEBI Act §11AA — Collective Investment Scheme', status: 'HIGH RISK', statusColor: 'var(--red)', body: 'Any scheme where funds are pooled, managed on behalf of investors, and investors expect returns without day-to-day control must register as a CIS. Human capital tokenization almost certainly qualifies. Operating unregistered is prima facie unlawful.' },
+      { icon: '🔐', color: '#ffb800', name: 'Digital Personal Data Protection Act 2023 (DPDPA)', status: 'MANDATORY', statusColor: 'var(--amber)', body: 'Processing financial and professional personal data requires explicit, granular consent. Users must be informed of processing purposes. Cross-border data transfers to non-approved countries require additional safeguards. Penalties up to ₹250 crore per breach.' },
+      { icon: '💰', color: '#4d9fff', name: 'Prevention of Money Laundering Act (PMLA)', status: 'MANDATORY', statusColor: 'var(--amber)', body: 'All entities facilitating trading of tokenized instruments must implement full KYC, maintain records for 5 years, and file Suspicious Transaction Reports (STRs) with FIU-India. Applies regardless of whether tokens are classified as securities.' },
+    ]
+  },
+  eu: {
+    title: '🇪🇺 European Union Regulatory Framework',
+    laws: [
+      { icon: '🏦', color: '#00e5ff', name: 'Markets in Crypto-Assets Regulation (MiCA)', status: 'APPLIES', statusColor: 'var(--blue)', body: 'MiCA, fully effective from December 2024, covers asset-referenced tokens and e-money tokens. Personal earning tokens may fall under "other crypto-assets" requiring whitepaper publication, ongoing disclosure, and ESMA/EBA notification.' },
+      { icon: '🔒', color: '#a855f7', name: 'GDPR — General Data Protection Regulation', status: 'MANDATORY', statusColor: 'var(--amber)', body: 'Processing personal financial data requires legal basis (consent or legitimate interest). Right to erasure conflicts with immutable blockchain records — a fundamental tension requiring off-chain data architecture.' },
+      { icon: '📊', color: '#00ff88', name: 'MiFID II — Financial Instruments Directive', status: 'LIKELY APPLIES', statusColor: 'var(--amber)', body: 'If personal tokens are classified as transferable securities (likely), issuers must produce a prospectus, platforms must be licensed as multilateral trading facilities (MTFs), and investor protection rules apply.' },
+    ]
+  }
+};
+
+function switchCountry(c, el) {
+  document.querySelectorAll('.country-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderCountry(c);
+}
+
+function renderCountry(c) {
+  const data = COUNTRY_DATA[c];
+  const el = document.getElementById('country-content');
+  el.innerHTML = `
+    <div style="font-size:16px;font-weight:800;margin-bottom:16px">${data.title}</div>
+    ${data.laws.map(law=>`
+    <div class="law-card">
+      <div class="law-card-header">
+        <div class="law-icon" style="background:${law.color}15;border:1px solid ${law.color}30">${law.icon}</div>
+        <div style="flex:1">
+          <div style="font-weight:700;font-size:14px;margin-bottom:3px">${law.name}</div>
+          <span class="badge" style="background:${law.statusColor}15;color:${law.statusColor};border-color:${law.statusColor}30;font-size:10px">${law.status}</span>
+        </div>
+      </div>
+      <p style="font-size:12px;color:var(--text-secondary);line-height:1.7;font-family:var(--font-mono)">${law.body}</p>
+    </div>`).join('')}`;
+}
+renderCountry('us');
+
+// Guardrails
+const GUARDRAILS = [
+  { status:'active', label:'ISA Earnings Cap', desc:'Enforces 8% maximum earnings share per Illinois ISA Law 2025' },
+  { status:'active', label:'KYC Gate',          desc:'Blocks IPO launch for users without verified identity (KYC_STATUS=VERIFIED)' },
+  { status:'active', label:'Securities Disclaimer', desc:'Mandatory modal before every trade, IPO, or investment action' },
+  { status:'warn',   label:'SEBI CIS Warning',  desc:'Triggered for IN-jurisdiction users on fund and IPO pages' },
+  { status:'active', label:'No Real Money Lock', desc:'All monetary values are simulation-only; no payment processing exists' },
+  { status:'active', label:'Data Consent Gate', desc:'DPDPA-compliant consent checkpoint on registration and data submission' },
+  { status:'info',   label:'Bankruptcy Clause', desc:'ISA auto-voids if income drops below $30K/year threshold' },
+];
+document.getElementById('guardrails-list').innerHTML = GUARDRAILS.map(g=>`
+  <div class="guardrail-item">
+    <div class="guardrail-status ${g.status==='active'?'status-active':g.status==='warn'?'status-warn':'status-info'}"></div>
+    <div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:3px">${g.label}</div>
+      <div style="font-size:11px;color:var(--text-muted);font-family:var(--font-mono)">${g.desc}</div>
+    </div>
+    <span class="badge ${g.status==='active'?'badge-green':g.status==='warn'?'badge-amber':'badge-blue'}" style="margin-left:auto;white-space:nowrap">${g.status.toUpperCase()}</span>
+  </div>`).join('');
+
+// ISA Calculator
+function calcISA() {
+  const income=parseFloat(document.getElementById('isa-income').value)||0;
+  const pct=parseFloat(document.getElementById('isa-pct').value)||0;
+  const monthlyPayment=income/12*pct/100;
+  const cap=income/12*0.08;
+  const ok=pct<=8;
+  const el=document.getElementById('isa-result');
+  el.innerHTML=`
+    <div style="text-align:center">
+      <div class="badge ${ok?'badge-green':'badge-red'}" style="font-size:12px;margin-bottom:12px">${ok?'✓ ISA COMPLIANT':'✕ EXCEEDS CAP'}</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">Monthly Payment</div>
+      <div class="mono" style="font-size:22px;font-weight:800;color:${ok?'var(--green)':'var(--red)'}">${fmt.currency(monthlyPayment)}</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:8px">Illinois Cap: ${fmt.currency(cap)}/mo (8%)</div>
+      ${!ok?`<div style="font-size:11px;color:var(--red);margin-top:6px;font-family:var(--font-mono)">Exceeds by ${fmt.currency(monthlyPayment-cap)}</div>`:''}
+    </div>`;
+}
+
+// Timeline
+const TIMELINE=[
+  { date:'2024 Q4', icon:'⚖️', color:'#4d9fff', title:'SEC Issues Tokenized Securities Guidance', body:'SEC clarifies all tokenized assets subject to same securities laws as traditional instruments.' },
+  { date:'2025 Aug', icon:'📋', color:'#00ff88', title:'Illinois ISA Protection Act Enacted', body:'First US state law explicitly governing Income Share Agreements. 8% cap, 10-year term limit.' },
+  { date:'2025 Q2', icon:'🇪🇺', color:'#a855f7', title:'EU MiCA Fully Effective', body:'Markets in Crypto-Assets regulation covers all token types operating in the EU.' },
+  { date:'2026 Q1', icon:'🏛️', color:'#ffb800', title:'Joint SEC/CFTC Digital Asset Framework', body:'Proposed federal framework for classifying tokenized assets as securities vs commodities.' },
+  { date:'2026 Q2', icon:'🇮🇳', color:'#ff3355', title:'SEBI Releases Tokenization Consultation Paper', body:'SEBI invites public comment on proposed framework for real-world asset tokenization.' },
+];
+document.getElementById('timeline').innerHTML=TIMELINE.map(t=>`
+  <div class="timeline-item">
+    <div class="timeline-dot" style="background:${t.color}20;border:2px solid ${t.color}">${t.icon}</div>
+    <div style="flex:1;padding-bottom:0">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+        <span class="mono" style="font-size:10px;color:var(--text-muted)">${t.date}</span>
+        <span style="font-size:13px;font-weight:700">${t.title}</span>
+      </div>
+      <p style="font-size:12px;color:var(--text-secondary);line-height:1.5;font-family:var(--font-mono)">${t.body}</p>
+    </div>
+  </div>`).join('');
+</script>
+</body>
+</html>
