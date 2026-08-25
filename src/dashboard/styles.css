@@ -229,14 +229,14 @@ body {
   z-index: 1;
 }
 
-/* Specific background image for each page */
-.bg-overview  { background-image: url('/assets/bg-overview.jpg') !important; }
-.bg-coa       { background-image: url('/assets/bg-coa.jpg') !important; }
-.bg-bdms      { background-image: url('/assets/bg-bdms.jpg') !important; }
-.bg-fois      { background-image: url('/assets/bg-fois.jpg') !important; }
-.bg-milp      { background-image: url('/assets/bg-milp.jpg') !important; }
-.bg-analytics { background-image: url('/assets/bg-analytics.jpg') !important; }
-.bg-terminal  { background-image: url('/assets/bg-terminal.jpg') !important; }
+/* Specific background image for each page (Cache-busting versioned assets) */
+.bg-overview  { background-image: url('/assets/bg-overview.jpg?v=3') !important; }
+.bg-coa       { background-image: url('/assets/bg-red-train.jpg?v=3') !important; }
+.bg-bdms      { background-image: url('/assets/bg-wdp4d-train.jpg?v=3') !important; }
+.bg-fois      { background-image: url('/assets/bg-fois.jpg?v=3') !important; }
+.bg-milp      { background-image: url('/assets/bg-milp.jpg?v=3') !important; }
+.bg-analytics { background-image: url('/assets/bg-red-train.jpg?v=3') !important; }
+.bg-terminal  { background-image: url('/assets/bg-terminal.jpg?v=3') !important; }
 
 /* ── Header ── */
 header {
