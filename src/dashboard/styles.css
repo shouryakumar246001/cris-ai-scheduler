@@ -16,17 +16,17 @@
 
 :root {
   /* Surface & Background Tones */
-  --bg-main:       #0e0d14;
-  --bg-sidebar:    #151320;
-  --bg-surface:    #1a1728;
-  --bg-card:       rgba(26, 23, 40, 0.75);
-  --bg-card-hover: rgba(35, 30, 56, 0.92);
-  --bg-inset:      rgba(14, 13, 20, 0.65);
-  --card-bg:       rgba(26, 23, 40, 0.75);
-  --card-border:   rgba(192, 38, 211, 0.15);
-  --border:        rgba(192, 38, 211, 0.15);
-  --border-hover:  rgba(239, 68, 68, 0.45);
-  --border-glow:   rgba(217, 70, 239, 0.45);
+  --bg-main:       #0a0c12;
+  --bg-sidebar:    #11131c;
+  --bg-surface:    #161924;
+  --bg-card:       rgba(18, 21, 32, 0.82);
+  --bg-card-hover: rgba(25, 30, 45, 0.92);
+  --bg-inset:      rgba(11, 13, 20, 0.72);
+  --card-bg:       rgba(18, 21, 32, 0.82);
+  --card-border:   rgba(255, 255, 255, 0.08);
+  --border:        rgba(255, 255, 255, 0.08);
+  --border-hover:  rgba(249, 115, 22, 0.45);
+  --border-glow:   rgba(249, 115, 22, 0.45);
 
   /* Primary Color Palette (NO GREEN, NO BLUE) */
   --accent-purple: #c026d3; /* Vibrant Magenta Purple */
@@ -70,18 +70,17 @@ body {
   overflow: hidden;
   letter-spacing: -0.01em;
   
-  /* Subtle warm radial ambiance */
+  /* Clean neutral dark subtle ambiance - NO pink tint */
   background-image:
-    radial-gradient(circle at 10% 0%, rgba(192, 38, 211, 0.08) 0%, transparent 50%),
-    radial-gradient(circle at 90% 100%, rgba(249, 115, 22, 0.06) 0%, transparent 50%),
-    radial-gradient(circle at 50% 50%, rgba(239, 68, 68, 0.03) 0%, transparent 60%);
+    radial-gradient(circle at 15% 0%, rgba(249, 115, 22, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 85% 100%, rgba(245, 158, 11, 0.03) 0%, transparent 50%);
 }
 
 /* ── Scrollbars ── */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: #12101b; }
-::-webkit-scrollbar-thumb { background: rgba(192, 38, 211, 0.3); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--accent-purple); }
+::-webkit-scrollbar-track { background: #11131c; }
+::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent-orange); }
 
 /* ══════════════════════════════════════════════════
    SIDEBAR NAVIGATION SYSTEM
@@ -110,7 +109,7 @@ body {
 
 .sidebar h2 {
   font-family: var(--font-display);
-  background: linear-gradient(90deg, var(--accent-purple), var(--accent-red), var(--accent-orange));
+  background: linear-gradient(90deg, #ffffff, var(--accent-orange), var(--accent-amber));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-size: 1.45rem;
@@ -122,9 +121,9 @@ body {
   font-size: 0.6rem;
   padding: 2px 7px;
   border-radius: 4px;
-  background: rgba(192, 38, 211, 0.2);
-  color: var(--accent-fuchsia);
-  border: 1px solid rgba(192, 38, 211, 0.4);
+  background: rgba(249, 115, 22, 0.15);
+  color: var(--accent-orange);
+  border: 1px solid rgba(249, 115, 22, 0.35);
   font-weight: 700;
   text-transform: uppercase;
   font-family: var(--font-mono);
@@ -155,16 +154,16 @@ body {
 
 .sidebar a:hover {
   color: var(--text-primary);
-  background: rgba(192, 38, 211, 0.12);
+  background: rgba(255, 255, 255, 0.05);
   padding-left: 20px;
-  box-shadow: inset 3px 0 0 var(--accent-purple);
+  box-shadow: inset 3px 0 0 var(--accent-orange);
 }
 
 .sidebar a.active {
   color: #ffffff;
-  background: linear-gradient(90deg, rgba(192, 38, 211, 0.25), rgba(239, 68, 68, 0.15));
-  border-left: 3px solid var(--accent-purple);
-  box-shadow: 0 0 15px rgba(192, 38, 211, 0.2);
+  background: linear-gradient(90deg, rgba(249, 115, 22, 0.2), rgba(239, 68, 68, 0.1));
+  border-left: 3px solid var(--accent-orange);
+  box-shadow: 0 0 15px rgba(249, 115, 22, 0.15);
   font-weight: 700;
 }
 
@@ -191,30 +190,59 @@ body {
   height: 100vh;
 }
 
-/* Front page backdrop with user uploaded train image */
-.front-page-main {
+/* ── Page Image Backdrops (Zero Pink / Pure Neutral Dark Glassmorphic) ── */
+.content.page-backdrop {
   position: relative;
-  background: 
-    linear-gradient(180deg, rgba(14, 13, 20, 0.82) 0%, rgba(14, 13, 20, 0.89) 35%, rgba(14, 13, 20, 0.97) 100%),
-    url('/assets/train-bg.jpg') no-repeat center top / cover fixed;
+  background-size: cover !important;
+  background-position: center center !important;
+  background-attachment: fixed !important;
+  background-repeat: no-repeat !important;
 }
 
-.front-page-main .card {
-  background: rgba(26, 23, 40, 0.82);
+/* Neutral dark slate / charcoal overlay without any pink / magenta tint */
+.content.page-backdrop::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: var(--sidebar-w);
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, rgba(10, 12, 18, 0.78) 0%, rgba(10, 12, 18, 0.86) 35%, rgba(8, 10, 15, 0.94) 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.content.page-backdrop > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Specific background image for each page */
+.bg-overview  { background-image: url('/assets/bg-overview.jpg') !important; }
+.bg-coa       { background-image: url('/assets/bg-coa.jpg') !important; }
+.bg-bdms      { background-image: url('/assets/bg-bdms.jpg') !important; }
+.bg-fois      { background-image: url('/assets/bg-fois.jpg') !important; }
+.bg-milp      { background-image: url('/assets/bg-milp.jpg') !important; }
+.bg-analytics { background-image: url('/assets/bg-analytics.jpg') !important; }
+.bg-terminal  { background-image: url('/assets/bg-terminal.jpg') !important; }
+
+.content.page-backdrop .card {
+  background: rgba(18, 21, 32, 0.85);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(192, 38, 211, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.09);
 }
 
-.front-page-main .card:hover {
-  background: rgba(35, 30, 56, 0.92);
-  border-color: var(--border-glow);
+.content.page-backdrop .card:hover {
+  background: rgba(25, 30, 45, 0.92);
+  border-color: rgba(249, 115, 22, 0.45);
 }
 
-.front-page-main .hero-stat-card {
-  background: rgba(21, 19, 32, 0.85);
+.content.page-backdrop .hero-stat-card {
+  background: rgba(18, 21, 32, 0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 header {
