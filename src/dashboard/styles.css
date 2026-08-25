@@ -191,6 +191,32 @@ body {
   height: 100vh;
 }
 
+/* Front page backdrop with user uploaded train image */
+.front-page-main {
+  position: relative;
+  background: 
+    linear-gradient(180deg, rgba(14, 13, 20, 0.82) 0%, rgba(14, 13, 20, 0.89) 35%, rgba(14, 13, 20, 0.97) 100%),
+    url('/assets/train-bg.jpg') no-repeat center top / cover fixed;
+}
+
+.front-page-main .card {
+  background: rgba(26, 23, 40, 0.82);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(192, 38, 211, 0.22);
+}
+
+.front-page-main .card:hover {
+  background: rgba(35, 30, 56, 0.92);
+  border-color: var(--border-glow);
+}
+
+.front-page-main .hero-stat-card {
+  background: rgba(21, 19, 32, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
 header {
   display: flex;
   justify-content: space-between;
