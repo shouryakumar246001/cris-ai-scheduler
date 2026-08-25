@@ -507,14 +507,14 @@ function renderSharedNav(activePage) {
 
   sidebar.innerHTML = `
     <div class="sidebar-header">
-      <div class="logo-icon" style="font-family:var(--font-mono); font-size:0.95rem; font-weight:800; background:#000000; color:#ffffff !important;">IR</div>
+      <div class="logo-icon">IR</div>
       <div>
-        <div class="logo-title" style="color:#000000; font-weight:800;">CRIS AI SCHEDULER</div>
-        <div class="logo-sub" style="color:#475569; font-weight:700;">INDIAN RAILWAYS CORRIDORS</div>
+        <div class="logo-title">CRIS AI SCHEDULER</div>
+        <div class="logo-sub">INDIAN RAILWAYS CORRIDORS</div>
       </div>
     </div>
 
-    <div class="nav-label" style="color:#475569; font-weight:800;">COMMAND & CONTROL</div>
+    <div class="nav-label">COMMAND & CONTROL</div>
     <ul class="nav-links">
       ${links.map(l => `
         <li class="nav-item">
@@ -527,13 +527,13 @@ function renderSharedNav(activePage) {
 
     <div class="sidebar-footer">
       <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-        <span style="color:#475569; font-weight:700;">Network Status:</span>
-        <span class="badge" style="font-size:0.68rem; background:#f1f5f9; color:#0f172a; border:1px solid #cbd5e1;">ONLINE</span>
+        <span style="color:#fbcfe8; font-weight:700;">Network Status:</span>
+        <span class="badge" style="font-size:0.68rem; background:rgba(236,72,153,0.25); color:#ffffff; border:1px solid rgba(236,72,153,0.6);">ONLINE</span>
       </div>
-      <div style="font-size:0.72rem; color:#1e293b; font-weight:700;">
+      <div style="font-size:0.72rem; color:#fbcfe8; font-weight:700;">
         8,990 Stations · 5,208 Trains
       </div>
-      <div style="font-size:0.7rem; color:#64748b; margin-top:4px;">
+      <div style="font-size:0.7rem; color:#f472b6; margin-top:4px;">
         Highs MILP Solver v2.4
       </div>
     </div>
