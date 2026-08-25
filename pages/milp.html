@@ -6,7 +6,7 @@
   <title>MILP Optimizer & XAI Studio — CRIS AI Block Scheduler</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <link rel="stylesheet" href="/src/dashboard/styles.css" />
 </head>
@@ -19,7 +19,7 @@
     <header>
       <div>
         <h1>MILP Optimizer & XAI Explanation Studio</h1>
-        <p style="color:var(--text-secondary); font-size:0.88rem; margin-top:4px;">
+        <p style="color:#334155; font-size:0.88rem; margin-top:4px;">
           Interactive mathematical optimizer solving max ∑ M_j·x_j - λ ∑ P_i·Δd_i with Explainable AI (XAI) transparent audit trails
         </p>
       </div>
@@ -36,27 +36,27 @@
     <div class="hero-stats">
       <div class="hero-stat-card">
         <div class="hstat-label">Solver Formulation</div>
-        <div class="hstat-val amber">HiGHS MIP (Exact)</div>
+        <div class="hstat-val">HiGHS MIP (Exact)</div>
       </div>
       <div class="hero-stat-card">
         <div class="hstat-label">Integrality Gap</div>
-        <div class="hstat-val purple">0.00% (Proven Optimal)</div>
+        <div class="hstat-val">0.00% (Proven Optimal)</div>
       </div>
       <div class="hero-stat-card">
         <div class="hstat-label">XAI Audit Engine</div>
-        <div class="hstat-val orange">CRIS-XAI-v2.4</div>
+        <div class="hstat-val">CRIS-XAI-v2.4</div>
       </div>
       <div class="hero-stat-card">
         <div class="hstat-label">Decision Boundary</div>
-        <div class="hstat-val red">x_j ∈ {0, 1}</div>
+        <div class="hstat-val">x_j ∈ {0, 1}</div>
       </div>
     </div>
 
     <!-- Optimization Solver Control Panel -->
-    <div class="card" style="border-color: rgba(192, 38, 211, 0.35);">
+    <div class="card">
       <div class="card-title-bar">
         <h3>Interactive MILP Solver Workbench</h3>
-        <span class="badge purple">Real-Time Engine</span>
+        <span class="badge">Real-Time Engine</span>
       </div>
 
       <div class="grid-3" style="gap: 16px; align-items: flex-end;">
@@ -70,22 +70,22 @@
         <div class="form-group">
           <div class="form-label" style="display:flex; justify-content:space-between;">
             <span>Penalty Weight Scaling (&lambda;):</span>
-            <span id="lambda-val-badge" style="font-family:var(--font-mono); color:var(--accent-fuchsia); font-weight:700;">1.5</span>
+            <span id="lambda-val-badge" style="font-family:var(--font-mono); color:#000000; font-weight:800;">1.5</span>
           </div>
           <div style="display:flex; align-items:center; gap:10px;">
             <input type="range" id="slider-lambda" min="0.1" max="5.0" step="0.1" value="1.5" />
-            <span style="font-family:var(--font-mono); font-size:0.85rem; font-weight:700; color:var(--accent-fuchsia);" id="slider-lambda-txt">1.5</span>
+            <span style="font-family:var(--font-mono); font-size:0.85rem; font-weight:800; color:#000000;" id="slider-lambda-txt">1.5</span>
           </div>
         </div>
 
         <div class="form-group">
           <div class="form-label" style="display:flex; justify-content:space-between;">
             <span>Traffic Window Offset:</span>
-            <span id="offset-val-badge" style="font-family:var(--font-mono); color:var(--accent-orange); font-weight:700;">Trough (0h)</span>
+            <span id="offset-val-badge" style="font-family:var(--font-mono); color:#000000; font-weight:800;">Trough (0h)</span>
           </div>
           <div style="display:flex; align-items:center; gap:10px;">
             <input type="range" id="slider-offset" min="0" max="4" step="1" value="0" />
-            <span style="font-family:var(--font-mono); font-size:0.85rem; font-weight:700; color:var(--accent-orange);" id="slider-offset-txt">+0h</span>
+            <span style="font-family:var(--font-mono); font-size:0.85rem; font-weight:800; color:#000000;" id="slider-offset-txt">+0h</span>
           </div>
         </div>
       </div>
@@ -104,40 +104,40 @@
     <div class="grid-4" id="kpi-banner-grid">
       <div class="card" style="text-align: center;" id="kpi-decision-card">
         <div class="hstat-label">Decision Variable (x_j)</div>
-        <div style="font-family: var(--font-mono); font-size: 2.2rem; font-weight: 800; color: var(--accent-amber); margin-top: 4px;" id="kpi-xj-val">
+        <div style="font-family: var(--font-mono); font-size: 2.2rem; font-weight: 800; color: #000000; margin-top: 4px;" id="kpi-xj-val">
           x_j = 1
         </div>
-        <div style="font-size: 0.75rem; font-weight: 800; color: var(--accent-amber); letter-spacing: 0.08em;" id="kpi-verdict-val">
+        <div style="font-size: 0.75rem; font-weight: 800; color: #000000; letter-spacing: 0.08em;" id="kpi-verdict-val">
           APPROVED
         </div>
       </div>
 
       <div class="card" style="text-align: center;">
         <div class="hstat-label">Maintenance Yield M_j<sup>eff</sup></div>
-        <div style="font-family: var(--font-mono); font-size: 2rem; font-weight: 800; color: var(--accent-fuchsia); margin-top: 4px;" id="kpi-yield-val">
+        <div style="font-family: var(--font-mono); font-size: 2rem; font-weight: 800; color: #000000; margin-top: 4px;" id="kpi-yield-val">
           98.13
         </div>
-        <div style="font-size: 0.68rem; color: var(--text-muted);">
+        <div style="font-size: 0.68rem; color: #475569; font-weight: 600;">
           Base M_j: 78.5 × 1.25 Urgency
         </div>
       </div>
 
       <div class="card" style="text-align: center;">
         <div class="hstat-label">Disruption Penalty Cost</div>
-        <div style="font-family: var(--font-mono); font-size: 2rem; font-weight: 800; color: var(--accent-red); margin-top: 4px;" id="kpi-penalty-val">
+        <div style="font-family: var(--font-mono); font-size: 2rem; font-weight: 800; color: #000000; margin-top: 4px;" id="kpi-penalty-val">
           58.73
         </div>
-        <div style="font-size: 0.68rem; color: var(--text-muted);" id="kpi-penalty-sub">
+        <div style="font-size: 0.68rem; color: #475569; font-weight: 600;" id="kpi-penalty-sub">
           λ · Σ(P_i · Δd_i)
         </div>
       </div>
 
       <div class="card" style="text-align: center;">
         <div class="hstat-label">Net Objective Value</div>
-        <div style="font-family: var(--font-mono); font-size: 2rem; font-weight: 800; color: var(--accent-orange); margin-top: 4px;" id="kpi-net-obj-val">
+        <div style="font-family: var(--font-mono); font-size: 2rem; font-weight: 800; color: #000000; margin-top: 4px;" id="kpi-net-obj-val">
           +39.40
         </div>
-        <div style="font-size: 0.68rem; color: var(--text-muted);">
+        <div style="font-size: 0.68rem; color: #475569; font-weight: 600;">
           Net System Benefit
         </div>
       </div>
@@ -149,7 +149,7 @@
       <div class="card">
         <div class="card-title-bar">
           <h3>Objective Tradeoff: Maintenance Yield vs Delay Disruption</h3>
-          <span class="badge orange">Cost-Benefit</span>
+          <span class="badge">Cost-Benefit</span>
         </div>
         <div style="height: 240px; position: relative;">
           <canvas id="milpYieldPenaltyChart"></canvas>
@@ -160,7 +160,7 @@
       <div class="card">
         <div class="card-title-bar">
           <h3>Per-Train Disruption Breakdown (Real Fleet)</h3>
-          <span class="badge purple" id="affected-fleet-count">5 Trains Assessed</span>
+          <span class="badge" id="affected-fleet-count">5 Trains Assessed</span>
         </div>
 
         <div class="table-wrap">
@@ -184,17 +184,17 @@
     </div>
 
     <!-- Explainable AI (XAI) Audit Log Section -->
-    <div class="card" style="border-color: rgba(192, 38, 211, 0.4);">
+    <div class="card">
       <div class="card-title-bar">
         <h3>Explainable AI (XAI) Decision Audit Trail</h3>
-        <span class="badge purple">CRIS Audit Compliance</span>
+        <span class="badge">CRIS Audit Compliance</span>
       </div>
 
-      <div style="background: var(--bg-inset); border-left: 4px solid var(--accent-purple); padding: 14px 18px; border-radius: var(--radius-sm); border-top:1px solid var(--border); border-right:1px solid var(--border); border-bottom:1px solid var(--border);">
-        <div style="font-size: 0.88rem; font-weight: 700; color: var(--text-primary);" id="xai-summary-text">
+      <div style="background: rgba(241, 245, 249, 0.9); border-left: 4px solid #0f172a; padding: 14px 18px; border-radius: var(--radius-sm); border-top:1px solid rgba(0,0,0,0.08); border-right:1px solid rgba(0,0,0,0.08); border-bottom:1px solid rgba(0,0,0,0.08);">
+        <div style="font-size: 0.88rem; font-weight: 800; color: #000000;" id="xai-summary-text">
           <!-- Summary injected -->
         </div>
-        <p style="font-size: 0.78rem; color: var(--text-secondary); margin-top: 8px; line-height: 1.6;" id="xai-narrative-text">
+        <p style="font-size: 0.78rem; color: #334155; margin-top: 8px; line-height: 1.6; font-weight: 500;" id="xai-narrative-text">
           <!-- Narrative injected -->
         </p>
       </div>
@@ -203,7 +203,7 @@
       <div class="grid-2">
         <!-- Feature Importances -->
         <div>
-          <div style="font-size: 0.76rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Top Decision Drivers (SHAP Attribution)</div>
+          <div style="font-size: 0.76rem; font-weight: 800; color: #475569; text-transform: uppercase; margin-bottom: 8px;">Top Decision Drivers (SHAP Attribution)</div>
           <div id="xai-feature-list" style="display: flex; flex-direction: column; gap: 8px;">
             <!-- Injected -->
           </div>
@@ -211,7 +211,7 @@
 
         <!-- Counterfactual Scenarios -->
         <div>
-          <div style="font-size: 0.76rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Evaluated Counterfactual "What-If" Scenarios</div>
+          <div style="font-size: 0.76rem; font-weight: 800; color: #475569; text-transform: uppercase; margin-bottom: 8px;">Evaluated Counterfactual "What-If" Scenarios</div>
           <div id="xai-counterfactual-list" style="display: flex; flex-direction: column; gap: 8px;">
             <!-- Injected -->
           </div>
@@ -223,14 +223,14 @@
     <div class="card">
       <div class="card-title-bar">
         <h3>Real-Time MILPOptimizerOutputPayload JSON (cris.milp.optimizer-output.v1)</h3>
-        <span class="badge amber">Optimizer Response</span>
+        <span class="badge">Optimizer Response</span>
       </div>
       <pre class="json-block" id="json-milp-stream"></pre>
     </div>
 
     <footer class="footer">
       <span>CRIS Protocol 4 — MILP Optimizer & Explainable AI Output (MILP-XAI-1.0)</span>
-      <span style="color:var(--accent-amber);">Complies with Indian Railways General Rules & Block Working Guidelines</span>
+      <span>Complies with Indian Railways General Rules & Block Working Guidelines</span>
     </footer>
   </main>
 
@@ -285,27 +285,27 @@
       const netElem = document.getElementById("kpi-net-obj-val");
 
       xjElem.textContent = `x_j = ${res.decision_xj}`;
-      xjElem.style.color = isApproved ? "var(--accent-amber)" : "var(--accent-red)";
+      xjElem.style.color = "#000000";
       verdElem.textContent = isApproved ? "APPROVED" : "REJECTED";
-      verdElem.style.color = isApproved ? "var(--accent-amber)" : "var(--accent-red)";
+      verdElem.style.color = "#000000";
 
       document.getElementById("kpi-yield-val").textContent = res.M_j_effective.toFixed(2);
       document.getElementById("kpi-penalty-val").textContent = res.total_penalty_cost.toFixed(2);
       document.getElementById("kpi-penalty-sub").textContent = `λ (${res.lambda}) × Σ(${res.raw_penalty_sum})`;
 
       netElem.textContent = `${res.net_objective > 0 ? '+' : ''}${res.net_objective.toFixed(2)}`;
-      netElem.style.color = res.net_objective > 0 ? "var(--accent-orange)" : "var(--accent-red)";
+      netElem.style.color = "#000000";
 
       // Per-train table
       document.getElementById("affected-fleet-count").textContent = `${res.per_train_impact.length} Trains Assessed`;
       document.getElementById("milp-trains-table").innerHTML = res.per_train_impact.map(t => `
         <tr>
-          <td><strong style="color:var(--accent-fuchsia);">${t.train_no}</strong> <span style="color:var(--text-secondary); font-size:0.72rem;">${t.train_name}</span></td>
-          <td style="font-family:var(--font-mono); color:var(--accent-purple); font-weight:700;">${t.P_i}</td>
-          <td style="font-family:var(--font-mono);">${t.est_delay} min</td>
-          <td style="font-family:var(--font-mono); color:var(--accent-gold);">${t.delta_d_i} min</td>
-          <td style="font-family:var(--font-mono); font-weight:700;">${t.penalty_contrib}</td>
-          <td>${t.financial_cost > 0 ? `<span class="badge red">${formatINR(t.financial_cost)}</span>` : '<span class="badge amber">₹0 (Within SLA)</span>'}</td>
+          <td><strong style="color:#000000;">${t.train_no}</strong> <span style="color:#334155; font-size:0.72rem;">${t.train_name}</span></td>
+          <td style="font-family:var(--font-mono); color:#000000; font-weight:700;">${t.P_i}</td>
+          <td style="font-family:var(--font-mono); color:#000000;">${t.est_delay} min</td>
+          <td style="font-family:var(--font-mono); color:#000000;">${t.delta_d_i} min</td>
+          <td style="font-family:var(--font-mono); font-weight:700; color:#000000;">${t.penalty_contrib}</td>
+          <td>${t.financial_cost > 0 ? `<span class="badge">${formatINR(t.financial_cost)}</span>` : '<span class="badge">₹0 (Within SLA)</span>'}</td>
         </tr>
       `).join("");
 
@@ -313,32 +313,32 @@
       document.getElementById("xai-summary-text").textContent = res.summary;
       document.getElementById("xai-narrative-text").textContent = res.narrative;
 
-      // SHAP bars (Purple & Red)
+      // SHAP bars (Solid Black/Slate)
       document.getElementById("xai-feature-list").innerHTML = res.feature_importances.map(f => {
         const isPos = f.contribution >= 0;
         return `
-          <div style="background:var(--bg-inset); padding:10px 14px; border-radius:var(--radius-sm); border:1px solid var(--border);">
-            <div style="display:flex; justify-content:space-between; font-size:0.76rem; font-weight:600;">
-              <span>${f.feature}</span>
-              <strong style="color:${isPos ? 'var(--accent-amber)' : 'var(--accent-red)'}; font-family:var(--font-mono);">${isPos ? '+' : ''}${f.contribution.toFixed(2)}</strong>
+          <div style="background:rgba(241,245,249,0.9); padding:10px 14px; border-radius:var(--radius-sm); border:1px solid rgba(0,0,0,0.08);">
+            <div style="display:flex; justify-content:space-between; font-size:0.76rem; font-weight:700;">
+              <span style="color:#000000;">${f.feature}</span>
+              <strong style="color:#000000; font-family:var(--font-mono);">${isPos ? '+' : ''}${f.contribution.toFixed(2)}</strong>
             </div>
-            <div style="font-size:0.68rem; color:var(--text-muted); margin-top:2px;">${f.description}</div>
+            <div style="font-size:0.68rem; color:#475569; margin-top:2px;">${f.description}</div>
           </div>
         `;
       }).join("");
 
       // Counterfactual cards
       document.getElementById("xai-counterfactual-list").innerHTML = res.counterfactuals.map(c => `
-        <div style="background:var(--bg-inset); padding:10px 14px; border-radius:var(--radius-sm); border:1px solid var(--border);">
-          <div style="display:flex; justify-content:space-between; font-size:0.76rem; font-weight:700; color:var(--text-primary);">
+        <div style="background:rgba(241,245,249,0.9); padding:10px 14px; border-radius:var(--radius-sm); border:1px solid rgba(0,0,0,0.08);">
+          <div style="display:flex; justify-content:space-between; font-size:0.76rem; font-weight:700; color:#000000;">
             <span>${c.scenario}</span>
-            <span class="badge ${c.delta_obj >= 0 ? 'amber' : 'red'}">${c.delta_obj >= 0 ? '+' : ''}${c.delta_obj} Net</span>
+            <span class="badge">${c.delta_obj >= 0 ? '+' : ''}${c.delta_obj} Net</span>
           </div>
-          <div style="font-size:0.68rem; color:var(--text-secondary); margin-top:3px;">${c.reason}</div>
+          <div style="font-size:0.68rem; color:#334155; margin-top:3px;">${c.reason}</div>
         </div>
       `).join("");
 
-      // Update Chart with Purple / Orange / Amber / Red palette
+      // Update Chart in Solid Black & Slate
       const chartCtx = document.getElementById("milpYieldPenaltyChart").getContext("2d");
       if (yieldPenaltyChart) yieldPenaltyChart.destroy();
 
@@ -348,10 +348,10 @@
           labels: ["Maintenance Yield (M_j)", "Disruption Penalty (λ·Σ)", "Net Objective"],
           datasets: [{
             data: [res.M_j_effective, res.total_penalty_cost, Math.max(0, res.net_objective)],
-            backgroundColor: ["rgba(192, 38, 211, 0.7)", "rgba(239, 68, 68, 0.7)", res.net_objective > 0 ? "rgba(245, 158, 11, 0.7)" : "rgba(244, 63, 94, 0.7)"],
-            borderColor: ["rgba(217, 70, 239, 1)", "rgba(239, 68, 68, 1)", res.net_objective > 0 ? "rgba(245, 158, 11, 1)" : "rgba(244, 63, 94, 1)"],
-            borderWidth: 1.5,
-            borderRadius: 5
+            backgroundColor: ["#0f172a", "#475569", "#000000"],
+            borderColor: "#000000",
+            borderWidth: 1,
+            borderRadius: 4
           }]
         },
         options: {
@@ -359,8 +359,8 @@
           maintainAspectRatio: false,
           plugins: { legend: { display: false } },
           scales: {
-            x: { ticks: { color: "#cbd5e1", font: { size: 10, family: "JetBrains Mono" } }, grid: { color: "rgba(192, 38, 211, 0.08)" } },
-            y: { ticks: { color: "#cbd5e1", font: { family: "JetBrains Mono" } }, grid: { color: "rgba(192, 38, 211, 0.08)" } }
+            x: { ticks: { color: "#000000", font: { size: 10, family: "JetBrains Mono", weight: "600" } }, grid: { color: "rgba(0, 0, 0, 0.06)" } },
+            y: { ticks: { color: "#000000", font: { family: "JetBrains Mono", weight: "600" } }, grid: { color: "rgba(0, 0, 0, 0.06)" } }
           }
         }
       });

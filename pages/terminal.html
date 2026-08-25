@@ -11,18 +11,18 @@
   <link rel="stylesheet" href="/src/dashboard/styles.css">
   <style>
     .terminal-window {
-      background: #08070e;
-      border: 1px solid var(--border);
+      background: #0f172a;
+      border: 1px solid #1e293b;
       border-radius: var(--radius-md);
       padding: 18px;
       font-family: var(--font-mono);
       font-size: 0.8rem;
-      color: #fdba74;
+      color: #f8fafc;
       min-height: 480px;
       display: flex;
       flex-direction: column;
       gap: 12px;
-      box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
     }
     .terminal-logs {
       flex: 1;
@@ -37,26 +37,26 @@
       gap: 10px;
       line-height: 1.5;
     }
-    .term-time { color: var(--accent-fuchsia); }
-    .term-tag-ok { color: var(--accent-amber); font-weight: 700; }
-    .term-tag-warn { color: var(--accent-orange); font-weight: 700; }
-    .term-tag-crit { color: var(--accent-red); font-weight: 700; }
+    .term-time { color: #94a3b8; font-weight: 700; }
+    .term-tag-ok { color: #38bdf8; font-weight: 700; }
+    .term-tag-warn { color: #facc15; font-weight: 700; }
+    .term-tag-crit { color: #f87171; font-weight: 700; }
     .term-input-row {
       display: flex;
       align-items: center;
       gap: 8px;
-      border-top: 1px solid var(--border);
+      border-top: 1px solid #334155;
       padding-top: 12px;
     }
     .term-prompt {
-      color: var(--accent-fuchsia);
-      font-weight: 700;
+      color: #ffffff;
+      font-weight: 800;
     }
     .term-input {
       flex: 1;
       background: transparent;
       border: none;
-      color: #fff;
+      color: #ffffff;
       font-family: var(--font-mono);
       font-size: 0.85rem;
       outline: none;
@@ -72,7 +72,7 @@
     <header>
       <div>
         <h1>CRIS Central CLI & Telemetry Terminal</h1>
-        <p style="color:var(--text-secondary); font-size:0.88rem; margin-top:4px;">
+        <p style="color:#334155; font-size:0.88rem; margin-top:4px;">
           Direct telemetry command line and operational dispatch gateway for CRIS Railway Systems Architecture
         </p>
       </div>
@@ -88,19 +88,19 @@
     <div class="hero-stats">
       <div class="hero-stat-card">
         <div class="hstat-label">Active Socket</div>
-        <div class="hstat-val purple">CRIS-WSS-01</div>
+        <div class="hstat-val">CRIS-WSS-01</div>
       </div>
       <div class="hero-stat-card">
         <div class="hstat-label">Buffer Health</div>
-        <div class="hstat-val amber">100% OK</div>
+        <div class="hstat-val">100% OK</div>
       </div>
       <div class="hero-stat-card">
         <div class="hstat-label">Stream Latency</div>
-        <div class="hstat-val orange">8ms</div>
+        <div class="hstat-val">8ms</div>
       </div>
       <div class="hero-stat-card">
         <div class="hstat-label">Node Zone</div>
-        <div class="hstat-val red">NR / CR GRAND</div>
+        <div class="hstat-val">NR / CR GRAND</div>
       </div>
     </div>
 
@@ -108,7 +108,7 @@
     <div class="card">
       <div class="card-title-bar">
         <h3>Real-Time Operational Log & Command Console</h3>
-        <span class="badge purple">Interactive CLI</span>
+        <span class="badge">Interactive CLI</span>
       </div>
 
       <div class="terminal-window">
@@ -118,7 +118,7 @@
           <div class="term-line"><span class="term-time">[SYSTEM]</span><span class="term-tag-ok">[BDMS-3.0]</span> Multi-department synchronization engine loaded (Track + OHE + S&T).</div>
           <div class="term-line"><span class="term-time">[SYSTEM]</span><span class="term-tag-ok">[FOIS-2.0]</span> P_i formula loaded: α·B_cat + β·L_dist + γ·V_vol + δ·C_casc.</div>
           <div class="term-line"><span class="term-time">[SYSTEM]</span><span class="term-tag-ok">[MILP-1.0]</span> HiGHS global optimizer solver initialized (gap: 0.00%).</div>
-          <div class="term-line"><span class="term-time">[TELEMETRY]</span><span class="term-tag-warn">[NOTICE]</span> 12301 Rajdhani (HWH→NDLS) speed at 128.5 km/h · Aspect: CLEAR.</div>
+          <div class="term-line"><span class="term-time">[TELEMETRY]</span><span class="term-tag-ok">[NOTICE]</span> 12301 Rajdhani (HWH→NDLS) speed at 128.5 km/h · Aspect: CLEAR.</div>
           <div class="term-line"><span class="term-time">[SOLVER]</span><span class="term-tag-ok">[SOLVED]</span> Evaluated SB-CR-20240815-007 on NGP→SEG · Net objective +39.40.</div>
         </div>
 
@@ -153,7 +153,7 @@
 
     <footer class="footer">
       <span>CRIS Central Command Terminal · Indian Railways Control Systems</span>
-      <span style="color:var(--accent-amber);">Session: TLS-1.3 Encrypted</span>
+      <span>Session: TLS-1.3 Encrypted</span>
     </footer>
   </main>
 
@@ -184,7 +184,7 @@
       cmd = cmd.trim().toLowerCase();
       if (!cmd) return;
 
-      addLog("USER", "ORANGE", `cris-admin@railway:~$ ${cmd}`);
+      addLog("USER", "OK", `cris-admin@railway:~$ ${cmd}`);
 
       if (cmd === "clear") {
         logs.innerHTML = "";
@@ -196,7 +196,7 @@
         addLog("SOLVER", "OK", "Running HiGHS solver on 4 corridors...");
         CORRIDOR_BLOCK_CANDIDATES.forEach(b => {
           const res = runMILPOptimizer(b.block_id, 1.5, 0);
-          addLog("SOLVER", res.decision_xj === 1 ? "OK" : "CRIT", `${b.block_id}: Decision x_j=${res.decision_xj} (${res.verdict}) · Net Objective: ${res.net_objective.toFixed(2)}`);
+          addLog("SOLVER", "OK", `${b.block_id}: Decision x_j=${res.decision_xj} (${res.verdict}) · Net Objective: ${res.net_objective.toFixed(2)}`);
         });
       } else if (cmd === "fleet") {
         addLog("FOIS", "OK", "Fleet Priority Weights P_i & Delay Budgets Δd_i:");

@@ -6,7 +6,7 @@
   <title>Dataset & Historical Delay Analytics — CRIS AI Block Scheduler</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <link rel="stylesheet" href="/src/dashboard/styles.css" />
 </head>
@@ -19,7 +19,7 @@
     <header>
       <div>
         <h1>Real Dataset & Historical Delay Analytics (2016–2025)</h1>
-        <p style="color:var(--text-secondary); font-size:0.88rem; margin-top:4px;">
+        <p style="color:#334155; font-size:0.88rem; margin-top:4px;">
           Comprehensive 10-year Indian Railways historical delay dataset tracking 10 distinct train services over winter operating seasons
         </p>
       </div>
@@ -36,19 +36,19 @@
     <div class="hero-stats">
       <div class="hero-stat-card">
         <div class="hstat-label">Total Observations</div>
-        <div class="hstat-val purple">100 Records</div>
+        <div class="hstat-val">100 Records</div>
       </div>
       <div class="hero-stat-card">
         <div class="hstat-label">Fleet Mean Delay</div>
-        <div class="hstat-val orange">38.4 min</div>
+        <div class="hstat-val">38.4 min</div>
       </div>
       <div class="hero-stat-card">
         <div class="hstat-label">Most Punctual Service</div>
-        <div class="hstat-val amber">Lucknow Mail (80%)</div>
+        <div class="hstat-val">Lucknow Mail (80%)</div>
       </div>
       <div class="hero-stat-card">
         <div class="hstat-label">Dataset Time Horizon</div>
-        <div class="hstat-val gold">10 Winter Yrs</div>
+        <div class="hstat-val">10 Winter Yrs</div>
       </div>
     </div>
 
@@ -77,11 +77,11 @@
       </div>
     </div>
 
-    <!-- Chart: 10-Year Year-over-Year Trajectory (Zero Green/Blue Palette) -->
+    <!-- Chart: 10-Year Year-over-Year Trajectory (Monochrome Palette) -->
     <div class="card">
       <div class="card-title-bar">
         <h3>10-Year Delay Trajectory (2016–2025) Across Trains</h3>
-        <span class="badge orange">Winter Season Delays</span>
+        <span class="badge">Winter Season Delays</span>
       </div>
       <div style="height: 320px; position: relative;">
         <canvas id="yoyDelayChart"></canvas>
@@ -92,7 +92,7 @@
     <div class="card">
       <div class="card-title-bar">
         <h3>Historical Observations Explorer</h3>
-        <span class="badge purple" id="table-record-count">Showing 100 of 100 records</span>
+        <span class="badge" id="table-record-count">Showing 100 of 100 records</span>
       </div>
 
       <div class="table-wrap" style="max-height: 460px; overflow-y: auto;">
@@ -120,7 +120,7 @@
 
     <footer class="footer">
       <span>Indian Railways Historical Delay Dataset · 10 Services · 2016–2025 Winter Observations</span>
-      <span style="color:var(--accent-amber);">Used for Dynamic P_i & Δd_i Machine Calibration</span>
+      <span>Used for Dynamic P_i & Δd_i Machine Calibration</span>
     </footer>
   </main>
 
@@ -160,28 +160,25 @@
     function renderTable(records) {
       document.getElementById("table-record-count").textContent = `Showing ${records.length} of ${allRecords.length} records`;
       document.getElementById("raw-data-table-body").innerHTML = records.map(r => {
-        let bClass = "badge amber";
         let status = "On-Time";
         if (r.delay_minutes > 60) {
-          bClass = "badge red";
           status = "Severe Delay (>1h)";
         } else if (r.delay_minutes > 15) {
-          bClass = "badge orange";
           status = "Moderate Delay";
         }
 
         return `
           <tr>
-            <td style="font-family:var(--font-mono); color:var(--text-muted);">${r.id}</td>
-            <td style="font-family:var(--font-mono); font-weight:700; color:var(--accent-fuchsia);">${r.train_no}</td>
+            <td style="font-family:var(--font-mono); color:#475569;">${r.id}</td>
+            <td style="font-family:var(--font-mono); font-weight:800; color:#000000;">${r.train_no}</td>
             <td><strong>${r.train_name}</strong></td>
-            <td style="color:var(--text-secondary); font-size:0.75rem;">${r.route}</td>
-            <td style="font-family:var(--font-mono); font-weight:700;">${r.year}</td>
-            <td style="font-family:var(--font-mono);">${r.distance_km} km</td>
-            <td style="font-family:var(--font-mono); color:var(--text-secondary);">${r.scheduled_arrival}</td>
-            <td style="font-family:var(--font-mono); color:var(--text-primary);">${r.actual_arrival}</td>
-            <td style="font-family:var(--font-mono); font-weight:800; color:${r.delay_minutes > 30 ? 'var(--accent-red)' : 'var(--accent-amber)'};">${r.delay_minutes} min</td>
-            <td><span class="${bClass}">${status}</span></td>
+            <td style="color:#334155; font-size:0.75rem;">${r.route}</td>
+            <td style="font-family:var(--font-mono); font-weight:700; color:#000000;">${r.year}</td>
+            <td style="font-family:var(--font-mono); color:#000000;">${r.distance_km} km</td>
+            <td style="font-family:var(--font-mono); color:#475569;">${r.scheduled_arrival}</td>
+            <td style="font-family:var(--font-mono); color:#000000; font-weight:700;">${r.actual_arrival}</td>
+            <td style="font-family:var(--font-mono); font-weight:800; color:#000000;">${r.delay_minutes} min</td>
+            <td><span class="badge">${status}</span></td>
           </tr>
         `;
       }).join("");
@@ -225,11 +222,11 @@
       a.click();
     });
 
-    // 10-Year YoY Line Chart (Strict NO Green, NO Blue: Purple, Fuchsia, Red, Orange, Amber, Gold, Rose, Coral)
+    // 10-Year YoY Line Chart in Clean Slate/Black
     const years = [2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025];
-    const warmPalette = [
-      "#c026d3", "#f97316", "#ef4444", "#f59e0b", "#d946ef",
-      "#fb7185", "#fbbf24", "#e11d48", "#ea580c", "#a855f7"
+    const monoPalette = [
+      "#0f172a", "#334155", "#475569", "#64748b", "#1e293b",
+      "#090d16", "#2c3444", "#3e485a", "#121826", "#525e75"
     ];
 
     new Chart(document.getElementById("yoyDelayChart").getContext("2d"), {
@@ -239,8 +236,8 @@
         datasets: TRAIN_PROFILES.map((p, i) => ({
           label: `${p.train_name.split(" ")[0]} (${p.train_no})`,
           data: p.delays_2016_2025,
-          borderColor: warmPalette[i % warmPalette.length],
-          backgroundColor: warmPalette[i % warmPalette.length] + "22",
+          borderColor: monoPalette[i % monoPalette.length],
+          backgroundColor: monoPalette[i % monoPalette.length] + "15",
           borderWidth: 2,
           pointRadius: 3,
           tension: 0.25,
@@ -252,12 +249,12 @@
         plugins: {
           legend: {
             position: "top",
-            labels: { color: "#cbd5e1", font: { size: 11, family: "Plus Jakarta Sans" }, boxWidth: 14 }
+            labels: { color: "#000000", font: { size: 11, family: "Plus Jakarta Sans", weight: "600" }, boxWidth: 14 }
           }
         },
         scales: {
-          x: { ticks: { color: "#cbd5e1", font: { family: "JetBrains Mono" } }, grid: { color: "rgba(192, 38, 211, 0.08)" } },
-          y: { title: { display: true, text: "Delay (Minutes)", color: "#cbd5e1" }, ticks: { color: "#cbd5e1", font: { family: "JetBrains Mono" } }, grid: { color: "rgba(192, 38, 211, 0.08)" } }
+          x: { ticks: { color: "#000000", font: { family: "JetBrains Mono", weight: "600" } }, grid: { color: "rgba(0, 0, 0, 0.06)" } },
+          y: { title: { display: true, text: "Delay (Minutes)", color: "#000000", font: { weight: "700" } }, ticks: { color: "#000000", font: { family: "JetBrains Mono", weight: "600" } }, grid: { color: "rgba(0, 0, 0, 0.06)" } }
         }
       }
     });

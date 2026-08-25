@@ -19,7 +19,7 @@
     <header>
       <div>
         <h1>Operations Command & CRIS Network Topology</h1>
-        <p style="color:var(--text-secondary); font-size:0.88rem; margin-top:4px;">
+        <p style="color:#334155; font-size:0.88rem; margin-top:4px;">
           Indian Railways AI-driven block scheduling & network corridor management platform · 8,990 Stations · 5,208 Trains
         </p>
       </div>
@@ -36,19 +36,19 @@
     <div class="hero-stats">
       <div class="hero-stat-card">
         <div class="hstat-label">IR Network Scope</div>
-        <div class="hstat-val purple">8,990 Stations</div>
+        <div class="hstat-val">8,990 Stations</div>
       </div>
       <div class="hero-stat-card">
         <div class="hstat-label">Historical Baseline</div>
-        <div class="hstat-val orange">10 Winter Yrs</div>
+        <div class="hstat-val">10 Winter Yrs</div>
       </div>
       <div class="hero-stat-card">
         <div class="hstat-label">Train Services</div>
-        <div class="hstat-val red">5,208 Trains</div>
+        <div class="hstat-val">5,208 Trains</div>
       </div>
       <div class="hero-stat-card">
         <div class="hstat-label">Solver Formulation</div>
-        <div class="hstat-val amber">HiGHS MIP (0.0%)</div>
+        <div class="hstat-val">HiGHS MIP (0.0%)</div>
       </div>
     </div>
 
@@ -56,16 +56,16 @@
       <div class="card">
         <div class="card-title-bar">
           <h3>COA Live Telemetry</h3>
-          <span class="badge purple">Protocol 1</span>
+          <span class="badge">Protocol 1</span>
         </div>
         <p>Real-time train positioning, loco speed telemetry, ATP vigilance, and block section berth occupancy tracking.</p>
         <div class="metric-row">
           <div>
-            <div class="metric-val" style="color:var(--accent-fuchsia);">100ms</div>
+            <div class="metric-val">100ms</div>
             <div class="metric-label">Feed Ingestion</div>
           </div>
           <div style="text-align:right;">
-            <div class="metric-val" style="color:var(--accent-amber);">KAVACH</div>
+            <div class="metric-val">KAVACH</div>
             <div class="metric-label">ATP Link</div>
           </div>
         </div>
@@ -75,16 +75,16 @@
       <div class="card">
         <div class="card-title-bar">
           <h3>BDMS Shadow Block</h3>
-          <span class="badge orange">Protocol 2</span>
+          <span class="badge">Protocol 2</span>
         </div>
         <p>Multi-department engineering block co-registration (Track, OHE, Signaling) synthesizing synchronized maintenance slots.</p>
         <div class="metric-row">
           <div>
-            <div class="metric-val" style="color:var(--accent-orange);">+840m</div>
+            <div class="metric-val">+840m</div>
             <div class="metric-label">Saved Train-Min</div>
           </div>
           <div style="text-align:right;">
-            <div class="metric-val" style="color:var(--accent-amber);">91%</div>
+            <div class="metric-val">91%</div>
             <div class="metric-label">Confidence</div>
           </div>
         </div>
@@ -94,16 +94,16 @@
       <div class="card">
         <div class="card-title-bar">
           <h3>FOIS Dynamic Priority</h3>
-          <span class="badge rose">Protocol 3</span>
+          <span class="badge">Protocol 3</span>
         </div>
         <p>Dynamic train priority weighting (P_i) and cascading delay budget (Δd_i) calibrated against 10-year volatility.</p>
         <div class="metric-row">
           <div>
-            <div class="metric-val" style="color:var(--accent-rose);">7.2 P_i</div>
+            <div class="metric-val">7.2 P_i</div>
             <div class="metric-label">Max Priority</div>
           </div>
           <div style="text-align:right;">
-            <div class="metric-val" style="color:var(--accent-gold);">₹15,000</div>
+            <div class="metric-val">₹15,000</div>
             <div class="metric-label">SLA Rate / Min</div>
           </div>
         </div>
@@ -113,16 +113,16 @@
       <div class="card">
         <div class="card-title-bar">
           <h3>MILP Optimizer Studio</h3>
-          <span class="badge red">Protocol 4</span>
+          <span class="badge">Protocol 4</span>
         </div>
         <p>Mixed Integer Linear Programming solver determining optimal binary approval decision (x_j) with XAI explanations.</p>
         <div class="metric-row">
           <div>
-            <div class="metric-val" style="color:var(--accent-red);">x_j = 1</div>
+            <div class="metric-val">x_j = 1</div>
             <div class="metric-label">Optimal Decision</div>
           </div>
           <div style="text-align:right;">
-            <div class="metric-val" style="color:var(--accent-amber); font-size:1.15rem;">λ = 1.5</div>
+            <div class="metric-val">λ = 1.5</div>
             <div class="metric-label">Penalty Weight</div>
           </div>
         </div>
@@ -133,7 +133,7 @@
       <div class="card table-card">
         <div class="card-title-bar">
           <h3>Flagship Fleet Monitoring (Enriched with Zone, Coaches, Stops & 10-Yr Delay Volatility)</h3>
-          <span class="badge amber">Historical Baseline</span>
+          <span class="badge">Historical Baseline</span>
         </div>
         <div class="table-wrap">
           <table class="data-table">
@@ -159,12 +159,12 @@
         </div>
       </div>
 
-      <!-- Visual Charts (Purple / Orange / Red / Amber Palette) -->
+      <!-- Visual Charts (Monochrome Black & Slate Palette) -->
       <div class="grid-2" style="grid-column: 1 / -1;">
         <div class="card">
           <div class="card-title-bar">
             <h3>10-Year Historical Mean Delay by Train (Minutes)</h3>
-            <span class="badge orange">2016–2025</span>
+            <span class="badge">2016–2025</span>
           </div>
           <div style="height: 240px; position: relative;">
             <canvas id="overviewDelayChart"></canvas>
@@ -174,7 +174,7 @@
         <div class="card">
           <div class="card-title-bar">
             <h3>Priority Weight P_i vs Delay Threshold Δd_i</h3>
-            <span class="badge purple">Spectrum Analysis</span>
+            <span class="badge">Spectrum Analysis</span>
           </div>
           <div style="height: 240px; position: relative;">
             <canvas id="overviewPriorityChart"></canvas>
@@ -185,7 +185,7 @@
 
     <footer class="footer">
       <span>Indian Railways · Centre for Railway Information Systems (CRIS) · AI Block Scheduling Platform</span>
-      <span style="color:var(--accent-amber);">Protocols: COA-2.1 · BDMS-3.0 · FOIS-ICMS-2.0 · MILP-XAI-1.0</span>
+      <span>Protocols: COA-2.1 · BDMS-3.0 · FOIS-ICMS-2.0 · MILP-XAI-1.0</span>
     </footer>
   </main>
 
@@ -198,29 +198,25 @@
     const tbody = document.getElementById("fleet-table-body");
     if (tbody && typeof TRAIN_PROFILES !== "undefined") {
       tbody.innerHTML = TRAIN_PROFILES.map(p => {
-        let badgeClass = "badge amber";
-        if (p.sensitivity === "CRITICAL") badgeClass = "badge red";
-        else if (p.sensitivity === "HIGH") badgeClass = "badge orange";
-
         return `
           <tr>
-            <td><strong style="color:var(--accent-fuchsia); font-family:var(--font-mono);">${p.train_no}</strong></td>
+            <td><strong style="color:#000000; font-family:var(--font-mono);">${p.train_no}</strong></td>
             <td><strong>${p.train_name}</strong></td>
-            <td><span class="badge purple">${p.zone || 'NR'}</span></td>
-            <td style="color:var(--text-secondary); font-size:0.76rem;">${p.source} &rarr; ${p.destination} <span style="color:var(--text-muted); font-size:0.7rem;">(${p.total_stops || 10} stops)</span></td>
-            <td><span class="badge amber">${p.category}</span></td>
-            <td style="font-family:var(--font-mono);">${p.distance_km} km</td>
-            <td style="font-family:var(--font-mono); font-weight:700; color:${p.mean_delay > 40 ? 'var(--accent-red)' : 'var(--accent-orange)'}">${p.mean_delay} min</td>
-            <td style="font-family:var(--font-mono); font-weight:700; color:var(--accent-fuchsia);">${p.P_i}</td>
-            <td style="font-family:var(--font-mono); color:var(--accent-gold); font-weight:700;">${p.delta_d_i} min</td>
-            <td><span class="${badgeClass}">${p.sensitivity}</span></td>
-            <td style="font-family:var(--font-mono); color:var(--accent-amber); font-weight:700;">${p.punctuality_pct}%</td>
+            <td><span class="badge">${p.zone || 'NR'}</span></td>
+            <td style="color:#334155; font-size:0.76rem;">${p.source} &rarr; ${p.destination} <span style="color:#64748b; font-size:0.7rem;">(${p.total_stops || 10} stops)</span></td>
+            <td><span class="badge">${p.category}</span></td>
+            <td style="font-family:var(--font-mono); color:#000000;">${p.distance_km} km</td>
+            <td style="font-family:var(--font-mono); font-weight:700; color:#000000;">${p.mean_delay} min</td>
+            <td style="font-family:var(--font-mono); font-weight:700; color:#000000;">${p.P_i}</td>
+            <td style="font-family:var(--font-mono); color:#000000; font-weight:700;">${p.delta_d_i} min</td>
+            <td><span class="badge">${p.sensitivity}</span></td>
+            <td style="font-family:var(--font-mono); color:#000000; font-weight:700;">${p.punctuality_pct}%</td>
           </tr>
         `;
       }).join("");
     }
 
-    // Render Delay Chart (Purple & Warm Orange / Red)
+    // Render Delay Chart (Clean Charcoal/Black Monochrome)
     if (document.getElementById("overviewDelayChart") && typeof TRAIN_PROFILES !== "undefined") {
       new Chart(document.getElementById("overviewDelayChart").getContext("2d"), {
         type: "bar",
@@ -229,9 +225,9 @@
           datasets: [{
             label: "10-Year Mean Delay (min)",
             data: TRAIN_PROFILES.map(p => p.mean_delay),
-            backgroundColor: TRAIN_PROFILES.map(p => p.mean_delay > 40 ? "rgba(239, 68, 68, 0.7)" : "rgba(192, 38, 211, 0.65)"),
-            borderColor: TRAIN_PROFILES.map(p => p.mean_delay > 40 ? "rgba(239, 68, 68, 1)" : "rgba(217, 70, 239, 1)"),
-            borderWidth: 1.5,
+            backgroundColor: "#0f172a",
+            borderColor: "#000000",
+            borderWidth: 1,
             borderRadius: 6,
           }]
         },
@@ -240,14 +236,14 @@
           maintainAspectRatio: false,
           plugins: { legend: { display: false } },
           scales: {
-            x: { ticks: { color: "#cbd5e1", font: { size: 10, family: "JetBrains Mono" } }, grid: { color: "rgba(192, 38, 211, 0.08)" } },
-            y: { ticks: { color: "#cbd5e1", font: { size: 10, family: "JetBrains Mono" } }, grid: { color: "rgba(192, 38, 211, 0.08)" } }
+            x: { ticks: { color: "#000000", font: { size: 10, family: "JetBrains Mono", weight: "600" } }, grid: { color: "rgba(0, 0, 0, 0.06)" } },
+            y: { ticks: { color: "#000000", font: { size: 10, family: "JetBrains Mono", weight: "600" } }, grid: { color: "rgba(0, 0, 0, 0.06)" } }
           }
         }
       });
     }
 
-    // Render Priority Bubble Chart (Purple / Rose / Gold)
+    // Render Priority Bubble Chart (Clean Charcoal/Black)
     if (document.getElementById("overviewPriorityChart") && typeof TRAIN_PROFILES !== "undefined") {
       new Chart(document.getElementById("overviewPriorityChart").getContext("2d"), {
         type: "bubble",
@@ -260,8 +256,8 @@
               r: Math.max(6, Math.min(18, p.distance_km / 240)),
               name: p.train_name
             })),
-            backgroundColor: "rgba(249, 115, 22, 0.65)",
-            borderColor: "rgba(249, 115, 22, 1)",
+            backgroundColor: "rgba(15, 23, 42, 0.75)",
+            borderColor: "#000000",
           }]
         },
         options: {
@@ -276,8 +272,8 @@
             }
           },
           scales: {
-            x: { title: { display: true, text: "Delay Threshold Δd_i (min)", color: "#cbd5e1" }, ticks: { color: "#cbd5e1", font: { family: "JetBrains Mono" } }, grid: { color: "rgba(192, 38, 211, 0.08)" } },
-            y: { title: { display: true, text: "Priority Weight P_i (1-10)", color: "#cbd5e1" }, ticks: { color: "#cbd5e1", font: { family: "JetBrains Mono" } }, grid: { color: "rgba(192, 38, 211, 0.08)" } }
+            x: { title: { display: true, text: "Delay Threshold Δd_i (min)", color: "#000000", font: { weight: "700" } }, ticks: { color: "#000000", font: { family: "JetBrains Mono", weight: "600" } }, grid: { color: "rgba(0, 0, 0, 0.06)" } },
+            y: { title: { display: true, text: "Priority Weight P_i (1-10)", color: "#000000", font: { weight: "700" } }, ticks: { color: "#000000", font: { family: "JetBrains Mono", weight: "600" } }, grid: { color: "rgba(0, 0, 0, 0.06)" } }
           }
         }
       });
