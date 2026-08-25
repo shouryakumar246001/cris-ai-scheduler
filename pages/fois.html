@@ -19,7 +19,7 @@
     <header>
       <div>
         <h1>FOIS & ICMS Dynamic Priority Intelligence</h1>
-        <p style="color:#334155; font-size:0.88rem; margin-top:4px;">
+        <p style="color:#e2e8f0; font-size:0.88rem; margin-top:4px;">
           Dynamic train priority weighting (P_i ∈ [1, 10]) and cascading delay budget (Δd_i) calibrated against 10-year delay volatility
         </p>
       </div>
@@ -56,7 +56,7 @@
     <div class="card" style="padding: 16px 20px;">
       <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
         <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-          <span style="font-size: 0.85rem; font-weight: 800; color: #000000;">Select Train for Priority Deep Dive:</span>
+          <span style="font-size: 0.85rem; font-weight: 800; color: #ffffff;">Select Train for Priority Deep Dive:</span>
           <select id="fois-train-selector" class="form-select" style="min-width: 340px;">
             <!-- Populated via JS -->
           </select>
@@ -78,56 +78,56 @@
           <div class="speed-display" id="pi-display-val">
             6.9
           </div>
-          <div style="font-size: 0.76rem; color: #334155; font-family: var(--font-mono); margin-top: 4px; font-weight: 700;">
+          <div style="font-size: 0.76rem; color: #f1f5f9; font-family: var(--font-mono); margin-top: 4px; font-weight: 700;">
             P<sub>i</sub> = α·B<sub>cat</sub> + β·L<sub>dist</sub> + γ·V<sub>vol</sub> + δ·C<sub>casc</sub>
           </div>
         </div>
 
-        <!-- 4 Component Bars (Clean Monochrome Slate) -->
+        <!-- 4 Component Bars (Clean White / Silver) -->
         <div style="display: flex; flex-direction: column; gap: 12px;">
           <div>
-            <div style="display: flex; justify-content: space-between; font-size: 0.76rem; font-weight: 700; color: #000000; margin-bottom: 4px;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.76rem; font-weight: 700; color: #ffffff; margin-bottom: 4px;">
               <span>α · Category Base (Rajdhani / Shatabdi / SF)</span>
-              <strong id="score-cat" style="color: #000000;">4.0</strong>
+              <strong id="score-cat" style="color: #ffffff;">4.0</strong>
             </div>
-            <div style="height: 8px; background: #e2e8f0; border-radius: 4px; overflow:hidden;">
-              <div id="bar-cat" style="width: 100%; height: 100%; background: #0f172a; border-radius:4px;"></div>
+            <div style="height: 8px; background: rgba(255,255,255,0.15); border-radius: 4px; overflow:hidden;">
+              <div id="bar-cat" style="width: 100%; height: 100%; background: #ffffff; border-radius:4px;"></div>
             </div>
           </div>
 
           <div>
-            <div style="display: flex; justify-content: space-between; font-size: 0.76rem; font-weight: 700; color: #000000; margin-bottom: 4px;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.76rem; font-weight: 700; color: #ffffff; margin-bottom: 4px;">
               <span>β · Distance & Load Factor (Up to 4,198 km)</span>
-              <strong id="score-dist" style="color: #000000;">0.82</strong>
+              <strong id="score-dist" style="color: #ffffff;">0.82</strong>
             </div>
-            <div style="height: 8px; background: #e2e8f0; border-radius: 4px; overflow:hidden;">
-              <div id="bar-dist" style="width: 41%; height: 100%; background: #0f172a; border-radius:4px;"></div>
+            <div style="height: 8px; background: rgba(255,255,255,0.15); border-radius: 4px; overflow:hidden;">
+              <div id="bar-dist" style="width: 41%; height: 100%; background: #ffffff; border-radius:4px;"></div>
             </div>
           </div>
 
           <div>
-            <div style="display: flex; justify-content: space-between; font-size: 0.76rem; font-weight: 700; color: #000000; margin-bottom: 4px;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.76rem; font-weight: 700; color: #ffffff; margin-bottom: 4px;">
               <span>γ · 10-Yr Delay Volatility Risk (σ = 24.2 min)</span>
-              <strong id="score-vol" style="color: #000000;">0.85</strong>
+              <strong id="score-vol" style="color: #ffffff;">0.85</strong>
             </div>
-            <div style="height: 8px; background: #e2e8f0; border-radius: 4px; overflow:hidden;">
-              <div id="bar-vol" style="width: 42%; height: 100%; background: #0f172a; border-radius:4px;"></div>
+            <div style="height: 8px; background: rgba(255,255,255,0.15); border-radius: 4px; overflow:hidden;">
+              <div id="bar-vol" style="width: 42%; height: 100%; background: #ffffff; border-radius:4px;"></div>
             </div>
           </div>
 
           <div>
-            <div style="display: flex; justify-content: space-between; font-size: 0.76rem; font-weight: 700; color: #000000; margin-bottom: 4px;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.76rem; font-weight: 700; color: #ffffff; margin-bottom: 4px;">
               <span>δ · Interlocking & Junction Cascade Factor</span>
-              <strong id="score-casc" style="color: #000000;">1.90</strong>
+              <strong id="score-casc" style="color: #ffffff;">1.90</strong>
             </div>
-            <div style="height: 8px; background: #e2e8f0; border-radius: 4px; overflow:hidden;">
-              <div id="bar-casc" style="width: 95%; height: 100%; background: #0f172a; border-radius:4px;"></div>
+            <div style="height: 8px; background: rgba(255,255,255,0.15); border-radius: 4px; overflow:hidden;">
+              <div id="bar-casc" style="width: 95%; height: 100%; background: #ffffff; border-radius:4px;"></div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Right: Cascading Delay Threshold Δd_i & SLA Exposure -->
+      <!-- Right: Cascading Delay Budget Δd_i & SLA Exposure -->
       <div class="card">
         <div class="card-title-bar">
           <h3>Cascading Delay Budget &Delta;d<sub>i</sub> (Tolerance Limit)</h3>
@@ -135,10 +135,10 @@
         </div>
 
         <div style="text-align: center; margin: 12px 0;">
-          <div style="font-family: var(--font-mono); font-size: 3.2rem; font-weight: 800; color: #000000;" id="delta-d-val">
-            20 <span style="font-size: 1.1rem; color: #475569;">min</span>
+          <div style="font-family: var(--font-mono); font-size: 3.2rem; font-weight: 800; color: #ffffff;" id="delta-d-val">
+            20 <span style="font-size: 1.1rem; color: #cbd5e1;">min</span>
           </div>
-          <div style="font-size: 0.76rem; color: #334155; margin-top: 2px; font-weight: 600;">
+          <div style="font-size: 0.76rem; color: #e2e8f0; margin-top: 2px; font-weight: 600;">
             Delays beyond &Delta;d<sub>i</sub> trigger exponential penalty in MILP cost function
           </div>
         </div>
@@ -162,9 +162,9 @@
           </div>
         </div>
 
-        <div style="background: rgba(241, 245, 249, 0.9); padding: 14px; border-radius: var(--radius-sm); border: 1px solid rgba(0, 0, 0, 0.08); margin-top: auto;">
-          <div style="font-size: 0.68rem; color: #475569; text-transform: uppercase; font-weight:800;">Regulatory Mandate & Protection</div>
-          <div style="font-size: 0.78rem; color: #1e293b; margin-top: 4px; font-weight: 600;" id="mandate-text">
+        <div style="background: rgba(0, 0, 0, 0.5); padding: 14px; border-radius: var(--radius-sm); border: 1px solid rgba(255, 255, 255, 0.12); margin-top: auto;">
+          <div style="font-size: 0.68rem; color: #cbd5e1; text-transform: uppercase; font-weight:800;">Regulatory Mandate & Protection</div>
+          <div style="font-size: 0.78rem; color: #f1f5f9; margin-top: 4px; font-weight: 600;" id="mandate-text">
             Coaching service operates under Indian Railways Punctuality Directive 2023. Top priority clearance enforced at block interfaces.
           </div>
         </div>
@@ -223,7 +223,7 @@
       document.getElementById("pi-badge-val").textContent = `P_i = ${activeProf.P_i} / 10.0`;
       document.getElementById("pi-display-val").textContent = activeProf.P_i;
       document.getElementById("budget-badge-val").textContent = `${activeProf.delta_d_i} min budget`;
-      document.getElementById("delta-d-val").innerHTML = `${activeProf.delta_d_i} <span style="font-size:1.1rem; color:#475569;">min</span>`;
+      document.getElementById("delta-d-val").innerHTML = `${activeProf.delta_d_i} <span style="font-size:1.1rem; color:#cbd5e1;">min</span>`;
 
       document.getElementById("score-cat").textContent = activeProf.category_base.toFixed(1);
       document.getElementById("bar-cat").style.width = `${(activeProf.category_base / 4.0) * 100}%`;
@@ -274,7 +274,7 @@
 
     updateView();
 
-    // Render 10-train comparison chart in Solid Black / Charcoal
+    // Render 10-train comparison chart in Solid White & Silver
     new Chart(document.getElementById("foisPriorityComparisonChart").getContext("2d"), {
       type: "bar",
       data: {
@@ -283,18 +283,18 @@
           {
             label: "Priority Weight P_i",
             data: TRAIN_PROFILES.map(p => p.P_i),
-            backgroundColor: "#0f172a",
-            borderColor: "#000000",
-            borderWidth: 1,
+            backgroundColor: "rgba(255, 255, 255, 0.9)",
+            borderColor: "#ffffff",
+            borderWidth: 1.5,
             borderRadius: 4,
             yAxisID: "y",
           },
           {
             label: "Allowed Threshold Δd_i (min)",
             data: TRAIN_PROFILES.map(p => p.delta_d_i),
-            backgroundColor: "#64748b",
-            borderColor: "#334155",
-            borderWidth: 1,
+            backgroundColor: "rgba(255, 255, 255, 0.45)",
+            borderColor: "#ffffff",
+            borderWidth: 1.5,
             borderRadius: 4,
             yAxisID: "y1",
           }
@@ -304,9 +304,9 @@
         responsive: true,
         maintainAspectRatio: false,
         scales: {
-          x: { ticks: { color: "#000000", font: { size: 10, family: "JetBrains Mono", weight: "600" } }, grid: { color: "rgba(0, 0, 0, 0.06)" } },
-          y: { type: "linear", position: "left", title: { display: true, text: "P_i (1-10)", color: "#000000", font: { weight: "700" } }, ticks: { color: "#000000", font: { family: "JetBrains Mono", weight: "600" } }, grid: { color: "rgba(0, 0, 0, 0.06)" } },
-          y1: { type: "linear", position: "right", title: { display: true, text: "Δd_i (min)", color: "#000000", font: { weight: "700" } }, ticks: { color: "#000000", font: { family: "JetBrains Mono", weight: "600" } }, grid: { drawOnChartArea: false } }
+          x: { ticks: { color: "#ffffff", font: { size: 10, family: "JetBrains Mono", weight: "700" } }, grid: { color: "rgba(255, 255, 255, 0.12)" } },
+          y: { type: "linear", position: "left", title: { display: true, text: "P_i (1-10)", color: "#ffffff", font: { weight: "800" } }, ticks: { color: "#ffffff", font: { family: "JetBrains Mono", weight: "700" } }, grid: { color: "rgba(255, 255, 255, 0.12)" } },
+          y1: { type: "linear", position: "right", title: { display: true, text: "Δd_i (min)", color: "#ffffff", font: { weight: "800" } }, ticks: { color: "#ffffff", font: { family: "JetBrains Mono", weight: "700" } }, grid: { drawOnChartArea: false } }
         }
       }
     });

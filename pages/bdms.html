@@ -19,7 +19,7 @@
     <header>
       <div>
         <h1>BDMS & "Shadow Block" Synchronization Engine</h1>
-        <p style="color:#334155; font-size:0.88rem; margin-top:4px;">
+        <p style="color:#e2e8f0; font-size:0.88rem; margin-top:4px;">
           Automated multi-department engineering block co-registration (Track, OHE, Signaling) to synthesize unified "Shadow Blocks"
         </p>
       </div>
@@ -56,7 +56,7 @@
     <div class="card" style="padding: 16px 20px;">
       <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
         <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-          <span style="font-size: 0.85rem; font-weight: 800; color: #000000;">Select Corridor Candidate:</span>
+          <span style="font-size: 0.85rem; font-weight: 800; color: #ffffff;">Select Corridor Candidate:</span>
           <select id="corridor-selector" class="form-select" style="min-width: 380px;">
             <!-- Populated via JS -->
           </select>
@@ -75,31 +75,31 @@
         </div>
 
         <div style="display: flex; flex-direction: column; gap: 12px; margin: 10px 0;">
-          <!-- 3 Department Nodes (Clean Monochrome) -->
+          <!-- 3 Department Nodes (Clean White / Dark Glass) -->
           <div style="display: flex; gap: 10px; justify-content: space-between;">
-            <div class="card" style="flex:1; background:rgba(241,245,249,0.9); border:1px solid rgba(0,0,0,0.12); text-align:center; padding:12px;">
-              <div style="font-family:var(--font-mono); font-size:0.8rem; font-weight:800; color:#000000;">TRACK (P-Way)</div>
-              <div style="font-size:0.68rem; color:#475569; margin-top:4px; font-weight:600;" id="dept-track-work">Deep Ballast Tamping</div>
+            <div class="card" style="flex:1; background:rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.18); text-align:center; padding:12px;">
+              <div style="font-family:var(--font-mono); font-size:0.8rem; font-weight:800; color:#ffffff;">TRACK (P-Way)</div>
+              <div style="font-size:0.68rem; color:#cbd5e1; margin-top:4px; font-weight:600;" id="dept-track-work">Deep Ballast Tamping</div>
             </div>
-            <div class="card" style="flex:1; background:rgba(241,245,249,0.9); border:1px solid rgba(0,0,0,0.12); text-align:center; padding:12px;">
-              <div style="font-family:var(--font-mono); font-size:0.8rem; font-weight:800; color:#000000;">OHE (Electrical)</div>
-              <div style="font-size:0.68rem; color:#475569; margin-top:4px; font-weight:600;" id="dept-ohe-work">Cantilever Tensioning</div>
+            <div class="card" style="flex:1; background:rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.18); text-align:center; padding:12px;">
+              <div style="font-family:var(--font-mono); font-size:0.8rem; font-weight:800; color:#ffffff;">OHE (Electrical)</div>
+              <div style="font-size:0.68rem; color:#cbd5e1; margin-top:4px; font-weight:600;" id="dept-ohe-work">Cantilever Tensioning</div>
             </div>
-            <div class="card" style="flex:1; background:rgba(241,245,249,0.9); border:1px solid rgba(0,0,0,0.12); text-align:center; padding:12px;">
-              <div style="font-family:var(--font-mono); font-size:0.8rem; font-weight:800; color:#000000;">SIGNALING (S&T)</div>
-              <div style="font-size:0.68rem; color:#475569; margin-top:4px; font-weight:600;" id="dept-sig-work">Track Circuit Testing</div>
+            <div class="card" style="flex:1; background:rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.18); text-align:center; padding:12px;">
+              <div style="font-family:var(--font-mono); font-size:0.8rem; font-weight:800; color:#ffffff;">SIGNALING (S&T)</div>
+              <div style="font-size:0.68rem; color:#cbd5e1; margin-top:4px; font-weight:600;" id="dept-sig-work">Track Circuit Testing</div>
             </div>
           </div>
 
           <!-- Convergence Banner -->
-          <div style="text-align: center; background: rgba(241,245,249,0.9); padding: 14px; border-radius: var(--radius-sm); border: 1px dashed rgba(0,0,0,0.25);">
-            <div style="font-size: 0.78rem; font-weight: 800; color: #000000; letter-spacing:0.5px;">
+          <div style="text-align: center; background: rgba(0,0,0,0.6); padding: 14px; border-radius: var(--radius-sm); border: 1px dashed rgba(255,255,255,0.35);">
+            <div style="font-size: 0.78rem; font-weight: 800; color: #ffffff; letter-spacing:0.5px;">
               AI SYNTHESIZED SHADOW BLOCK WINDOW
             </div>
-            <div style="font-family: var(--font-mono); font-size: 1.25rem; font-weight: 800; color: #000000; margin-top: 4px;" id="sb-id-banner">
+            <div style="font-family: var(--font-mono); font-size: 1.25rem; font-weight: 800; color: #ffffff; margin-top: 4px;" id="sb-id-banner">
               SB-CR-20240815-007
             </div>
-            <div style="font-size: 0.76rem; color: #334155; margin-top: 2px; font-weight: 600;" id="sb-window-text">
+            <div style="font-size: 0.76rem; color: #e2e8f0; margin-top: 2px; font-weight: 600;" id="sb-window-text">
               01:30 IST &rarr; 04:15 IST (165 Minutes · Zero Conflict)
             </div>
           </div>
@@ -107,7 +107,7 @@
 
         <!-- Sync Flags Matrix -->
         <div>
-          <div style="font-size: 0.76rem; font-weight: 800; color: #475569; text-transform: uppercase; margin-bottom: 8px;">Multi-Department Synchronization Flags</div>
+          <div style="font-size: 0.76rem; font-weight: 800; color: #cbd5e1; text-transform: uppercase; margin-bottom: 8px;">Multi-Department Synchronization Flags</div>
           <div class="grid-3" style="gap: 8px;">
             <div class="hero-stat-card" style="text-align:center;">
               <div class="hstat-label">Track Synced</div>
@@ -144,7 +144,7 @@
           <span class="badge" id="affected-count-badge">5 Trains</span>
         </div>
 
-        <p style="font-size: 0.8rem; color: #334155;">
+        <p style="font-size: 0.8rem; color: #e2e8f0;">
           Trains from our 2016–2025 dataset traversing this block section during the requested maintenance window:
         </p>
 
@@ -166,12 +166,12 @@
         </div>
 
         <!-- Efficiency Gain Breakdown -->
-        <div style="background: rgba(241,245,249,0.9); border: 1px solid rgba(0,0,0,0.12); border-radius: var(--radius-sm); padding: 14px; margin-top: auto;">
-          <div style="font-size: 0.82rem; font-weight: 800; color: #000000;">
+        <div style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); border-radius: var(--radius-sm); padding: 14px; margin-top: auto;">
+          <div style="font-size: 0.82rem; font-weight: 800; color: #ffffff;">
             Line Clearance & Efficiency Metric
           </div>
-          <div style="font-size: 0.76rem; color: #334155; margin-top: 4px; font-weight: 600;" id="eff-metric-expl">
-            Merging 3 separate department blocks (Track 180m + OHE 120m + S&T 90m = 390m total) into a single 180-minute Shadow Block saves <strong style="color:#000000;">840 train-minutes</strong> of cascading delay on the corridor.
+          <div style="font-size: 0.76rem; color: #e2e8f0; margin-top: 4px; font-weight: 600;" id="eff-metric-expl">
+            Merging 3 separate department blocks (Track 180m + OHE 120m + S&T 90m = 390m total) into a single 180-minute Shadow Block saves <strong style="color:#ffffff;">840 train-minutes</strong> of cascading delay on the corridor.
           </div>
         </div>
       </div>
@@ -223,10 +223,10 @@
 
       document.getElementById("affected-trains-table").innerHTML = affected.map(p => `
         <tr>
-          <td><strong style="color:#000000; font-family:var(--font-mono);">${p.train_no}</strong> <span style="font-size:0.75rem; color:#334155;">${p.train_name}</span></td>
+          <td><strong style="color:#ffffff; font-family:var(--font-mono);">${p.train_no}</strong> <span style="font-size:0.75rem; color:#cbd5e1;">${p.train_name}</span></td>
           <td><span class="badge">${p.category}</span></td>
-          <td style="font-family:var(--font-mono); color:#000000; font-weight:700;">${p.P_i}</td>
-          <td style="font-family:var(--font-mono); color:#000000; font-weight:700;">${p.delta_d_i} min</td>
+          <td style="font-family:var(--font-mono); color:#ffffff; font-weight:700;">${p.P_i}</td>
+          <td style="font-family:var(--font-mono); color:#ffffff; font-weight:700;">${p.delta_d_i} min</td>
           <td><span class="badge">${p.sensitivity}</span></td>
         </tr>
       `).join("");

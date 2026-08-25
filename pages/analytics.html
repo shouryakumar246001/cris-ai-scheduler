@@ -6,7 +6,7 @@
   <title>Dataset & Historical Delay Analytics — CRIS AI Block Scheduler</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <link rel="stylesheet" href="/src/dashboard/styles.css" />
 </head>
@@ -19,7 +19,7 @@
     <header>
       <div>
         <h1>Real Dataset & Historical Delay Analytics (2016–2025)</h1>
-        <p style="color:#334155; font-size:0.88rem; margin-top:4px;">
+        <p style="color:#e2e8f0; font-size:0.88rem; margin-top:4px;">
           Comprehensive 10-year Indian Railways historical delay dataset tracking 10 distinct train services over winter operating seasons
         </p>
       </div>
@@ -77,7 +77,7 @@
       </div>
     </div>
 
-    <!-- Chart: 10-Year Year-over-Year Trajectory (Monochrome Palette) -->
+    <!-- Chart: 10-Year Year-over-Year Trajectory (Crisp White / Silver Lines) -->
     <div class="card">
       <div class="card-title-bar">
         <h3>10-Year Delay Trajectory (2016–2025) Across Trains</h3>
@@ -169,15 +169,15 @@
 
         return `
           <tr>
-            <td style="font-family:var(--font-mono); color:#475569;">${r.id}</td>
-            <td style="font-family:var(--font-mono); font-weight:800; color:#000000;">${r.train_no}</td>
-            <td><strong>${r.train_name}</strong></td>
-            <td style="color:#334155; font-size:0.75rem;">${r.route}</td>
-            <td style="font-family:var(--font-mono); font-weight:700; color:#000000;">${r.year}</td>
-            <td style="font-family:var(--font-mono); color:#000000;">${r.distance_km} km</td>
-            <td style="font-family:var(--font-mono); color:#475569;">${r.scheduled_arrival}</td>
-            <td style="font-family:var(--font-mono); color:#000000; font-weight:700;">${r.actual_arrival}</td>
-            <td style="font-family:var(--font-mono); font-weight:800; color:#000000;">${r.delay_minutes} min</td>
+            <td style="font-family:var(--font-mono); color:#cbd5e1;">${r.id}</td>
+            <td style="font-family:var(--font-mono); font-weight:800; color:#ffffff;">${r.train_no}</td>
+            <td><strong style="color:#ffffff;">${r.train_name}</strong></td>
+            <td style="color:#e2e8f0; font-size:0.75rem;">${r.route}</td>
+            <td style="font-family:var(--font-mono); font-weight:700; color:#ffffff;">${r.year}</td>
+            <td style="font-family:var(--font-mono); color:#ffffff;">${r.distance_km} km</td>
+            <td style="font-family:var(--font-mono); color:#cbd5e1;">${r.scheduled_arrival}</td>
+            <td style="font-family:var(--font-mono); color:#ffffff; font-weight:700;">${r.actual_arrival}</td>
+            <td style="font-family:var(--font-mono); font-weight:800; color:#ffffff;">${r.delay_minutes} min</td>
             <td><span class="badge">${status}</span></td>
           </tr>
         `;
@@ -222,11 +222,11 @@
       a.click();
     });
 
-    // 10-Year YoY Line Chart in Clean Slate/Black
+    // 10-Year YoY Line Chart in Crisp White & Luminous Silver
     const years = [2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025];
-    const monoPalette = [
-      "#0f172a", "#334155", "#475569", "#64748b", "#1e293b",
-      "#090d16", "#2c3444", "#3e485a", "#121826", "#525e75"
+    const silverPalette = [
+      "#ffffff", "#f1f5f9", "#e2e8f0", "#cbd5e1", "#94a3b8",
+      "#f8fafc", "#e0e7ff", "#f3e8ff", "#fed7aa", "#fce7f3"
     ];
 
     new Chart(document.getElementById("yoyDelayChart").getContext("2d"), {
@@ -236,8 +236,8 @@
         datasets: TRAIN_PROFILES.map((p, i) => ({
           label: `${p.train_name.split(" ")[0]} (${p.train_no})`,
           data: p.delays_2016_2025,
-          borderColor: monoPalette[i % monoPalette.length],
-          backgroundColor: monoPalette[i % monoPalette.length] + "15",
+          borderColor: silverPalette[i % silverPalette.length],
+          backgroundColor: "rgba(255, 255, 255, 0.05)",
           borderWidth: 2,
           pointRadius: 3,
           tension: 0.25,
@@ -249,12 +249,12 @@
         plugins: {
           legend: {
             position: "top",
-            labels: { color: "#000000", font: { size: 11, family: "Plus Jakarta Sans", weight: "600" }, boxWidth: 14 }
+            labels: { color: "#ffffff", font: { size: 11, family: "Plus Jakarta Sans", weight: "700" }, boxWidth: 14 }
           }
         },
         scales: {
-          x: { ticks: { color: "#000000", font: { family: "JetBrains Mono", weight: "600" } }, grid: { color: "rgba(0, 0, 0, 0.06)" } },
-          y: { title: { display: true, text: "Delay (Minutes)", color: "#000000", font: { weight: "700" } }, ticks: { color: "#000000", font: { family: "JetBrains Mono", weight: "600" } }, grid: { color: "rgba(0, 0, 0, 0.06)" } }
+          x: { ticks: { color: "#ffffff", font: { family: "JetBrains Mono", weight: "700" } }, grid: { color: "rgba(255, 255, 255, 0.12)" } },
+          y: { title: { display: true, text: "Delay (Minutes)", color: "#ffffff", font: { weight: "800" } }, ticks: { color: "#ffffff", font: { family: "JetBrains Mono", weight: "700" } }, grid: { color: "rgba(255, 255, 255, 0.12)" } }
         }
       }
     });

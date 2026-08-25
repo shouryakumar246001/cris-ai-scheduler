@@ -19,7 +19,7 @@
     <header>
       <div>
         <h1>COA Live Telemetry & Ingestion Lab</h1>
-        <p style="color:#334155; font-size:0.88rem; margin-top:4px;">
+        <p style="color:#e2e8f0; font-size:0.88rem; margin-top:4px;">
           Real-time train positioning, loco speed telemetry, ATP status, and line berth occupancy across 10 Indian Railways services
         </p>
       </div>
@@ -56,7 +56,7 @@
     <div class="card" style="padding: 16px 20px;">
       <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
         <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-          <span style="font-size: 0.85rem; font-weight: 800; color: #000000;">Select Live Train Service:</span>
+          <span style="font-size: 0.85rem; font-weight: 800; color: #ffffff;">Select Live Train Service:</span>
           <select id="train-selector" class="form-select" style="min-width: 320px;">
             <!-- Populated via JS with all 10 real trains -->
           </select>
@@ -79,9 +79,9 @@
 
         <div style="text-align: center; margin: 12px 0;">
           <div class="speed-display" id="gauge-speed">
-            128.5 <span style="font-size: 1.1rem; color: #475569;">km/h</span>
+            128.5 <span style="font-size: 1.1rem; color: #cbd5e1;">km/h</span>
           </div>
-          <div style="font-size: 0.76rem; color: #334155; margin-top: 2px; font-weight: 600;">
+          <div style="font-size: 0.76rem; color: #e2e8f0; margin-top: 2px; font-weight: 600;">
             Target Section MPS: 130 km/h · ATP Restricted
           </div>
         </div>
@@ -105,9 +105,9 @@
           </div>
         </div>
 
-        <div style="background: rgba(241, 245, 249, 0.9); padding: 12px; border-radius: var(--radius-sm); border: 1px solid rgba(0, 0, 0, 0.08); margin-top: auto;">
-          <div style="font-size: 0.68rem; color: #475569; text-transform: uppercase; font-weight:800;">WGS-84 GPS Position</div>
-          <div style="font-family: var(--font-mono); font-size: 0.85rem; color: #000000; font-weight: 700; margin-top: 4px;" id="tele-coords">
+        <div style="background: rgba(0, 0, 0, 0.5); padding: 12px; border-radius: var(--radius-sm); border: 1px solid rgba(255, 255, 255, 0.12); margin-top: auto;">
+          <div style="font-size: 0.68rem; color: #cbd5e1; text-transform: uppercase; font-weight:800;">WGS-84 GPS Position</div>
+          <div style="font-family: var(--font-mono); font-size: 0.85rem; color: #ffffff; font-weight: 700; margin-top: 4px;" id="tele-coords">
             28.6139° N, 77.2090° E (Heading: 312°)
           </div>
         </div>
@@ -121,20 +121,20 @@
         </div>
 
         <!-- Track Line Progression -->
-        <div style="background: rgba(241, 245, 249, 0.9); padding: 16px; border-radius: var(--radius-sm); border: 1px solid rgba(0, 0, 0, 0.08);">
-          <div style="display: flex; justify-content: space-between; font-size: 0.76rem; color: #1e293b; font-weight: 700; margin-bottom: 8px;">
+        <div style="background: rgba(0, 0, 0, 0.5); padding: 16px; border-radius: var(--radius-sm); border: 1px solid rgba(255, 255, 255, 0.12);">
+          <div style="display: flex; justify-content: space-between; font-size: 0.76rem; color: #ffffff; font-weight: 700; margin-bottom: 8px;">
             <span id="prog-source">Howrah (HWH)</span>
-            <span id="prog-mid" style="color: #000000; font-weight: 800;">Section: CNB-NDLS-084</span>
+            <span id="prog-mid" style="color: #ffffff; font-weight: 800;">Section: CNB-NDLS-084</span>
             <span id="prog-dest">New Delhi (NDLS)</span>
           </div>
-          <div style="height: 8px; background: #e2e8f0; border-radius: 4px; position: relative; overflow: hidden;">
-            <div id="prog-bar" style="width: 78%; height: 100%; background: #0f172a; border-radius: 4px;"></div>
+          <div style="height: 8px; background: rgba(255, 255, 255, 0.15); border-radius: 4px; position: relative; overflow: hidden;">
+            <div id="prog-bar" style="width: 78%; height: 100%; background: #ffffff; border-radius: 4px;"></div>
           </div>
         </div>
 
         <!-- Section Berth Occupancy Grid -->
         <div>
-          <div style="font-size: 0.76rem; font-weight: 800; color: #475569; text-transform: uppercase; margin-bottom: 8px;">Current Section Berths (Line Occupancy State)</div>
+          <div style="font-size: 0.76rem; font-weight: 800; color: #cbd5e1; text-transform: uppercase; margin-bottom: 8px;">Current Section Berths (Line Occupancy State)</div>
           <div class="grid-3" id="berth-container">
             <!-- Dynamically populated -->
           </div>
@@ -142,7 +142,7 @@
 
         <!-- Station Event Log -->
         <div>
-          <div style="font-size: 0.76rem; font-weight: 800; color: #475569; text-transform: uppercase; margin-bottom: 8px;">Station Event Log & Punctuality Tracker</div>
+          <div style="font-size: 0.76rem; font-weight: 800; color: #cbd5e1; text-transform: uppercase; margin-bottom: 8px;">Station Event Log & Punctuality Tracker</div>
           <div class="table-wrap">
             <table class="data-table" style="font-size: 0.74rem;">
               <thead>
@@ -209,7 +209,7 @@
 
     function updateView() {
       document.getElementById("hero-section-id").textContent = activeTrain.route_sections[0] || "MAIN-01";
-      document.getElementById("gauge-speed").innerHTML = `${activeTrain.speed_kmph.toFixed(1)} <span style="font-size:1.1rem; color:#475569;">km/h</span>`;
+      document.getElementById("gauge-speed").innerHTML = `${activeTrain.speed_kmph.toFixed(1)} <span style="font-size:1.1rem; color:#cbd5e1;">km/h</span>`;
       document.getElementById("tele-current").textContent = `${activeTrain.traction_current_A} A`;
       document.getElementById("tele-brake").textContent = `${activeTrain.brake_pressure_bar} bar`;
       document.getElementById("route-span-label").textContent = `${activeTrain.source} → ${activeTrain.destination}`;
@@ -218,20 +218,20 @@
 
       // Berths
       const berthHtml = `
-        <div class="card" style="background:rgba(241,245,249,0.9); border:1px solid rgba(0,0,0,0.12); text-align:center; padding:12px;">
-          <div style="font-family:var(--font-mono); font-size:1.05rem; color:#000000; font-weight:800;">MAIN UP (B1)</div>
-          <div style="font-size:0.65rem; color:#000000; font-weight:800; margin-top:2px;">OCCUPIED</div>
-          <div style="font-family:var(--font-mono); font-size:0.74rem; color:#1e293b; margin-top:4px;">Train ${activeTrain.train_no}</div>
+        <div class="card" style="background:rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.2); text-align:center; padding:12px;">
+          <div style="font-family:var(--font-mono); font-size:1.05rem; color:#ffffff; font-weight:800;">MAIN UP (B1)</div>
+          <div style="font-size:0.65rem; color:#ffffff; font-weight:800; margin-top:2px;">OCCUPIED</div>
+          <div style="font-family:var(--font-mono); font-size:0.74rem; color:#cbd5e1; margin-top:4px;">Train ${activeTrain.train_no}</div>
         </div>
-        <div class="card" style="background:rgba(241,245,249,0.9); border:1px solid rgba(0,0,0,0.12); text-align:center; padding:12px;">
-          <div style="font-family:var(--font-mono); font-size:1.05rem; color:#000000; font-weight:800;">MAIN DOWN (B2)</div>
-          <div style="font-size:0.65rem; color:#475569; font-weight:800; margin-top:2px;">CLEAR</div>
-          <div style="font-family:var(--font-mono); font-size:0.74rem; color:#475569; margin-top:4px;">Clearance Granted</div>
+        <div class="card" style="background:rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.2); text-align:center; padding:12px;">
+          <div style="font-family:var(--font-mono); font-size:1.05rem; color:#ffffff; font-weight:800;">MAIN DOWN (B2)</div>
+          <div style="font-size:0.65rem; color:#cbd5e1; font-weight:800; margin-top:2px;">CLEAR</div>
+          <div style="font-family:var(--font-mono); font-size:0.74rem; color:#cbd5e1; margin-top:4px;">Clearance Granted</div>
         </div>
-        <div class="card" style="background:rgba(241,245,249,0.9); border:1px solid rgba(0,0,0,0.12); text-align:center; padding:12px;">
-          <div style="font-family:var(--font-mono); font-size:1.05rem; color:#000000; font-weight:800;">LOOP LINE (L1)</div>
-          <div style="font-size:0.65rem; color:#475569; font-weight:800; margin-top:2px;">RESERVED</div>
-          <div style="font-family:var(--font-mono); font-size:0.74rem; color:#475569; margin-top:4px;">Maintenance Slot</div>
+        <div class="card" style="background:rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.2); text-align:center; padding:12px;">
+          <div style="font-family:var(--font-mono); font-size:1.05rem; color:#ffffff; font-weight:800;">LOOP LINE (L1)</div>
+          <div style="font-size:0.65rem; color:#cbd5e1; font-weight:800; margin-top:2px;">RESERVED</div>
+          <div style="font-family:var(--font-mono); font-size:0.74rem; color:#cbd5e1; margin-top:4px;">Maintenance Slot</div>
         </div>
       `;
       document.getElementById("berth-container").innerHTML = berthHtml;
@@ -239,25 +239,25 @@
       // Station Timeline
       const timelineHtml = `
         <tr>
-          <td><strong style="color:#000000;">${activeTrain.source}</strong></td>
-          <td style="font-family:var(--font-mono); color:#475569;">Dep: 06:00 IST</td>
-          <td style="font-family:var(--font-mono); color:#000000; font-weight:700;">Dep: 06:05 IST</td>
+          <td><strong style="color:#ffffff;">${activeTrain.source}</strong></td>
+          <td style="font-family:var(--font-mono); color:#cbd5e1;">Dep: 06:00 IST</td>
+          <td style="font-family:var(--font-mono); color:#ffffff; font-weight:700;">Dep: 06:05 IST</td>
           <td><span class="badge">On-Time (+5m)</span></td>
-          <td style="color:#334155;">Origin Station</td>
+          <td style="color:#e2e8f0;">Origin Station</td>
         </tr>
         <tr>
-          <td><strong style="color:#000000;">Junction Hub (Midway)</strong></td>
-          <td style="font-family:var(--font-mono); color:#475569;">Arr: 08:30 · Dep: 08:40</td>
-          <td style="font-family:var(--font-mono); color:#000000; font-weight:700;">Arr: 08:42 · Dep: 08:50</td>
+          <td><strong style="color:#ffffff;">Junction Hub (Midway)</strong></td>
+          <td style="font-family:var(--font-mono); color:#cbd5e1;">Arr: 08:30 · Dep: 08:40</td>
+          <td style="font-family:var(--font-mono); color:#ffffff; font-weight:700;">Arr: 08:42 · Dep: 08:50</td>
           <td><span class="badge">Delayed (+12m)</span></td>
-          <td style="color:#334155;">Crew Change (Yes)</td>
+          <td style="color:#e2e8f0;">Crew Change (Yes)</td>
         </tr>
         <tr>
-          <td><strong style="color:#000000;">${activeTrain.destination}</strong></td>
-          <td style="font-family:var(--font-mono); color:#475569;">Sch: ${activeTrain.scheduled_arrival}</td>
-          <td style="font-family:var(--font-mono); color:#000000; font-weight:700;">Est: In Transit</td>
+          <td><strong style="color:#ffffff;">${activeTrain.destination}</strong></td>
+          <td style="font-family:var(--font-mono); color:#cbd5e1;">Sch: ${activeTrain.scheduled_arrival}</td>
+          <td style="font-family:var(--font-mono); color:#ffffff; font-weight:700;">Est: In Transit</td>
           <td><span class="badge">P_i=${activeTrain.P_i}</span></td>
-          <td style="color:#334155;">Destination Terminal</td>
+          <td style="color:#e2e8f0;">Destination Terminal</td>
         </tr>
       `;
       document.getElementById("station-timeline-body").innerHTML = timelineHtml;
@@ -303,7 +303,7 @@
       if (isPaused) return;
       const jitter = (Math.random() * 2 - 1).toFixed(1);
       activeTrain.speed_kmph = Math.max(80, Math.min(140, activeTrain.speed_kmph + parseFloat(jitter)));
-      document.getElementById("gauge-speed").innerHTML = `${activeTrain.speed_kmph.toFixed(1)} <span style="font-size:1.1rem; color:#475569;">km/h</span>`;
+      document.getElementById("gauge-speed").innerHTML = `${activeTrain.speed_kmph.toFixed(1)} <span style="font-size:1.1rem; color:#cbd5e1;">km/h</span>`;
     }, 2000);
   </script>
 </body>

@@ -19,7 +19,7 @@
     <header>
       <div>
         <h1>Operations Command & CRIS Network Topology</h1>
-        <p style="color:#334155; font-size:0.88rem; margin-top:4px;">
+        <p style="color:#e2e8f0; font-size:0.88rem; margin-top:4px;">
           Indian Railways AI-driven block scheduling & network corridor management platform · 8,990 Stations · 5,208 Trains
         </p>
       </div>
@@ -159,7 +159,7 @@
         </div>
       </div>
 
-      <!-- Visual Charts (Monochrome Black & Slate Palette) -->
+      <!-- Visual Charts (100% Crisp White & Luminous Silver) -->
       <div class="grid-2" style="grid-column: 1 / -1;">
         <div class="card">
           <div class="card-title-bar">
@@ -200,23 +200,23 @@
       tbody.innerHTML = TRAIN_PROFILES.map(p => {
         return `
           <tr>
-            <td><strong style="color:#000000; font-family:var(--font-mono);">${p.train_no}</strong></td>
-            <td><strong>${p.train_name}</strong></td>
+            <td><strong style="color:#ffffff; font-family:var(--font-mono);">${p.train_no}</strong></td>
+            <td><strong style="color:#ffffff;">${p.train_name}</strong></td>
             <td><span class="badge">${p.zone || 'NR'}</span></td>
-            <td style="color:#334155; font-size:0.76rem;">${p.source} &rarr; ${p.destination} <span style="color:#64748b; font-size:0.7rem;">(${p.total_stops || 10} stops)</span></td>
+            <td style="color:#cbd5e1; font-size:0.76rem;">${p.source} &rarr; ${p.destination} <span style="color:#94a3b8; font-size:0.7rem;">(${p.total_stops || 10} stops)</span></td>
             <td><span class="badge">${p.category}</span></td>
-            <td style="font-family:var(--font-mono); color:#000000;">${p.distance_km} km</td>
-            <td style="font-family:var(--font-mono); font-weight:700; color:#000000;">${p.mean_delay} min</td>
-            <td style="font-family:var(--font-mono); font-weight:700; color:#000000;">${p.P_i}</td>
-            <td style="font-family:var(--font-mono); color:#000000; font-weight:700;">${p.delta_d_i} min</td>
+            <td style="font-family:var(--font-mono); color:#ffffff;">${p.distance_km} km</td>
+            <td style="font-family:var(--font-mono); font-weight:700; color:#ffffff;">${p.mean_delay} min</td>
+            <td style="font-family:var(--font-mono); font-weight:700; color:#ffffff;">${p.P_i}</td>
+            <td style="font-family:var(--font-mono); color:#ffffff; font-weight:700;">${p.delta_d_i} min</td>
             <td><span class="badge">${p.sensitivity}</span></td>
-            <td style="font-family:var(--font-mono); color:#000000; font-weight:700;">${p.punctuality_pct}%</td>
+            <td style="font-family:var(--font-mono); color:#ffffff; font-weight:700;">${p.punctuality_pct}%</td>
           </tr>
         `;
       }).join("");
     }
 
-    // Render Delay Chart (Clean Charcoal/Black Monochrome)
+    // Render Delay Chart (Crisp White & Luminous Silver Bars)
     if (document.getElementById("overviewDelayChart") && typeof TRAIN_PROFILES !== "undefined") {
       new Chart(document.getElementById("overviewDelayChart").getContext("2d"), {
         type: "bar",
@@ -225,9 +225,9 @@
           datasets: [{
             label: "10-Year Mean Delay (min)",
             data: TRAIN_PROFILES.map(p => p.mean_delay),
-            backgroundColor: "#0f172a",
-            borderColor: "#000000",
-            borderWidth: 1,
+            backgroundColor: "rgba(255, 255, 255, 0.85)",
+            borderColor: "#ffffff",
+            borderWidth: 1.5,
             borderRadius: 6,
           }]
         },
@@ -236,14 +236,14 @@
           maintainAspectRatio: false,
           plugins: { legend: { display: false } },
           scales: {
-            x: { ticks: { color: "#000000", font: { size: 10, family: "JetBrains Mono", weight: "600" } }, grid: { color: "rgba(0, 0, 0, 0.06)" } },
-            y: { ticks: { color: "#000000", font: { size: 10, family: "JetBrains Mono", weight: "600" } }, grid: { color: "rgba(0, 0, 0, 0.06)" } }
+            x: { ticks: { color: "#ffffff", font: { size: 10, family: "JetBrains Mono", weight: "700" } }, grid: { color: "rgba(255, 255, 255, 0.12)" } },
+            y: { ticks: { color: "#ffffff", font: { size: 10, family: "JetBrains Mono", weight: "700" } }, grid: { color: "rgba(255, 255, 255, 0.12)" } }
           }
         }
       });
     }
 
-    // Render Priority Bubble Chart (Clean Charcoal/Black)
+    // Render Priority Bubble Chart (Crisp White Bubbles & Labels)
     if (document.getElementById("overviewPriorityChart") && typeof TRAIN_PROFILES !== "undefined") {
       new Chart(document.getElementById("overviewPriorityChart").getContext("2d"), {
         type: "bubble",
@@ -253,11 +253,12 @@
             data: TRAIN_PROFILES.map(p => ({
               x: p.delta_d_i,
               y: p.P_i,
-              r: Math.max(6, Math.min(18, p.distance_km / 240)),
+              r: Math.max(7, Math.min(18, p.distance_km / 240)),
               name: p.train_name
             })),
-            backgroundColor: "rgba(15, 23, 42, 0.75)",
-            borderColor: "#000000",
+            backgroundColor: "rgba(255, 255, 255, 0.75)",
+            borderColor: "#ffffff",
+            borderWidth: 2,
           }]
         },
         options: {
@@ -272,8 +273,8 @@
             }
           },
           scales: {
-            x: { title: { display: true, text: "Delay Threshold Δd_i (min)", color: "#000000", font: { weight: "700" } }, ticks: { color: "#000000", font: { family: "JetBrains Mono", weight: "600" } }, grid: { color: "rgba(0, 0, 0, 0.06)" } },
-            y: { title: { display: true, text: "Priority Weight P_i (1-10)", color: "#000000", font: { weight: "700" } }, ticks: { color: "#000000", font: { family: "JetBrains Mono", weight: "600" } }, grid: { color: "rgba(0, 0, 0, 0.06)" } }
+            x: { title: { display: true, text: "Delay Threshold Δd_i (min)", color: "#ffffff", font: { weight: "800" } }, ticks: { color: "#ffffff", font: { family: "JetBrains Mono", weight: "700" } }, grid: { color: "rgba(255, 255, 255, 0.12)" } },
+            y: { title: { display: true, text: "Priority Weight P_i (1-10)", color: "#ffffff", font: { weight: "800" } }, ticks: { color: "#ffffff", font: { family: "JetBrains Mono", weight: "700" } }, grid: { color: "rgba(255, 255, 255, 0.12)" } }
           }
         }
       });
