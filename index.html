@@ -1,256 +1,287 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CRIS AI Block Scheduler — Operations Command</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRIS AI Scheduler — Operations Command</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <link rel="stylesheet" href="/src/dashboard/styles.css" />
+  <link rel="stylesheet" href="/src/dashboard/styles.css">
 </head>
 <body>
+  <!-- Sidebar Navigation -->
+  <nav class="sidebar" id="sidebar"></nav>
 
-  <!-- Shared Header Container -->
-  <div id="shared-header"></div>
-
-  <div class="page-container">
-    <!-- Page Hero -->
-    <div class="page-hero">
-      <div class="hero-left">
-        <h1>
-          <span>🚆 Operations Command & CRIS Topology</span>
-          <span class="hero-badge cyan">SYSTEM ACTIVE</span>
-        </h1>
-        <p class="hero-sub">
-          Central AI Block Scheduling coordinator across Indian Railways Control Office (COA), BDMS, FOIS, and ICMS frameworks.
+  <!-- Main Content Area -->
+  <main class="content">
+    <header>
+      <div>
+        <h1>Operations Command & CRIS Network Topology</h1>
+        <p style="color:var(--text-secondary); font-size:0.88rem; margin-top:4px;">
+          Indian Railways AI-driven block scheduling & network corridor management platform · 8,990 Stations · 5,208 Trains
         </p>
       </div>
-      <div class="hero-stats">
-        <div class="hero-stat-card">
-          <div class="hstat-label">Tracked Trains</div>
-          <div class="hstat-val">10 Services</div>
+      <div class="header-meta">
+        <div class="status-pill">
+          <span class="pulse"></span>
+          <span>ALL PROTOCOLS ACTIVE</span>
         </div>
-        <div class="hero-stat-card">
-          <div class="hstat-label">Historical Baseline</div>
-          <div class="hstat-val purple">10 Years</div>
-        </div>
-        <div class="hero-stat-card">
-          <div class="hstat-label">Active Corridors</div>
-          <div class="hstat-val orange">4 Trunks</div>
-        </div>
-        <div class="hero-stat-card">
-          <div class="hstat-label">Solver Engine</div>
-          <div class="hstat-val green">HiGHS MILP</div>
-        </div>
+        <div class="clock-box" id="live-clock">--:--:-- IST</div>
+      </div>
+    </header>
+    
+    <!-- Hero Stats Strip -->
+    <div class="hero-stats">
+      <div class="hero-stat-card">
+        <div class="hstat-label">IR Network Scope</div>
+        <div class="hstat-val purple">8,990 Stations</div>
+      </div>
+      <div class="hero-stat-card">
+        <div class="hstat-label">Historical Baseline</div>
+        <div class="hstat-val orange">10 Winter Yrs</div>
+      </div>
+      <div class="hero-stat-card">
+        <div class="hstat-label">Train Services</div>
+        <div class="hstat-val red">5,208 Trains</div>
+      </div>
+      <div class="hero-stat-card">
+        <div class="hstat-label">Solver Formulation</div>
+        <div class="hstat-val amber">HiGHS MIP (0.0%)</div>
       </div>
     </div>
 
-    <!-- Live Corridor Status & Quick Links -->
-    <div class="grid-4">
-      <div class="card" style="border-top: 3px solid var(--cyan)">
+    <section class="dashboard-grid">
+      <div class="card">
         <div class="card-title-bar">
-          <h3>🛰️ COA Telemetry</h3>
-          <span class="badge cyan">Protocol 1</span>
+          <h3>COA Live Telemetry</h3>
+          <span class="badge purple">Protocol 1</span>
         </div>
-        <p style="font-size: 0.75rem; color: var(--text-secondary);">
-          Real-time train positioning, live loco speed, ATP vigilance, and block section berth occupancy tracking.
-        </p>
-        <div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--cyan);">
-          Live: 12301 Rajdhani · 128.5 km/h · GREEN Aspect
+        <p>Real-time train positioning, loco speed telemetry, ATP vigilance, and block section berth occupancy tracking.</p>
+        <div class="metric-row">
+          <div>
+            <div class="metric-val" style="color:var(--accent-fuchsia);">100ms</div>
+            <div class="metric-label">Feed Ingestion</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="metric-val" style="color:var(--accent-amber);">KAVACH</div>
+            <div class="metric-label">ATP Link</div>
+          </div>
         </div>
-        <a href="/pages/coa.html" class="btn btn-secondary" style="margin-top: auto;">Open COA Monitor &rarr;</a>
+        <a href="/pages/coa.html" class="card-btn">Open Telemetry Lab &rarr;</a>
       </div>
 
-      <div class="card" style="border-top: 3px solid var(--orange)">
+      <div class="card">
         <div class="card-title-bar">
-          <h3>🏗️ Shadow Block</h3>
+          <h3>BDMS Shadow Block</h3>
           <span class="badge orange">Protocol 2</span>
         </div>
-        <p style="font-size: 0.75rem; color: var(--text-secondary);">
-          Multi-department maintenance request synchronization (Track, OHE, Signaling) into unified shadow blocks.
-        </p>
-        <div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--orange);">
-          Merged: BLK-NDLS-CNB-01 · 180 min · 3 Depts
+        <p>Multi-department engineering block co-registration (Track, OHE, Signaling) synthesizing synchronized maintenance slots.</p>
+        <div class="metric-row">
+          <div>
+            <div class="metric-val" style="color:var(--accent-orange);">+840m</div>
+            <div class="metric-label">Saved Train-Min</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="metric-val" style="color:var(--accent-amber);">91%</div>
+            <div class="metric-label">Confidence</div>
+          </div>
         </div>
-        <a href="/pages/bdms.html" class="btn btn-secondary" style="margin-top: auto;">Open BDMS Engine &rarr;</a>
-      </div>
-
-      <div class="card" style="border-top: 3px solid var(--purple)">
-        <div class="card-title-bar">
-          <h3>📦 Dynamic Priority</h3>
-          <span class="badge purple">Protocol 3</span>
-        </div>
-        <p style="font-size: 0.75rem; color: var(--text-secondary);">
-          Dynamic train weighting (P_i) and cascading delay absorption thresholds (Δd_i) from FOIS & ICMS data.
-        </p>
-        <div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--purple);">
-          Max P_i: 7.2 (15906 Vivek Exp) · Strict: 12002
-        </div>
-        <a href="/pages/fois.html" class="btn btn-secondary" style="margin-top: auto;">Open Priority Matrix &rarr;</a>
-      </div>
-
-      <div class="card" style="border-top: 3px solid var(--green)">
-        <div class="card-title-bar">
-          <h3>🧮 MILP Optimizer</h3>
-          <span class="badge green">Protocol 4</span>
-        </div>
-        <p style="font-size: 0.75rem; color: var(--text-secondary);">
-          Mathematical yield vs penalty optimization, binary decision variable (x_j), and XAI audit logs.
-        </p>
-        <div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--green);">
-          HiGHS MILP Solver · Global Optimum Guaranteed
-        </div>
-        <a href="/pages/milp.html" class="btn btn-secondary" style="margin-top: auto;">Open MILP Studio &rarr;</a>
-      </div>
-    </div>
-
-    <!-- Real-Time Fleet Status Table (All 10 Real Trains) -->
-    <div class="card">
-      <div class="card-title-bar">
-        <h3>🚆 Active Train Fleet Monitoring (10 Real Services · 2016–2025 Dataset)</h3>
-        <span class="card-subtitle">Real-time status calculated from 10-year historical baseline</span>
-      </div>
-
-      <div class="table-wrap">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Train No</th>
-              <th>Train Name</th>
-              <th>Route</th>
-              <th>Category</th>
-              <th>Distance</th>
-              <th>Mean Delay (10yr)</th>
-              <th>Dynamic P_i</th>
-              <th>Allowed Δd_i</th>
-              <th>Sensitivity</th>
-              <th>Punctuality Rate</th>
-            </tr>
-          </thead>
-          <tbody id="fleet-table-body">
-            <!-- Injected via JavaScript -->
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- Quick Visuals: Corridor Network & Delay Distribution -->
-    <div class="grid-2">
-      <div class="card">
-        <div class="card-title-bar">
-          <h3>📊 Historical Average Delay by Train (Minutes)</h3>
-          <span class="card-subtitle">10-Year Winter Baseline (2016–2025)</span>
-        </div>
-        <div style="height: 250px; position: relative;">
-          <canvas id="overviewDelayChart"></canvas>
-        </div>
+        <a href="/pages/bdms.html" class="card-btn">Open BDMS Engine &rarr;</a>
       </div>
 
       <div class="card">
         <div class="card-title-bar">
-          <h3>🛡️ Priority Weight P_i vs Delay Threshold Δd_i</h3>
-          <span class="card-subtitle">Optimization Tradeoff Spectrum</span>
+          <h3>FOIS Dynamic Priority</h3>
+          <span class="badge rose">Protocol 3</span>
         </div>
-        <div style="height: 250px; position: relative;">
-          <canvas id="overviewPriorityChart"></canvas>
+        <p>Dynamic train priority weighting (P_i) and cascading delay budget (Δd_i) calibrated against 10-year volatility.</p>
+        <div class="metric-row">
+          <div>
+            <div class="metric-val" style="color:var(--accent-rose);">7.2 P_i</div>
+            <div class="metric-label">Max Priority</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="metric-val" style="color:var(--accent-gold);">₹15,000</div>
+            <div class="metric-label">SLA Rate / Min</div>
+          </div>
+        </div>
+        <a href="/pages/fois.html" class="card-btn">Open Priority Matrix &rarr;</a>
+      </div>
+
+      <div class="card">
+        <div class="card-title-bar">
+          <h3>MILP Optimizer Studio</h3>
+          <span class="badge red">Protocol 4</span>
+        </div>
+        <p>Mixed Integer Linear Programming solver determining optimal binary approval decision (x_j) with XAI explanations.</p>
+        <div class="metric-row">
+          <div>
+            <div class="metric-val" style="color:var(--accent-red);">x_j = 1</div>
+            <div class="metric-label">Optimal Decision</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="metric-val" style="color:var(--accent-amber); font-size:1.15rem;">λ = 1.5</div>
+            <div class="metric-label">Penalty Weight</div>
+          </div>
+        </div>
+        <a href="/pages/milp.html" class="card-btn">Launch Solver Studio &rarr;</a>
+      </div>
+
+      <!-- Fleet Monitoring Table -->
+      <div class="card table-card">
+        <div class="card-title-bar">
+          <h3>Flagship Fleet Monitoring (Enriched with Zone, Coaches, Stops & 10-Yr Delay Volatility)</h3>
+          <span class="badge amber">Historical Baseline</span>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Train No</th>
+                <th>Train Name</th>
+                <th>Zone</th>
+                <th>Route & Stops</th>
+                <th>Category</th>
+                <th>Distance</th>
+                <th>10-Yr Mean Delay</th>
+                <th>Dynamic P_i</th>
+                <th>Allowed Δd_i</th>
+                <th>Sensitivity</th>
+                <th>Punctuality Rate</th>
+              </tr>
+            </thead>
+            <tbody id="fleet-table-body">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
         </div>
       </div>
-    </div>
-  </div>
 
-  <footer class="footer">
-    <div class="footer-inner">
-      <span>🇮🇳 Indian Railways · Centre for Railway Information Systems (CRIS) · AI Block Scheduling System</span>
-      <span>Protocols: COA-2.1 · BDMS-3.0 · FOIS-ICMS-2.0 · MILP-XAI-1.0</span>
-    </div>
-  </footer>
+      <!-- Visual Charts (Purple / Orange / Red / Amber Palette) -->
+      <div class="grid-2" style="grid-column: 1 / -1;">
+        <div class="card">
+          <div class="card-title-bar">
+            <h3>10-Year Historical Mean Delay by Train (Minutes)</h3>
+            <span class="badge orange">2016–2025</span>
+          </div>
+          <div style="height: 240px; position: relative;">
+            <canvas id="overviewDelayChart"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title-bar">
+            <h3>Priority Weight P_i vs Delay Threshold Δd_i</h3>
+            <span class="badge purple">Spectrum Analysis</span>
+          </div>
+          <div style="height: 240px; position: relative;">
+            <canvas id="overviewPriorityChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <span>Indian Railways · Centre for Railway Information Systems (CRIS) · AI Block Scheduling Platform</span>
+      <span style="color:var(--accent-amber);">Protocols: COA-2.1 · BDMS-3.0 · FOIS-ICMS-2.0 · MILP-XAI-1.0</span>
+    </footer>
+  </main>
 
   <script src="/src/dashboard/shared.js"></script>
   <script>
+    // Render Unified Sidebar
     renderSharedNav("overview");
 
     // Populate Fleet Table
     const tbody = document.getElementById("fleet-table-body");
-    tbody.innerHTML = TRAIN_PROFILES.map(p => {
-      let badgeClass = "badge green";
-      if (p.sensitivity === "CRITICAL") badgeClass = "badge red";
-      else if (p.sensitivity === "HIGH") badgeClass = "badge orange";
+    if (tbody && typeof TRAIN_PROFILES !== "undefined") {
+      tbody.innerHTML = TRAIN_PROFILES.map(p => {
+        let badgeClass = "badge amber";
+        if (p.sensitivity === "CRITICAL") badgeClass = "badge red";
+        else if (p.sensitivity === "HIGH") badgeClass = "badge orange";
 
-      return `
-        <tr>
-          <td><strong style="color:var(--cyan); font-family:var(--font-mono);">${p.train_no}</strong></td>
-          <td><strong>${p.train_name}</strong></td>
-          <td style="color:var(--text-secondary);">${p.source} &rarr; ${p.destination}</td>
-          <td><span class="badge purple">${p.category}</span></td>
-          <td style="font-family:var(--font-mono);">${p.distance_km} km</td>
-          <td style="font-family:var(--font-mono); font-weight:700; color:${p.mean_delay > 40 ? 'var(--orange)' : 'var(--text-primary)'}">${p.mean_delay} min</td>
-          <td style="font-family:var(--font-mono); font-weight:700; color:var(--cyan);">${p.P_i}</td>
-          <td style="font-family:var(--font-mono); color:var(--green); font-weight:700;">${p.delta_d_i} min</td>
-          <td><span class="${badgeClass}">${p.sensitivity}</span></td>
-          <td style="font-family:var(--font-mono);">${p.punctuality_pct}%</td>
-        </tr>
-      `;
-    }).join("");
+        return `
+          <tr>
+            <td><strong style="color:var(--accent-fuchsia); font-family:var(--font-mono);">${p.train_no}</strong></td>
+            <td><strong>${p.train_name}</strong></td>
+            <td><span class="badge purple">${p.zone || 'NR'}</span></td>
+            <td style="color:var(--text-secondary); font-size:0.76rem;">${p.source} &rarr; ${p.destination} <span style="color:var(--text-muted); font-size:0.7rem;">(${p.total_stops || 10} stops)</span></td>
+            <td><span class="badge amber">${p.category}</span></td>
+            <td style="font-family:var(--font-mono);">${p.distance_km} km</td>
+            <td style="font-family:var(--font-mono); font-weight:700; color:${p.mean_delay > 40 ? 'var(--accent-red)' : 'var(--accent-orange)'}">${p.mean_delay} min</td>
+            <td style="font-family:var(--font-mono); font-weight:700; color:var(--accent-fuchsia);">${p.P_i}</td>
+            <td style="font-family:var(--font-mono); color:var(--accent-gold); font-weight:700;">${p.delta_d_i} min</td>
+            <td><span class="${badgeClass}">${p.sensitivity}</span></td>
+            <td style="font-family:var(--font-mono); color:var(--accent-amber); font-weight:700;">${p.punctuality_pct}%</td>
+          </tr>
+        `;
+      }).join("");
+    }
 
-    // Render Charts
-    new Chart(document.getElementById("overviewDelayChart").getContext("2d"), {
-      type: "bar",
-      data: {
-        labels: TRAIN_PROFILES.map(p => p.train_name.split(" ")[0] + " (" + p.train_no + ")"),
-        datasets: [{
-          label: "10-Year Mean Delay (min)",
-          data: TRAIN_PROFILES.map(p => p.mean_delay),
-          backgroundColor: TRAIN_PROFILES.map(p => p.mean_delay > 40 ? "rgba(243, 156, 18, 0.6)" : "rgba(0, 212, 255, 0.5)"),
-          borderColor: TRAIN_PROFILES.map(p => p.mean_delay > 40 ? "rgba(243, 156, 18, 1)" : "rgba(0, 212, 255, 1)"),
-          borderWidth: 1.5,
-          borderRadius: 4,
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
-        scales: {
-          x: { ticks: { color: "#7a9bb5", font: { size: 9, family: "Space Mono" } }, grid: { color: "rgba(255,255,255,0.04)" } },
-          y: { ticks: { color: "#7a9bb5" }, grid: { color: "rgba(255,255,255,0.06)" } }
-        }
-      }
-    });
-
-    new Chart(document.getElementById("overviewPriorityChart").getContext("2d"), {
-      type: "bubble",
-      data: {
-        datasets: [{
-          label: "Trains",
-          data: TRAIN_PROFILES.map(p => ({
-            x: p.delta_d_i,
-            y: p.P_i,
-            r: Math.max(6, Math.min(18, p.distance_km / 250)),
-            name: p.train_name
-          })),
-          backgroundColor: "rgba(168, 85, 247, 0.6)",
-          borderColor: "rgba(168, 85, 247, 1)",
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            callbacks: {
-              label: (ctx) => ` ${ctx.raw.name}: P_i=${ctx.raw.y}, Δd_i=${ctx.raw.x}m`
-            }
-          }
+    // Render Delay Chart (Purple & Warm Orange / Red)
+    if (document.getElementById("overviewDelayChart") && typeof TRAIN_PROFILES !== "undefined") {
+      new Chart(document.getElementById("overviewDelayChart").getContext("2d"), {
+        type: "bar",
+        data: {
+          labels: TRAIN_PROFILES.map(p => p.train_name.split(" ")[0] + " (" + p.train_no + ")"),
+          datasets: [{
+            label: "10-Year Mean Delay (min)",
+            data: TRAIN_PROFILES.map(p => p.mean_delay),
+            backgroundColor: TRAIN_PROFILES.map(p => p.mean_delay > 40 ? "rgba(239, 68, 68, 0.7)" : "rgba(192, 38, 211, 0.65)"),
+            borderColor: TRAIN_PROFILES.map(p => p.mean_delay > 40 ? "rgba(239, 68, 68, 1)" : "rgba(217, 70, 239, 1)"),
+            borderWidth: 1.5,
+            borderRadius: 6,
+          }]
         },
-        scales: {
-          x: { title: { display: true, text: "Delay Threshold Δd_i (min)", color: "#7a9bb5" }, ticks: { color: "#7a9bb5" }, grid: { color: "rgba(255,255,255,0.05)" } },
-          y: { title: { display: true, text: "Priority Weight P_i (1-10)", color: "#7a9bb5" }, ticks: { color: "#7a9bb5" }, grid: { color: "rgba(255,255,255,0.05)" } }
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { color: "#cbd5e1", font: { size: 10, family: "JetBrains Mono" } }, grid: { color: "rgba(192, 38, 211, 0.08)" } },
+            y: { ticks: { color: "#cbd5e1", font: { size: 10, family: "JetBrains Mono" } }, grid: { color: "rgba(192, 38, 211, 0.08)" } }
+          }
         }
-      }
-    });
+      });
+    }
+
+    // Render Priority Bubble Chart (Purple / Rose / Gold)
+    if (document.getElementById("overviewPriorityChart") && typeof TRAIN_PROFILES !== "undefined") {
+      new Chart(document.getElementById("overviewPriorityChart").getContext("2d"), {
+        type: "bubble",
+        data: {
+          datasets: [{
+            label: "Trains",
+            data: TRAIN_PROFILES.map(p => ({
+              x: p.delta_d_i,
+              y: p.P_i,
+              r: Math.max(6, Math.min(18, p.distance_km / 240)),
+              name: p.train_name
+            })),
+            backgroundColor: "rgba(249, 115, 22, 0.65)",
+            borderColor: "rgba(249, 115, 22, 1)",
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => ` ${ctx.raw.name}: P_i=${ctx.raw.y}, Δd_i=${ctx.raw.x}m`
+              }
+            }
+          },
+          scales: {
+            x: { title: { display: true, text: "Delay Threshold Δd_i (min)", color: "#cbd5e1" }, ticks: { color: "#cbd5e1", font: { family: "JetBrains Mono" } }, grid: { color: "rgba(192, 38, 211, 0.08)" } },
+            y: { title: { display: true, text: "Priority Weight P_i (1-10)", color: "#cbd5e1" }, ticks: { color: "#cbd5e1", font: { family: "JetBrains Mono" } }, grid: { color: "rgba(192, 38, 211, 0.08)" } }
+          }
+        }
+      });
+    }
   </script>
 </body>
 </html>

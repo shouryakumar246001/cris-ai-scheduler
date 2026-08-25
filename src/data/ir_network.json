@@ -1,0 +1,1687 @@
+{
+  "total_stations_registered": 8990,
+  "total_train_services": 5208,
+  "zones_count": 18,
+  "enriched_fleet": [
+    {
+      "train_no": "12301",
+      "name": "Howrah-New Delhi Rajdhani Express",
+      "zone": "ER",
+      "type": "Raj",
+      "from_station_code": "HWH",
+      "from_station_name": "HOWRAH JN",
+      "to_station_code": "NDLS",
+      "to_station_name": "NEW DELHI",
+      "departure": "16:55:00",
+      "arrival": "09:55:00",
+      "duration_hours": 17,
+      "duration_minutes": 0,
+      "distance_km": 1447,
+      "coaches": {
+        "first_ac": 1,
+        "second_ac": 1,
+        "third_ac": 1,
+        "chair_car": 0,
+        "sleeper": 0
+      },
+      "total_stops": 18,
+      "stoppages": []
+    },
+    {
+      "train_no": "12002",
+      "name": "New Delhi-Bhopal Shatabdi Express",
+      "zone": "NR",
+      "type": "Shtb",
+      "from_station_code": "NDLS",
+      "from_station_name": "NEW DELHI",
+      "to_station_code": "BPL",
+      "to_station_name": "BHOPAL JN",
+      "departure": "06:15:00",
+      "arrival": "14:05:00",
+      "duration_hours": 7,
+      "duration_minutes": 50,
+      "distance_km": 701,
+      "coaches": {
+        "first_ac": 1,
+        "second_ac": 0,
+        "third_ac": 0,
+        "chair_car": 1,
+        "sleeper": 0
+      },
+      "total_stops": 10,
+      "stoppages": []
+    },
+    {
+      "train_no": "12377",
+      "name": "Padatik Express",
+      "zone": "ER",
+      "type": "SF",
+      "from_station_code": "SDAH",
+      "from_station_name": "KOLKATA SEALDAH",
+      "to_station_code": "NJP",
+      "to_station_name": "NEW JALPAIGURI",
+      "departure": "22:55:00",
+      "arrival": "09:05:00",
+      "duration_hours": 10,
+      "duration_minutes": 10,
+      "distance_km": 567,
+      "coaches": {
+        "first_ac": 1,
+        "second_ac": 1,
+        "third_ac": 1,
+        "chair_car": 0,
+        "sleeper": 1
+      },
+      "total_stops": 13,
+      "stoppages": [
+        {
+          "sno": "1",
+          "station": "SEALDAH - SDAH",
+          "arrives": "Source",
+          "departs": "23:20",
+          "distance": "0 kms"
+        },
+        {
+          "sno": "2",
+          "station": "BARDDHAMAN JN - BWN",
+          "arrives": "00:42",
+          "departs": "00:44",
+          "distance": "101 kms"
+        },
+        {
+          "sno": "3",
+          "station": "BOLPUR S NIKTN - BHP",
+          "arrives": "01:30",
+          "departs": "01:32",
+          "distance": "153 kms"
+        },
+        {
+          "sno": "4",
+          "station": "RAMPUR HAT - RPH",
+          "arrives": "02:22",
+          "departs": "02:27",
+          "distance": "213 kms"
+        },
+        {
+          "sno": "5",
+          "station": "MALDA TOWN - MLDT",
+          "arrives": "05:15",
+          "departs": "05:20",
+          "distance": "335 kms"
+        },
+        {
+          "sno": "6",
+          "station": "SAMSI - SM",
+          "arrives": "05:58",
+          "departs": "06:00",
+          "distance": "369 kms"
+        },
+        {
+          "sno": "7",
+          "station": "DALKOLHA - DLK",
+          "arrives": "07:05",
+          "departs": "07:07",
+          "distance": "452 kms"
+        },
+        {
+          "sno": "8",
+          "station": "KISHANGANJ - KNE",
+          "arrives": "07:30",
+          "departs": "07:32",
+          "distance": "480 kms"
+        },
+        {
+          "sno": "9",
+          "station": "NEW JALPAIGURI - NJP",
+          "arrives": "09:05",
+          "departs": "09:15",
+          "distance": "567 kms"
+        },
+        {
+          "sno": "10",
+          "station": "JALPAIGURI ROAD - JPE",
+          "arrives": "10:03",
+          "departs": "10:05",
+          "distance": "601 kms"
+        },
+        {
+          "sno": "11",
+          "station": "MATHABHANGA - MHBA",
+          "arrives": "11:00",
+          "departs": "11:02",
+          "distance": "664 kms"
+        },
+        {
+          "sno": "12",
+          "station": "NEW COOCH BEHAR - NCB",
+          "arrives": "11:30",
+          "departs": "11:32",
+          "distance": "695 kms"
+        },
+        {
+          "sno": "13",
+          "station": "NEW ALIPURDAUR - NOQ",
+          "arrives": "12:25",
+          "departs": "Destination",
+          "distance": "713 kms"
+        }
+      ]
+    },
+    {
+      "train_no": "12238",
+      "name": "Jammu-Varanasi SF Express",
+      "zone": "NR",
+      "type": "SF",
+      "from_station_code": "JAT",
+      "from_station_name": "JAMMU TAWI",
+      "to_station_code": "BSB",
+      "to_station_name": "VARANASI JN",
+      "departure": "14:00:00",
+      "arrival": "13:00:00",
+      "duration_hours": 23,
+      "duration_minutes": 0,
+      "distance_km": 1261,
+      "coaches": {
+        "first_ac": 0,
+        "second_ac": 0,
+        "third_ac": 1,
+        "chair_car": 0,
+        "sleeper": 1
+      },
+      "total_stops": 16,
+      "stoppages": [
+        {
+          "sno": "1",
+          "station": "JAMMU TAWI - JAT",
+          "arrives": "Source",
+          "departs": "13:45",
+          "distance": "0 kms"
+        },
+        {
+          "sno": "2",
+          "station": "KATHUA - KTHU",
+          "arrives": "14:46",
+          "departs": "14:48",
+          "distance": "77 kms"
+        },
+        {
+          "sno": "3",
+          "station": "PATHANKOT CANTT - PTKC",
+          "arrives": "15:30",
+          "departs": "15:35",
+          "distance": "100 kms"
+        },
+        {
+          "sno": "4",
+          "station": "MUKERIAN - MEX",
+          "arrives": "16:08",
+          "departs": "16:10",
+          "distance": "139 kms"
+        },
+        {
+          "sno": "5",
+          "station": "JALANDHAR CANT - JRC",
+          "arrives": "17:25",
+          "departs": "17:30",
+          "distance": "213 kms"
+        },
+        {
+          "sno": "6",
+          "station": "LUDHIANA JN - LDH",
+          "arrives": "18:15",
+          "departs": "18:25",
+          "distance": "265 kms"
+        },
+        {
+          "sno": "7",
+          "station": "AMBALA CANT JN - UMB",
+          "arrives": "20:58",
+          "departs": "21:03",
+          "distance": "378 kms"
+        },
+        {
+          "sno": "8",
+          "station": "SAHARANPUR - SRE",
+          "arrives": "22:08",
+          "departs": "22:15",
+          "distance": "460 kms"
+        },
+        {
+          "sno": "9",
+          "station": "MORADABAD - MB",
+          "arrives": "01:25",
+          "departs": "01:33",
+          "distance": "652 kms"
+        },
+        {
+          "sno": "10",
+          "station": "SHAHJEHANPUR - SPN",
+          "arrives": "04:00",
+          "departs": "04:02",
+          "distance": "813 kms"
+        },
+        {
+          "sno": "11",
+          "station": "LUCKNOW NR - LKO",
+          "arrives": "07:10",
+          "departs": "07:20",
+          "distance": "978 kms"
+        },
+        {
+          "sno": "12",
+          "station": "MAH BIJLI PASI - MBLP",
+          "arrives": "08:36",
+          "departs": "08:38",
+          "distance": "1067 kms"
+        },
+        {
+          "sno": "13",
+          "station": "SULTANPUR - SLN",
+          "arrives": "09:25",
+          "departs": "09:30",
+          "distance": "1118 kms"
+        },
+        {
+          "sno": "14",
+          "station": "LAMBHUA - LBA",
+          "arrives": "09:53",
+          "departs": "09:54",
+          "distance": "1140 kms"
+        },
+        {
+          "sno": "15",
+          "station": "JAUNPUR CITY - JOP",
+          "arrives": "10:38",
+          "departs": "10:40",
+          "distance": "1203 kms"
+        },
+        {
+          "sno": "16",
+          "station": "VARANASI JN - BSB",
+          "arrives": "12:30",
+          "departs": "Destination",
+          "distance": "1261 kms"
+        }
+      ]
+    },
+    {
+      "train_no": "12229",
+      "name": "Lucknow Mail",
+      "zone": "NR",
+      "type": "SF",
+      "from_station_code": "LKO",
+      "from_station_name": "LUCKNOW",
+      "to_station_code": "NDLS",
+      "to_station_name": "NEW DELHI",
+      "departure": "22:10:00",
+      "arrival": "06:50:00",
+      "duration_hours": 8,
+      "duration_minutes": 40,
+      "distance_km": 493,
+      "coaches": {
+        "first_ac": 1,
+        "second_ac": 1,
+        "third_ac": 1,
+        "chair_car": 0,
+        "sleeper": 1
+      },
+      "total_stops": 9,
+      "stoppages": [
+        {
+          "sno": "1",
+          "station": "LUCKNOW NR - LKO",
+          "arrives": "Source",
+          "departs": "22:00",
+          "distance": "0 kms"
+        },
+        {
+          "sno": "2",
+          "station": "HARDOI - HRI",
+          "arrives": "23:34",
+          "departs": "23:36",
+          "distance": "102 kms"
+        },
+        {
+          "sno": "3",
+          "station": "SHAHJEHANPUR - SPN",
+          "arrives": "00:38",
+          "departs": "00:40",
+          "distance": "165 kms"
+        },
+        {
+          "sno": "4",
+          "station": "BAREILLY - BE",
+          "arrives": "01:41",
+          "departs": "01:43",
+          "distance": "236 kms"
+        },
+        {
+          "sno": "5",
+          "station": "RAMPUR - RMU",
+          "arrives": "02:36",
+          "departs": "02:38",
+          "distance": "299 kms"
+        },
+        {
+          "sno": "6",
+          "station": "MORADABAD - MB",
+          "arrives": "03:25",
+          "departs": "03:33",
+          "distance": "326 kms"
+        },
+        {
+          "sno": "7",
+          "station": "HAPUR - HPU",
+          "arrives": "04:56",
+          "departs": "04:59",
+          "distance": "430 kms"
+        },
+        {
+          "sno": "8",
+          "station": "GHAZIABAD - GZB",
+          "arrives": "05:53",
+          "departs": "05:55",
+          "distance": "467 kms"
+        },
+        {
+          "sno": "9",
+          "station": "NEW DELHI - NDLS",
+          "arrives": "06:55",
+          "departs": "Destination",
+          "distance": "493 kms"
+        }
+      ]
+    },
+    {
+      "train_no": "15029",
+      "name": "GKP PUNE EXP",
+      "zone": "NR",
+      "type": "SF",
+      "from_station_code": "",
+      "from_station_name": "",
+      "to_station_code": "",
+      "to_station_name": "",
+      "departure": "",
+      "arrival": "",
+      "duration_hours": 0,
+      "duration_minutes": 0,
+      "distance_km": 0,
+      "coaches": {
+        "first_ac": 0,
+        "second_ac": 0,
+        "third_ac": 0,
+        "chair_car": 0,
+        "sleeper": 0
+      },
+      "total_stops": 20,
+      "stoppages": [
+        {
+          "sno": "1",
+          "station": "GORAKHPUR JN - GKP",
+          "arrives": "Source",
+          "departs": "17:10",
+          "distance": "0 kms"
+        },
+        {
+          "sno": "2",
+          "station": "KHALILABAD - KLD",
+          "arrives": "17:46",
+          "departs": "17:48",
+          "distance": "35 kms"
+        },
+        {
+          "sno": "3",
+          "station": "BASTI - BST",
+          "arrives": "18:11",
+          "departs": "18:14",
+          "distance": "65 kms"
+        },
+        {
+          "sno": "4",
+          "station": "MANKAPUR JN - MUR",
+          "arrives": "19:02",
+          "departs": "19:04",
+          "distance": "126 kms"
+        },
+        {
+          "sno": "5",
+          "station": "GONDA JN - GD",
+          "arrives": "19:45",
+          "departs": "19:50",
+          "distance": "154 kms"
+        },
+        {
+          "sno": "6",
+          "station": "LUCKNOW NR - LKO",
+          "arrives": "22:40",
+          "departs": "22:50",
+          "distance": "271 kms"
+        },
+        {
+          "sno": "7",
+          "station": "UNNAO JN - ON",
+          "arrives": "23:46",
+          "departs": "23:48",
+          "distance": "327 kms"
+        },
+        {
+          "sno": "8",
+          "station": "KANPUR CENTRAL - CNB",
+          "arrives": "00:30",
+          "departs": "00:35",
+          "distance": "345 kms"
+        },
+        {
+          "sno": "9",
+          "station": "ORAI - ORAI",
+          "arrives": "02:02",
+          "departs": "02:04",
+          "distance": "451 kms"
+        },
+        {
+          "sno": "10",
+          "station": "V LAKSHMIBAI JHANSI - VGLJ",
+          "arrives": "04:15",
+          "departs": "04:23",
+          "distance": "564 kms"
+        },
+        {
+          "sno": "11",
+          "station": "BINA JN - BINA",
+          "arrives": "06:50",
+          "departs": "07:00",
+          "distance": "717 kms"
+        },
+        {
+          "sno": "12",
+          "station": "BHOPAL JN - BPL",
+          "arrives": "08:45",
+          "departs": "08:50",
+          "distance": "855 kms"
+        },
+        {
+          "sno": "13",
+          "station": "RANI KAMLAPATI - RKMP",
+          "arrives": "09:02",
+          "departs": "09:04",
+          "distance": "861 kms"
+        },
+        {
+          "sno": "14",
+          "station": "ITARSI JN - ET",
+          "arrives": "11:00",
+          "departs": "11:10",
+          "distance": "947 kms"
+        },
+        {
+          "sno": "15",
+          "station": "KHANDWA - KNW",
+          "arrives": "13:57",
+          "departs": "14:00",
+          "distance": "1130 kms"
+        },
+        {
+          "sno": "16",
+          "station": "BHUSAVAL JN - BSL",
+          "arrives": "15:45",
+          "departs": "15:50",
+          "distance": "1254 kms"
+        },
+        {
+          "sno": "17",
+          "station": "MANMAD JN - MMR",
+          "arrives": "18:30",
+          "departs": "18:35",
+          "distance": "1438 kms"
+        },
+        {
+          "sno": "18",
+          "station": "KOPARGAON - KPG",
+          "arrives": "19:47",
+          "departs": "19:50",
+          "distance": "1480 kms"
+        },
+        {
+          "sno": "19",
+          "station": "AHMADNAGAR - ANG",
+          "arrives": "21:57",
+          "departs": "22:00",
+          "distance": "1591 kms"
+        },
+        {
+          "sno": "20",
+          "station": "PUNE JN - PUNE",
+          "arrives": "02:15",
+          "departs": "Destination",
+          "distance": "1750 kms"
+        }
+      ]
+    },
+    {
+      "train_no": "12604",
+      "name": "Hyderabad - Chennai Express",
+      "zone": "SR",
+      "type": "SF",
+      "from_station_code": "HYB",
+      "from_station_name": "HYDERABAD DECCAN",
+      "to_station_code": "MAS",
+      "to_station_name": "CHENNAI CENTRAL",
+      "departure": "16:55:00",
+      "arrival": "05:55:00",
+      "duration_hours": 13,
+      "duration_minutes": 0,
+      "distance_km": 715,
+      "coaches": {
+        "first_ac": 1,
+        "second_ac": 1,
+        "third_ac": 1,
+        "chair_car": 0,
+        "sleeper": 1
+      },
+      "total_stops": 18,
+      "stoppages": [
+        {
+          "sno": "1",
+          "station": "CHARLAPALLI - CHZ",
+          "arrives": "Source",
+          "departs": "17:25",
+          "distance": "0 kms"
+        },
+        {
+          "sno": "2",
+          "station": "NALGONDA - NLDA",
+          "arrives": "18:48",
+          "departs": "18:49",
+          "distance": "98 kms"
+        },
+        {
+          "sno": "3",
+          "station": "MIRYALAGUDA - MRGA",
+          "arrives": "19:14",
+          "departs": "19:15",
+          "distance": "136 kms"
+        },
+        {
+          "sno": "4",
+          "station": "NADIKODE - NDKD",
+          "arrives": "19:44",
+          "departs": "19:45",
+          "distance": "174 kms"
+        },
+        {
+          "sno": "5",
+          "station": "PIDUGURALLA - PGRL",
+          "arrives": "20:03",
+          "departs": "20:04",
+          "distance": "195 kms"
+        },
+        {
+          "sno": "6",
+          "station": "SATTENAPALLE - SAP",
+          "arrives": "20:29",
+          "departs": "20:30",
+          "distance": "227 kms"
+        },
+        {
+          "sno": "7",
+          "station": "GUNTUR JN - GNT",
+          "arrives": "22:00",
+          "departs": "22:10",
+          "distance": "269 kms"
+        },
+        {
+          "sno": "8",
+          "station": "TENALI JN - TEL",
+          "arrives": "22:58",
+          "departs": "23:00",
+          "distance": "295 kms"
+        },
+        {
+          "sno": "9",
+          "station": "NIDUBROLU - NDO",
+          "arrives": "23:19",
+          "departs": "23:20",
+          "distance": "317 kms"
+        },
+        {
+          "sno": "10",
+          "station": "BAPATLA - BPP",
+          "arrives": "23:38",
+          "departs": "23:40",
+          "distance": "337 kms"
+        },
+        {
+          "sno": "11",
+          "station": "CHIRALA - CLX",
+          "arrives": "23:53",
+          "departs": "23:55",
+          "distance": "352 kms"
+        },
+        {
+          "sno": "12",
+          "station": "ONGOLE - OGL",
+          "arrives": "00:38",
+          "departs": "00:40",
+          "distance": "401 kms"
+        },
+        {
+          "sno": "13",
+          "station": "SINGARAYAKONDA - SKM",
+          "arrives": "00:58",
+          "departs": "01:00",
+          "distance": "429 kms"
+        },
+        {
+          "sno": "14",
+          "station": "KAVALI - KVZ",
+          "arrives": "01:28",
+          "departs": "01:30",
+          "distance": "467 kms"
+        },
+        {
+          "sno": "15",
+          "station": "NELLORE - NLR",
+          "arrives": "02:13",
+          "departs": "02:15",
+          "distance": "518 kms"
+        },
+        {
+          "sno": "16",
+          "station": "GUDUR JN - GDR",
+          "arrives": "03:03",
+          "departs": "03:05",
+          "distance": "556 kms"
+        },
+        {
+          "sno": "17",
+          "station": "SULLURUPETA - SPE",
+          "arrives": "03:43",
+          "departs": "03:45",
+          "distance": "611 kms"
+        },
+        {
+          "sno": "18",
+          "station": "CHENNAI CENTRAL - MAS",
+          "arrives": "05:40",
+          "departs": "Destination",
+          "distance": "693 kms"
+        }
+      ]
+    },
+    {
+      "train_no": "12633",
+      "name": "CHENNAI EGMORE - KANNIYAKUMARI SF Exp",
+      "zone": "SR",
+      "type": "SF",
+      "from_station_code": "MS",
+      "from_station_name": "CHENNAI EGMORE",
+      "to_station_code": "CAPE",
+      "to_station_name": "KANYAKUMARI",
+      "departure": "17:30:00",
+      "arrival": "06:50:00",
+      "duration_hours": 13,
+      "duration_minutes": 20,
+      "distance_km": 742,
+      "coaches": {
+        "first_ac": 1,
+        "second_ac": 1,
+        "third_ac": 1,
+        "chair_car": 0,
+        "sleeper": 1
+      },
+      "total_stops": 15,
+      "stoppages": [
+        {
+          "sno": "1",
+          "station": "CHENNAI EGMORE - MS",
+          "arrives": "Source",
+          "departs": "17:20",
+          "distance": "0 kms"
+        },
+        {
+          "sno": "2",
+          "station": "TAMBARAM - TBM",
+          "arrives": "17:45",
+          "departs": "17:47",
+          "distance": "25 kms"
+        },
+        {
+          "sno": "3",
+          "station": "CHENGALPATTU - CGL",
+          "arrives": "18:18",
+          "departs": "18:20",
+          "distance": "56 kms"
+        },
+        {
+          "sno": "4",
+          "station": "MELMARUVATTUR - MLMR",
+          "arrives": "18:43",
+          "departs": "18:45",
+          "distance": "92 kms"
+        },
+        {
+          "sno": "5",
+          "station": "TINDIVANAM - TMV",
+          "arrives": "19:08",
+          "departs": "19:10",
+          "distance": "122 kms"
+        },
+        {
+          "sno": "6",
+          "station": "VILLUPURAM JN - VM",
+          "arrives": "19:55",
+          "departs": "20:00",
+          "distance": "159 kms"
+        },
+        {
+          "sno": "7",
+          "station": "VRIDHACHALAM JN - VRI",
+          "arrives": "20:40",
+          "departs": "20:42",
+          "distance": "213 kms"
+        },
+        {
+          "sno": "8",
+          "station": "TIRUCHCHIRAPALI - TPJ",
+          "arrives": "22:25",
+          "departs": "22:30",
+          "distance": "336 kms"
+        },
+        {
+          "sno": "9",
+          "station": "DINDIGUL JN - DG",
+          "arrives": "23:37",
+          "departs": "23:40",
+          "distance": "431 kms"
+        },
+        {
+          "sno": "10",
+          "station": "MADURAI JN - MDU",
+          "arrives": "00:45",
+          "departs": "00:50",
+          "distance": "497 kms"
+        },
+        {
+          "sno": "11",
+          "station": "VIRUDUNAGAR JN - VPT",
+          "arrives": "01:28",
+          "departs": "01:30",
+          "distance": "540 kms"
+        },
+        {
+          "sno": "12",
+          "station": "TIRUNELVELI JN - TEN",
+          "arrives": "03:10",
+          "departs": "03:15",
+          "distance": "653 kms"
+        },
+        {
+          "sno": "13",
+          "station": "VALLIYUR - VLY",
+          "arrives": "03:56",
+          "departs": "03:58",
+          "distance": "695 kms"
+        },
+        {
+          "sno": "14",
+          "station": "NAGERCOIL JN - NCJ",
+          "arrives": "04:45",
+          "departs": "04:50",
+          "distance": "727 kms"
+        },
+        {
+          "sno": "15",
+          "station": "KANYAKUMARI - CAPE",
+          "arrives": "05:30",
+          "departs": "Destination",
+          "distance": "742 kms"
+        }
+      ]
+    },
+    {
+      "train_no": "22832",
+      "name": "YPR HWH SF EXP",
+      "zone": "NR",
+      "type": "SF",
+      "from_station_code": "",
+      "from_station_name": "",
+      "to_station_code": "",
+      "to_station_name": "",
+      "departure": "",
+      "arrival": "",
+      "duration_hours": 0,
+      "duration_minutes": 0,
+      "distance_km": 0,
+      "coaches": {
+        "first_ac": 0,
+        "second_ac": 0,
+        "third_ac": 0,
+        "chair_car": 0,
+        "sleeper": 0
+      },
+      "total_stops": 22,
+      "stoppages": [
+        {
+          "sno": "1",
+          "station": "YESVANTPUR JN - YPR",
+          "arrives": "Source",
+          "departs": "04:30",
+          "distance": "0 kms"
+        },
+        {
+          "sno": "2",
+          "station": "YELHANKA JN - YNK",
+          "arrives": "04:50",
+          "departs": "04:52",
+          "distance": "13 kms"
+        },
+        {
+          "sno": "3",
+          "station": "HINDUPUR - HUP",
+          "arrives": "06:00",
+          "departs": "06:02",
+          "distance": "96 kms"
+        },
+        {
+          "sno": "4",
+          "station": "SAI P NILAYAM - SSPN",
+          "arrives": "07:03",
+          "departs": "07:05",
+          "distance": "154 kms"
+        },
+        {
+          "sno": "5",
+          "station": "DHARMAVARAM JN - DMM",
+          "arrives": "08:20",
+          "departs": "08:25",
+          "distance": "187 kms"
+        },
+        {
+          "sno": "6",
+          "station": "ANANTAPUR - ATP",
+          "arrives": "08:58",
+          "departs": "09:00",
+          "distance": "220 kms"
+        },
+        {
+          "sno": "7",
+          "station": "GOOTY JN - GY",
+          "arrives": "09:48",
+          "departs": "09:50",
+          "distance": "277 kms"
+        },
+        {
+          "sno": "8",
+          "station": "DHONE - DHNE",
+          "arrives": "10:58",
+          "departs": "11:00",
+          "distance": "332 kms"
+        },
+        {
+          "sno": "9",
+          "station": "NANDYAL - NDL",
+          "arrives": "12:25",
+          "departs": "12:30",
+          "distance": "408 kms"
+        },
+        {
+          "sno": "10",
+          "station": "GIDDALUR - GID",
+          "arrives": "13:29",
+          "departs": "13:30",
+          "distance": "462 kms"
+        },
+        {
+          "sno": "11",
+          "station": "MARKAPUR ROAD - MRK",
+          "arrives": "14:09",
+          "departs": "14:10",
+          "distance": "521 kms"
+        },
+        {
+          "sno": "12",
+          "station": "NARASARAOPET - NRT",
+          "arrives": "15:19",
+          "departs": "15:20",
+          "distance": "620 kms"
+        },
+        {
+          "sno": "13",
+          "station": "GUNTUR JN - GNT",
+          "arrives": "16:30",
+          "departs": "16:35",
+          "distance": "665 kms"
+        },
+        {
+          "sno": "14",
+          "station": "VIJAYAWADA JN - BZA",
+          "arrives": "17:50",
+          "departs": "18:00",
+          "distance": "697 kms"
+        },
+        {
+          "sno": "15",
+          "station": "DUVVADA - DVD",
+          "arrives": "22:53",
+          "departs": "22:55",
+          "distance": "1030 kms"
+        },
+        {
+          "sno": "16",
+          "station": "VIZIANAGRAM JN - VZM",
+          "arrives": "00:10",
+          "departs": "00:20",
+          "distance": "1094 kms"
+        },
+        {
+          "sno": "17",
+          "station": "BRAHMAPUR - BAM",
+          "arrives": "03:08",
+          "departs": "03:10",
+          "distance": "1310 kms"
+        },
+        {
+          "sno": "18",
+          "station": "KHURDA ROAD JN - KUR",
+          "arrives": "05:00",
+          "departs": "05:10",
+          "distance": "1457 kms"
+        },
+        {
+          "sno": "19",
+          "station": "BHUBANESWAR - BBS",
+          "arrives": "05:25",
+          "departs": "05:30",
+          "distance": "1476 kms"
+        },
+        {
+          "sno": "20",
+          "station": "BALASORE - BLS",
+          "arrives": "09:08",
+          "departs": "09:10",
+          "distance": "1682 kms"
+        },
+        {
+          "sno": "21",
+          "station": "KHARAGPUR JN - KGP",
+          "arrives": "10:50",
+          "departs": "10:55",
+          "distance": "1800 kms"
+        },
+        {
+          "sno": "22",
+          "station": "HOWRAH JN - HWH",
+          "arrives": "14:00",
+          "departs": "Destination",
+          "distance": "1915 kms"
+        }
+      ]
+    },
+    {
+      "train_no": "15906",
+      "name": "DIBRUGARH - KANNIYAKUMARI Vivek Exp",
+      "zone": "NFR",
+      "type": "Exp",
+      "from_station_code": "DBRG",
+      "from_station_name": "DIBRUGARH",
+      "to_station_code": "CAPE",
+      "to_station_name": "KANYAKUMARI",
+      "departure": "23:45:00",
+      "arrival": "10:25:00",
+      "duration_hours": 82,
+      "duration_minutes": 40,
+      "distance_km": 4278,
+      "coaches": {
+        "first_ac": 0,
+        "second_ac": 1,
+        "third_ac": 1,
+        "chair_car": 0,
+        "sleeper": 1
+      },
+      "total_stops": 18,
+      "stoppages": []
+    }
+  ],
+  "major_junction_nodes": [
+    {
+      "code": "MNM",
+      "name": "MANAMADURAI JN",
+      "state": "Tamil Nadu",
+      "zone": "SR",
+      "lat": 9.681538999999999,
+      "lon": 78.45351
+    },
+    {
+      "code": "GKP",
+      "name": "GORAKHPUR JN",
+      "state": null,
+      "zone": null,
+      "lat": 26.759311,
+      "lon": 83.381499
+    },
+    {
+      "code": "SIOB",
+      "name": "SAMAKHIALI JN",
+      "state": null,
+      "zone": null,
+      "lat": 23.309819,
+      "lon": 70.503394
+    },
+    {
+      "code": "BRJN",
+      "name": "BRAJRAJNAGAR",
+      "state": null,
+      "zone": null,
+      "lat": 21.822718000000002,
+      "lon": 83.923653
+    },
+    {
+      "code": "DLJ",
+      "name": "DHOLA JN",
+      "state": "Gujarat",
+      "zone": "WR",
+      "lat": 21.822549000000002,
+      "lon": 71.738273
+    },
+    {
+      "code": "PGW",
+      "name": "PHAGWARA JN",
+      "state": null,
+      "zone": null,
+      "lat": 31.217555749800002,
+      "lon": 75.7655019775
+    },
+    {
+      "code": "JSG",
+      "name": "JHARSUGUDA JN",
+      "state": null,
+      "zone": null,
+      "lat": 21.862274,
+      "lon": 84.017427
+    },
+    {
+      "code": "UMB",
+      "name": "AMBALA CANT JN",
+      "state": null,
+      "zone": null,
+      "lat": 30.338918,
+      "lon": 76.826966
+    },
+    {
+      "code": "HTZ",
+      "name": "HATHIDAH JN",
+      "state": null,
+      "zone": null,
+      "lat": 25.367027,
+      "lon": 85.987826
+    },
+    {
+      "code": "PBE",
+      "name": "PILIBHIT JN",
+      "state": "Uttar Pradesh",
+      "zone": "NER",
+      "lat": 28.614977999999997,
+      "lon": 79.813946
+    },
+    {
+      "code": "MGS",
+      "name": "MUGHAL SARAI JN",
+      "state": null,
+      "zone": null,
+      "lat": 25.278149,
+      "lon": 83.11925000000001
+    },
+    {
+      "code": "JM",
+      "name": "JALAMB JN",
+      "state": null,
+      "zone": null,
+      "lat": 20.813007000000002,
+      "lon": 76.573236
+    },
+    {
+      "code": "APDJ",
+      "name": "ALIPUR DUAR JN",
+      "state": "West Bengal",
+      "zone": "NFR",
+      "lat": 26.523279,
+      "lon": 89.534048
+    },
+    {
+      "code": "BJU",
+      "name": "BARAUNI JN",
+      "state": null,
+      "zone": null,
+      "lat": 25.461768000000003,
+      "lon": 85.988748
+    },
+    {
+      "code": "TEL",
+      "name": "TENALI JN",
+      "state": null,
+      "zone": null,
+      "lat": 16.242409000000002,
+      "lon": 80.640413
+    },
+    {
+      "code": "SMR",
+      "name": "SAMDHARI JN",
+      "state": "Rajasthan",
+      "zone": "NWR",
+      "lat": 25.837202,
+      "lon": 72.57300699999999
+    },
+    {
+      "code": "SV",
+      "name": "SIWAN JN",
+      "state": null,
+      "zone": null,
+      "lat": 26.210724000000003,
+      "lon": 84.359267
+    },
+    {
+      "code": "DDA",
+      "name": "DURAUNDHA JN",
+      "state": null,
+      "zone": null,
+      "lat": 26.086973,
+      "lon": 84.45894600000001
+    },
+    {
+      "code": "ASR",
+      "name": "AMRITSAR JN",
+      "state": null,
+      "zone": null,
+      "lat": 31.631511999999997,
+      "lon": 74.858025
+    },
+    {
+      "code": "SOG",
+      "name": "SURATGARH JN",
+      "state": "Rajasthan",
+      "zone": "NWR",
+      "lat": 29.324152,
+      "lon": 73.90724800000001
+    },
+    {
+      "code": "CLD",
+      "name": "CHALSA JN",
+      "state": "West Bengal",
+      "zone": "NFR",
+      "lat": 26.882215,
+      "lon": 88.798213
+    },
+    {
+      "code": "BTT",
+      "name": "BHATNI JN",
+      "state": null,
+      "zone": null,
+      "lat": 26.381257,
+      "lon": 83.934035
+    },
+    {
+      "code": "AKV",
+      "name": "ANKLESHWAR JN",
+      "state": null,
+      "zone": null,
+      "lat": 21.623889,
+      "lon": 73.000633
+    },
+    {
+      "code": "UDN",
+      "name": "UDHNA JN",
+      "state": null,
+      "zone": null,
+      "lat": 21.171156,
+      "lon": 72.851461
+    },
+    {
+      "code": "NDD",
+      "name": "NIDADAVOLU JN",
+      "state": null,
+      "zone": null,
+      "lat": 16.898297,
+      "lon": 81.67550399999999
+    },
+    {
+      "code": "PNP",
+      "name": "PANIPAT JN",
+      "state": null,
+      "zone": null,
+      "lat": 29.388948,
+      "lon": 76.96379300000001
+    },
+    {
+      "code": "CPK",
+      "name": "CHAPARMUKH JN",
+      "state": "Assam",
+      "zone": "NFR",
+      "lat": 26.202272,
+      "lon": 92.511718
+    },
+    {
+      "code": "KKDE",
+      "name": "KURUKSHETRA JN",
+      "state": null,
+      "zone": null,
+      "lat": 29.969440000000002,
+      "lon": 76.852795
+    },
+    {
+      "code": "HJP",
+      "name": "HAJIPUR JN",
+      "state": null,
+      "zone": null,
+      "lat": 25.702909000000002,
+      "lon": 85.2155
+    },
+    {
+      "code": "CBE",
+      "name": "COIMBATORE JN",
+      "state": null,
+      "zone": null,
+      "lat": 10.997639,
+      "lon": 76.966298
+    },
+    {
+      "code": "PTJ",
+      "name": "PODANUR JN",
+      "state": null,
+      "zone": null,
+      "lat": 10.965425,
+      "lon": 76.990125
+    },
+    {
+      "code": "ERSC",
+      "name": "ERNAKULAM JN. C",
+      "state": null,
+      "zone": null,
+      "lat": 9.978060000000001,
+      "lon": 76.28985899999999
+    },
+    {
+      "code": "ALD",
+      "name": "ALLAHABAD JN",
+      "state": null,
+      "zone": null,
+      "lat": 25.446241,
+      "lon": 81.828816
+    },
+    {
+      "code": "BSL",
+      "name": "BHUSAVAL JN",
+      "state": null,
+      "zone": null,
+      "lat": 21.0472812,
+      "lon": 75.78867170000001
+    },
+    {
+      "code": "JHS",
+      "name": "JHANSI JN",
+      "state": null,
+      "zone": null,
+      "lat": 25.443585,
+      "lon": 78.55298499999999
+    },
+    {
+      "code": "ED",
+      "name": "ERODE JN",
+      "state": null,
+      "zone": null,
+      "lat": 11.327682,
+      "lon": 77.72593400000001
+    },
+    {
+      "code": "NBD",
+      "name": "NAJIBABAD JN",
+      "state": null,
+      "zone": null,
+      "lat": 29.603540000000002,
+      "lon": 78.335733
+    },
+    {
+      "code": "HMH",
+      "name": "HANUMANGARH JN",
+      "state": "Rajasthan",
+      "zone": "NWR",
+      "lat": 29.614904,
+      "lon": 74.297633
+    },
+    {
+      "code": "PHR",
+      "name": "PHILLAUR JN",
+      "state": null,
+      "zone": null,
+      "lat": 31.016907,
+      "lon": 75.78576100000001
+    },
+    {
+      "code": "LDH",
+      "name": "LUDHIANA JN",
+      "state": null,
+      "zone": null,
+      "lat": 30.912367,
+      "lon": 75.84787299999999
+    },
+    {
+      "code": "SIR",
+      "name": "SIRHIND JN",
+      "state": null,
+      "zone": null,
+      "lat": 30.624222,
+      "lon": 76.383194
+    },
+    {
+      "code": "RPJ",
+      "name": "RAJPURA JN",
+      "state": null,
+      "zone": null,
+      "lat": 30.486458949,
+      "lon": 76.5940201901
+    },
+    {
+      "code": "JND",
+      "name": "JUNAGADH JN",
+      "state": "Gujarat",
+      "zone": "WR",
+      "lat": 21.530606,
+      "lon": 70.457612
+    },
+    {
+      "code": "MUR",
+      "name": "MANKAPUR JN",
+      "state": null,
+      "zone": null,
+      "lat": 27.039058,
+      "lon": 82.227648
+    },
+    {
+      "code": "KID",
+      "name": "KHAIRAR JN",
+      "state": "Uttar Pradesh",
+      "zone": "NCR",
+      "lat": 25.451955,
+      "lon": 80.236073
+    },
+    {
+      "code": "KTX",
+      "name": "KATAKHAL JN",
+      "state": "Assam",
+      "zone": "NFR",
+      "lat": 24.83436,
+      "lon": 92.62706700000001
+    },
+    {
+      "code": "ET",
+      "name": "ITARSI JN",
+      "state": null,
+      "zone": null,
+      "lat": 22.608258,
+      "lon": 77.767128
+    },
+    {
+      "code": "JL",
+      "name": "JALGAON JN",
+      "state": null,
+      "zone": null,
+      "lat": 21.018114999999998,
+      "lon": 75.56287499999999
+    },
+    {
+      "code": "KSB",
+      "name": "KOSAMBA JN",
+      "state": null,
+      "zone": null,
+      "lat": 21.464052,
+      "lon": 72.95459799999999
+    },
+    {
+      "code": "GWL",
+      "name": "GWALIOR JN",
+      "state": null,
+      "zone": null,
+      "lat": 26.216483,
+      "lon": 78.18229199999999
+    },
+    {
+      "code": "NKJ",
+      "name": "NEW KATNI JN",
+      "state": null,
+      "zone": null,
+      "lat": 23.8136370394,
+      "lon": 80.4204539438
+    },
+    {
+      "code": "ASN",
+      "name": "ASANSOL JN",
+      "state": null,
+      "zone": null,
+      "lat": 23.691441,
+      "lon": 86.975152
+    },
+    {
+      "code": "MRJ",
+      "name": "MIRAJ JN",
+      "state": "Maharashtra",
+      "zone": "CR",
+      "lat": 16.819946,
+      "lon": 74.638839
+    },
+    {
+      "code": "AGC",
+      "name": "AGRA CANTT",
+      "state": null,
+      "zone": null,
+      "lat": 27.157992,
+      "lon": 77.990153
+    },
+    {
+      "code": "MV",
+      "name": "MAYILADUTURAI JN",
+      "state": "Tamil Nadu",
+      "zone": "SR",
+      "lat": 11.095237000000001,
+      "lon": 79.62868
+    },
+    {
+      "code": "VG",
+      "name": "VIRAMGAM JN",
+      "state": null,
+      "zone": null,
+      "lat": 23.129098,
+      "lon": 72.052968
+    },
+    {
+      "code": "KOTA",
+      "name": "KOTA JN",
+      "state": null,
+      "zone": null,
+      "lat": 25.223553,
+      "lon": 75.8805
+    },
+    {
+      "code": "NAD",
+      "name": "NAGDA JN",
+      "state": null,
+      "zone": null,
+      "lat": 23.45592,
+      "lon": 75.41249099999999
+    },
+    {
+      "code": "BRC",
+      "name": "VADODARA JN",
+      "state": null,
+      "zone": null,
+      "lat": 22.310756,
+      "lon": 73.181065
+    },
+    {
+      "code": "CPN",
+      "name": "CHAMPANER RD JN",
+      "state": null,
+      "zone": null,
+      "lat": 22.541916,
+      "lon": 73.393378
+    },
+    {
+      "code": "SMLA",
+      "name": "SAMLAYA JN",
+      "state": null,
+      "zone": null,
+      "lat": 22.483966,
+      "lon": 73.302104
+    },
+    {
+      "code": "DHN",
+      "name": "DHANBAD JN",
+      "state": null,
+      "zone": null,
+      "lat": 23.790966,
+      "lon": 86.428956
+    },
+    {
+      "code": "CSN",
+      "name": "CHALISGAON JN",
+      "state": null,
+      "zone": null,
+      "lat": 20.464109,
+      "lon": 74.999049
+    },
+    {
+      "code": "SBC",
+      "name": "BANGALORE CITY JN",
+      "state": "Karnataka",
+      "zone": "SWR",
+      "lat": 12.977595,
+      "lon": 77.56808299999999
+    },
+    {
+      "code": "MTJ",
+      "name": "MATHURA JN",
+      "state": null,
+      "zone": null,
+      "lat": 27.480145,
+      "lon": 77.67311699999999
+    },
+    {
+      "code": "ITRN",
+      "name": "Itwari Jn (Ng)",
+      "state": null,
+      "zone": null,
+      "lat": 21.156859,
+      "lon": 79.118302
+    },
+    {
+      "code": "PRLI",
+      "name": "PARLI VAIJNATH",
+      "state": "Maharashtra",
+      "zone": "SCR",
+      "lat": 18.853005,
+      "lon": 76.524424
+    },
+    {
+      "code": "SBT",
+      "name": "SABARMATI JN",
+      "state": null,
+      "zone": null,
+      "lat": 23.077545999999998,
+      "lon": 72.58928200000001
+    },
+    {
+      "code": "ANND",
+      "name": "ANAND JN",
+      "state": null,
+      "zone": null,
+      "lat": 22.561307,
+      "lon": 72.965733
+    },
+    {
+      "code": "VDA",
+      "name": "VASAD JN",
+      "state": null,
+      "zone": null,
+      "lat": 22.452351,
+      "lon": 73.05999100000001
+    },
+    {
+      "code": "SLO",
+      "name": "SAMALKOT JN",
+      "state": null,
+      "zone": null,
+      "lat": 17.044827,
+      "lon": 82.168724
+    },
+    {
+      "code": "SBI",
+      "name": "SABARMATI JN",
+      "state": null,
+      "zone": null,
+      "lat": 23.072985,
+      "lon": 72.587162
+    },
+    {
+      "code": "BBQ",
+      "name": "BASIN BRIDGE JN",
+      "state": null,
+      "zone": null,
+      "lat": 13.102361,
+      "lon": 80.27122100000001
+    },
+    {
+      "code": "RJAK",
+      "name": "RAJNAGAR",
+      "state": "Madhya Pradesh",
+      "zone": "NCR",
+      "lat": 24.903476070500002,
+      "lon": 79.8769002625
+    },
+    {
+      "code": "BH",
+      "name": "BHARUCH JN",
+      "state": null,
+      "zone": null,
+      "lat": 21.706907,
+      "lon": 72.997689
+    },
+    {
+      "code": "NGP",
+      "name": "NAGPUR",
+      "state": null,
+      "zone": null,
+      "lat": 21.153567,
+      "lon": 79.089004
+    },
+    {
+      "code": "SLGR",
+      "name": "SIMALUGURI JN",
+      "state": "Assam",
+      "zone": "NFR",
+      "lat": 26.917281,
+      "lon": 94.756816
+    },
+    {
+      "code": "MS",
+      "name": "CHENNAI EGMORE",
+      "state": null,
+      "zone": null,
+      "lat": 13.077677999999999,
+      "lon": 80.260193
+    },
+    {
+      "code": "BZA",
+      "name": "VIJAYAWADA JN",
+      "state": null,
+      "zone": null,
+      "lat": 16.518262,
+      "lon": 80.61864800000001
+    },
+    {
+      "code": "ERS",
+      "name": "ERNAKULAM JN",
+      "state": null,
+      "zone": null,
+      "lat": 9.969541999999999,
+      "lon": 76.290672
+    }
+  ]
+}

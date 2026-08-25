@@ -6,55 +6,64 @@
   <title>COA Telemetry Lab — CRIS AI Block Scheduler</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <link rel="stylesheet" href="/src/dashboard/styles.css" />
 </head>
 <body>
+  <!-- Sidebar Navigation -->
+  <nav class="sidebar" id="sidebar"></nav>
 
-  <!-- Shared Navigation -->
-  <div id="shared-header"></div>
-
-  <div class="page-container">
-    <!-- Page Hero -->
-    <div class="page-hero">
-      <div class="hero-left">
-        <h1>
-          <span>🛰️ COA Live Telemetry & Ingestion Lab</span>
-          <span class="hero-badge cyan">PROTOCOL 1 (COA-2.1)</span>
-        </h1>
-        <p class="hero-sub">
-          Real-time train positioning, loco speed telemetry, ATP status, station event tracking, and section berth occupancy across 10 Indian Railways services.
+  <!-- Main Content Area -->
+  <main class="content">
+    <header>
+      <div>
+        <h1>COA Live Telemetry & Ingestion Lab</h1>
+        <p style="color:var(--text-secondary); font-size:0.88rem; margin-top:4px;">
+          Real-time train positioning, loco speed telemetry, ATP status, and line berth occupancy across 10 Indian Railways services
         </p>
       </div>
-      <div class="hero-stats">
-        <div class="hero-stat-card">
-          <div class="hstat-label">Feed Ingestion Rate</div>
-          <div class="hstat-val cyan">100 ms</div>
+      <div class="header-meta">
+        <div class="status-pill">
+          <span class="pulse"></span>
+          <span>COA-2.1 INGESTION ACTIVE</span>
         </div>
-        <div class="hero-stat-card">
-          <div class="hstat-label">ATP Link</div>
-          <div class="hstat-val green">KAVACH SYNC</div>
-        </div>
-        <div class="hero-stat-card">
-          <div class="hstat-label">Active Section</div>
-          <div class="hstat-val orange" id="hero-section-id">CNB-NDLS-084</div>
-        </div>
+        <div class="clock-box" id="live-clock">--:--:-- IST</div>
+      </div>
+    </header>
+
+    <!-- Hero Stats -->
+    <div class="hero-stats">
+      <div class="hero-stat-card">
+        <div class="hstat-label">Ingestion Rate</div>
+        <div class="hstat-val purple">100 ms</div>
+      </div>
+      <div class="hero-stat-card">
+        <div class="hstat-label">ATP Link</div>
+        <div class="hstat-val amber">KAVACH SYNC</div>
+      </div>
+      <div class="hero-stat-card">
+        <div class="hstat-label">Active Section</div>
+        <div class="hstat-val orange" id="hero-section-id">CNB-NDLS-084</div>
+      </div>
+      <div class="hero-stat-card">
+        <div class="hstat-label">Signal Aspect</div>
+        <div class="hstat-val gold">PROCEED</div>
       </div>
     </div>
 
     <!-- Interactive Train Selector -->
-    <div class="card" style="padding: 14px 20px;">
-      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
-        <div style="display: flex; align-items: center; gap: 10px;">
-          <span style="font-size: 0.8rem; font-weight: 700; color: var(--cyan);">Select Live Train Service:</span>
-          <select id="train-selector" class="form-select" style="min-width: 320px; font-weight: 600;">
+    <div class="card" style="padding: 16px 20px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
+        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+          <span style="font-size: 0.85rem; font-weight: 700; color: var(--accent-fuchsia);">Select Live Train Service:</span>
+          <select id="train-selector" class="form-select" style="min-width: 320px;">
             <!-- Populated via JS with all 10 real trains -->
           </select>
         </div>
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <button id="btn-toggle-sim" class="btn btn-secondary" style="font-size: 0.75rem;">⏸️ Pause Simulation</button>
-          <button id="btn-copy-json" class="btn" style="font-size: 0.75rem;">📋 Copy COA Payload JSON</button>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <button id="btn-toggle-sim" class="btn btn-secondary">Pause Simulation</button>
+          <button id="btn-copy-json" class="btn">Copy Payload JSON</button>
         </div>
       </div>
     </div>
@@ -64,40 +73,40 @@
       <!-- Left: Loco Gauges & Status -->
       <div class="card">
         <div class="card-title-bar">
-          <h3>⚡ Loco Telemetry & Speedometer</h3>
-          <span class="badge cyan" id="loco-signal-aspect">GREEN</span>
+          <h3>Loco Telemetry & Speedometer</h3>
+          <span class="badge amber" id="loco-signal-aspect">ASPECT: CLEAR</span>
         </div>
 
-        <div style="text-align: center; margin: 10px 0;">
-          <div style="font-family: var(--font-mono); font-size: 3rem; font-weight: 800; color: var(--cyan); text-shadow: 0 0 20px rgba(0,212,255,0.6);" id="gauge-speed">
-            128.5 <span style="font-size: 1rem; color: var(--text-dim);">km/h</span>
+        <div style="text-align: center; margin: 12px 0;">
+          <div class="speed-display" id="gauge-speed">
+            128.5 <span style="font-size: 1.1rem; color: var(--text-muted);">km/h</span>
           </div>
-          <div style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 2px;">
+          <div style="font-size: 0.76rem; color: var(--text-secondary); margin-top: 2px;">
             Target Section MPS: 130 km/h · ATP Restricted
           </div>
         </div>
 
-        <div class="grid-2" style="gap: 10px;">
+        <div class="grid-2" style="gap: 12px;">
           <div class="hero-stat-card" style="text-align: center;">
-            <div class="hstat-label">Traction Motor Current</div>
-            <div class="hstat-val" id="tele-current" style="color: var(--yellow);">1,520 A</div>
+            <div class="hstat-label">Traction Current</div>
+            <div class="hstat-val amber" id="tele-current">1,520 A</div>
           </div>
           <div class="hero-stat-card" style="text-align: center;">
-            <div class="hstat-label">Brake Pipe Pressure</div>
-            <div class="hstat-val" id="tele-brake" style="color: var(--green);">5.0 bar</div>
+            <div class="hstat-label">Brake Pressure</div>
+            <div class="hstat-val orange" id="tele-brake">5.0 bar</div>
           </div>
           <div class="hero-stat-card" style="text-align: center;">
             <div class="hstat-label">ATP Override</div>
-            <div class="hstat-val green" id="tele-atp">DISABLED</div>
+            <div class="hstat-val amber" id="tele-atp">DISABLED</div>
           </div>
           <div class="hero-stat-card" style="text-align: center;">
-            <div class="hstat-label">GSM-R Gap Filled</div>
-            <div class="hstat-val green" id="tele-gap">NO</div>
+            <div class="hstat-label">GSM-R Link</div>
+            <div class="hstat-val purple" id="tele-gap">ACTIVE</div>
           </div>
         </div>
 
-        <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border); margin-top: auto;">
-          <div style="font-size: 0.65rem; color: var(--text-dim); text-transform: uppercase;">WGS-84 GPS Position</div>
+        <div style="background: var(--bg-inset); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border); margin-top: auto;">
+          <div style="font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; font-weight:700;">WGS-84 GPS Position</div>
           <div style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-primary); margin-top: 4px;" id="tele-coords">
             28.6139° N, 77.2090° E (Heading: 312°)
           </div>
@@ -107,42 +116,42 @@
       <!-- Right: Route Topology & Interactive Berth Tracking -->
       <div class="card">
         <div class="card-title-bar">
-          <h3>🛤️ Route Section & Line Berth Matrix</h3>
-          <span class="card-subtitle" id="route-span-label">Howrah &rarr; New Delhi</span>
+          <h3>Route Section & Line Berth Matrix</h3>
+          <span class="badge purple" id="route-span-label">Howrah &rarr; New Delhi</span>
         </div>
 
-        <!-- Visual Track Line Progression -->
-        <div style="background: rgba(0,0,0,0.3); padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
-          <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-secondary); margin-bottom: 8px;">
+        <!-- Track Line Progression -->
+        <div style="background: var(--bg-inset); padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+          <div style="display: flex; justify-content: space-between; font-size: 0.76rem; color: var(--text-secondary); margin-bottom: 8px;">
             <span id="prog-source">Howrah (HWH)</span>
-            <span id="prog-mid" style="color: var(--cyan); font-weight: 700;">Section: CNB-NDLS-084</span>
+            <span id="prog-mid" style="color: var(--accent-fuchsia); font-weight: 700;">Section: CNB-NDLS-084</span>
             <span id="prog-dest">New Delhi (NDLS)</span>
           </div>
-          <div style="height: 8px; background: rgba(255,255,255,0.08); border-radius: 4px; position: relative; overflow: hidden;">
-            <div id="prog-bar" style="width: 78%; height: 100%; background: linear-gradient(90deg, var(--blue), var(--cyan)); border-radius: 4px;"></div>
+          <div style="height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; position: relative; overflow: hidden;">
+            <div id="prog-bar" style="width: 78%; height: 100%; background: linear-gradient(90deg, var(--accent-purple), var(--accent-orange)); border-radius: 4px;"></div>
           </div>
         </div>
 
         <!-- Section Berth Occupancy Grid -->
         <div>
-          <div class="card-subtitle" style="margin-bottom: 8px;">Current Section Berths (Line Occupancy State)</div>
+          <div style="font-size: 0.76rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Current Section Berths (Line Occupancy State)</div>
           <div class="grid-3" id="berth-container">
             <!-- Dynamically populated -->
           </div>
         </div>
 
-        <!-- 4-Stop Station Timeline -->
+        <!-- Station Event Log -->
         <div>
-          <div class="card-subtitle" style="margin-bottom: 8px;">Station Event Log & Punctuality Tracker</div>
+          <div style="font-size: 0.76rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Station Event Log & Punctuality Tracker</div>
           <div class="table-wrap">
-            <table class="data-table" style="font-size: 0.7rem;">
+            <table class="data-table" style="font-size: 0.74rem;">
               <thead>
                 <tr>
                   <th>Station</th>
                   <th>Scheduled Arr/Dep</th>
                   <th>Actual Arr/Dep</th>
                   <th>Delay Status</th>
-                  <th>Crew / Halt</th>
+                  <th>Halt Status</th>
                 </tr>
               </thead>
               <tbody id="station-timeline-body">
@@ -154,22 +163,20 @@
       </div>
     </div>
 
-    <!-- Live Generated COA Ingestion JSON Payload -->
+    <!-- Live COA JSON Stream -->
     <div class="card">
       <div class="card-title-bar">
-        <h3>📄 Real-Time COAIngestionPayload JSON Stream (`cris.coa.train-telemetry.v2`)</h3>
-        <span class="badge cyan">JSON Stream</span>
+        <h3>Real-Time COAIngestionPayload JSON Stream (cris.coa.train-telemetry.v2)</h3>
+        <span class="badge orange">Live Stream</span>
       </div>
-      <pre id="json-coa-stream" style="background: #02050c; border: 1px solid var(--border); padding: 16px; border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: 0.75rem; color: #73daca; overflow-x: auto; max-height: 280px;"></pre>
+      <pre class="json-block" id="json-coa-stream"></pre>
     </div>
-  </div>
 
-  <footer class="footer">
-    <div class="footer-inner">
+    <footer class="footer">
       <span>CRIS Protocol 1 — Control Office Application Ingestion (COA-2.1)</span>
-      <span>Real-Time Frequency: 100ms · Auto-reconnect enabled</span>
-    </div>
-  </footer>
+      <span style="color:var(--accent-amber);">Real-Time Frequency: 100ms · Auto-reconnect enabled</span>
+    </footer>
+  </main>
 
   <script src="/src/dashboard/shared.js"></script>
   <script>
@@ -191,7 +198,7 @@
 
     document.getElementById("btn-toggle-sim").addEventListener("click", () => {
       isPaused = !isPaused;
-      document.getElementById("btn-toggle-sim").textContent = isPaused ? "▶️ Resume Simulation" : "⏸️ Pause Simulation";
+      document.getElementById("btn-toggle-sim").textContent = isPaused ? "Resume Simulation" : "Pause Simulation";
     });
 
     document.getElementById("btn-copy-json").addEventListener("click", () => {
@@ -202,7 +209,7 @@
 
     function updateView() {
       document.getElementById("hero-section-id").textContent = activeTrain.route_sections[0] || "MAIN-01";
-      document.getElementById("gauge-speed").innerHTML = `${activeTrain.speed_kmph.toFixed(1)} <span style="font-size:1rem; color:var(--text-dim);">km/h</span>`;
+      document.getElementById("gauge-speed").innerHTML = `${activeTrain.speed_kmph.toFixed(1)} <span style="font-size:1.1rem; color:var(--text-muted);">km/h</span>`;
       document.getElementById("tele-current").textContent = `${activeTrain.traction_current_A} A`;
       document.getElementById("tele-brake").textContent = `${activeTrain.brake_pressure_bar} bar`;
       document.getElementById("route-span-label").textContent = `${activeTrain.source} → ${activeTrain.destination}`;
@@ -211,20 +218,20 @@
 
       // Berths
       const berthHtml = `
-        <div class="card" style="background:rgba(243,156,18,0.1); border-color:rgba(243,156,18,0.4); text-align:center; padding:12px;">
-          <div style="font-family:var(--font-mono); font-size:1.1rem; color:var(--orange); font-weight:700;">MAIN UP (B1)</div>
-          <div style="font-size:0.65rem; color:var(--orange); font-weight:700; margin-top:2px;">OCCUPIED</div>
-          <div style="font-family:var(--font-mono); font-size:0.75rem; color:var(--text-primary); margin-top:4px;">Train ${activeTrain.train_no}</div>
+        <div class="card" style="background:rgba(249,115,22,0.12); border-color:rgba(249,115,22,0.45); text-align:center; padding:12px;">
+          <div style="font-family:var(--font-mono); font-size:1.05rem; color:var(--accent-orange); font-weight:700;">MAIN UP (B1)</div>
+          <div style="font-size:0.65rem; color:var(--accent-orange); font-weight:700; margin-top:2px;">OCCUPIED</div>
+          <div style="font-family:var(--font-mono); font-size:0.74rem; color:var(--text-primary); margin-top:4px;">Train ${activeTrain.train_no}</div>
         </div>
-        <div class="card" style="background:rgba(46,204,113,0.1); border-color:rgba(46,204,113,0.4); text-align:center; padding:12px;">
-          <div style="font-family:var(--font-mono); font-size:1.1rem; color:var(--green); font-weight:700;">MAIN DOWN (B2)</div>
-          <div style="font-size:0.65rem; color:var(--green); font-weight:700; margin-top:2px;">FREE</div>
-          <div style="font-family:var(--font-mono); font-size:0.75rem; color:var(--text-dim); margin-top:4px;">Clearance Granted</div>
+        <div class="card" style="background:rgba(245,158,11,0.12); border-color:rgba(245,158,11,0.45); text-align:center; padding:12px;">
+          <div style="font-family:var(--font-mono); font-size:1.05rem; color:var(--accent-amber); font-weight:700;">MAIN DOWN (B2)</div>
+          <div style="font-size:0.65rem; color:var(--accent-amber); font-weight:700; margin-top:2px;">CLEAR</div>
+          <div style="font-family:var(--font-mono); font-size:0.74rem; color:var(--text-muted); margin-top:4px;">Clearance Granted</div>
         </div>
-        <div class="card" style="background:rgba(0,212,255,0.1); border-color:rgba(0,212,255,0.4); text-align:center; padding:12px;">
-          <div style="font-family:var(--font-mono); font-size:1.1rem; color:var(--cyan); font-weight:700;">LOOP LINE (L1)</div>
-          <div style="font-size:0.65rem; color:var(--cyan); font-weight:700; margin-top:2px;">RESERVED</div>
-          <div style="font-family:var(--font-mono); font-size:0.75rem; color:var(--text-dim); margin-top:4px;">Maintenance Slot</div>
+        <div class="card" style="background:rgba(192,38,211,0.12); border-color:rgba(192,38,211,0.45); text-align:center; padding:12px;">
+          <div style="font-family:var(--font-mono); font-size:1.05rem; color:var(--accent-fuchsia); font-weight:700;">LOOP LINE (L1)</div>
+          <div style="font-size:0.65rem; color:var(--accent-fuchsia); font-weight:700; margin-top:2px;">RESERVED</div>
+          <div style="font-family:var(--font-mono); font-size:0.74rem; color:var(--text-muted); margin-top:4px;">Maintenance Slot</div>
         </div>
       `;
       document.getElementById("berth-container").innerHTML = berthHtml;
@@ -233,22 +240,22 @@
       const timelineHtml = `
         <tr>
           <td><strong>${activeTrain.source}</strong></td>
-          <td style="font-family:var(--font-mono); color:var(--text-secondary);">Dep: 06:00 UTC</td>
-          <td style="font-family:var(--font-mono); color:var(--text-primary);">Dep: 06:05 UTC</td>
-          <td><span class="badge green">On-Time (+5m)</span></td>
+          <td style="font-family:var(--font-mono); color:var(--text-muted);">Dep: 06:00 IST</td>
+          <td style="font-family:var(--font-mono); color:var(--text-primary);">Dep: 06:05 IST</td>
+          <td><span class="badge amber">On-Time (+5m)</span></td>
           <td>Origin Station</td>
         </tr>
         <tr>
           <td><strong>Junction Hub (Midway)</strong></td>
-          <td style="font-family:var(--font-mono); color:var(--text-secondary);">Arr: 08:30 · Dep: 08:40</td>
+          <td style="font-family:var(--font-mono); color:var(--text-muted);">Arr: 08:30 · Dep: 08:40</td>
           <td style="font-family:var(--font-mono); color:var(--text-primary);">Arr: 08:42 · Dep: 08:50</td>
           <td><span class="badge orange">Delayed (+12m)</span></td>
           <td>Crew Change (Yes)</td>
         </tr>
         <tr>
           <td><strong>${activeTrain.destination}</strong></td>
-          <td style="font-family:var(--font-mono); color:var(--text-secondary);">Sch: ${activeTrain.scheduled_arrival}</td>
-          <td style="font-family:var(--font-mono); color:var(--cyan);">Est: In Transit</td>
+          <td style="font-family:var(--font-mono); color:var(--text-muted);">Sch: ${activeTrain.scheduled_arrival}</td>
+          <td style="font-family:var(--font-mono); color:var(--accent-fuchsia);">Est: In Transit</td>
           <td><span class="badge purple">P_i=${activeTrain.P_i}</span></td>
           <td>Destination Terminal</td>
         </tr>
@@ -273,7 +280,7 @@
           heading_deg: 312,
           traction_current_A: activeTrain.traction_current_A,
           brake_pressure_bar: activeTrain.brake_pressure_bar,
-          signal_aspect: "GREEN",
+          signal_aspect: "CLEAR",
           atp_override_active: false
         },
         current_section: {
@@ -296,7 +303,7 @@
       if (isPaused) return;
       const jitter = (Math.random() * 2 - 1).toFixed(1);
       activeTrain.speed_kmph = Math.max(80, Math.min(140, activeTrain.speed_kmph + parseFloat(jitter)));
-      document.getElementById("gauge-speed").innerHTML = `${activeTrain.speed_kmph.toFixed(1)} <span style="font-size:1rem; color:var(--text-dim);">km/h</span>`;
+      document.getElementById("gauge-speed").innerHTML = `${activeTrain.speed_kmph.toFixed(1)} <span style="font-size:1.1rem; color:var(--text-muted);">km/h</span>`;
     }, 2000);
   </script>
 </body>

@@ -27,20 +27,33 @@ const server = http.createServer((req, res) => {
   let reqUrl = req.url.split("?")[0];
   if (reqUrl === "/") reqUrl = "/index.html";
 
-  // Map /coa, /bdms, /fois, /milp, /analytics to their respective HTML pages
+  // Map clean routes to pages
   if (reqUrl === "/coa") reqUrl = "/pages/coa.html";
   if (reqUrl === "/bdms") reqUrl = "/pages/bdms.html";
   if (reqUrl === "/fois") reqUrl = "/pages/fois.html";
   if (reqUrl === "/milp") reqUrl = "/pages/milp.html";
   if (reqUrl === "/analytics" || reqUrl === "/data") reqUrl = "/pages/analytics.html";
+  if (reqUrl === "/terminal") reqUrl = "/pages/terminal.html";
 
-  const filePath = path.join(BASE_DIR, reqUrl);
+  let filePath = path.join(BASE_DIR, reqUrl);
 
   fs.stat(filePath, (err, stats) => {
     if (err || !stats.isFile()) {
-      res.writeHead(404, { "Content-Type": "text/html" });
-      res.end(`<h2>404 Not Found</h2><p>The requested URL ${reqUrl} was not found.</p><a href="/">Return to Dashboard</a>`);
-      return;
+      // Try appending .html if not found
+      if (!path.extname(filePath)) {
+        const htmlPath = filePath + ".html";
+        if (fs.existsSync(htmlPath)) {
+          filePath = htmlPath;
+        } else {
+          res.writeHead(404, { "Content-Type": "text/html" });
+          res.end(`<h2>404 Not Found</h2><p>The requested URL ${reqUrl} was not found.</p><a href="/">Return to Dashboard</a>`);
+          return;
+        }
+      } else {
+        res.writeHead(404, { "Content-Type": "text/html" });
+        res.end(`<h2>404 Not Found</h2><p>The requested URL ${reqUrl} was not found.</p><a href="/">Return to Dashboard</a>`);
+        return;
+      }
     }
 
     const ext = path.extname(filePath).toLowerCase();
