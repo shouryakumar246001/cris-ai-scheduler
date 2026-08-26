@@ -503,6 +503,7 @@ function renderSharedNav(activePage) {
     { id: "coa", label: "RTIS GPS Telemetry", url: "/pages/coa.html" },
     { id: "fois", label: "Cascade Delay Risk", url: "/pages/fois.html" },
     { id: "terminal", label: "CLI Dispatch Terminal", url: "/pages/terminal.html" },
+    { id: "notifications", label: "Notification Center", url: "/pages/notifications.html" },
   ];
 
   sidebar.innerHTML = `

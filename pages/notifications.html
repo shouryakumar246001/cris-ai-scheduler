@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Controller Notification Center — CRIS ETA Predict (SIH 26028)</title>
+  <meta name="description" content="Controller Notification Center — Broadcast delay alerts, platform changes, and TSR warnings to passengers and station staff in real time.">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/dashboard/styles.css?v=4" />
+  <style>
+    /* ─── Composer ─────────────────────────────── */
+    .composer-form { display: flex; flex-direction: column; gap: 14px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-label {
+      font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700;
+      color: #94a3b8; text-transform: uppercase; letter-spacing: 0.07em;
+    }
+    .form-control {
+      background: rgba(255,255,255,0.06);
+      border: 1.5px solid rgba(255,255,255,0.18);
+      border-radius: 7px;
+      color: #ffffff;
+      font-family: var(--font-mono);
+      font-size: 0.84rem;
+      font-weight: 600;
+      padding: 9px 13px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-control:focus { border-color: rgba(255,255,255,0.55); }
+    .form-control option { background: #1e293b; color: #fff; }
+    textarea.form-control { min-height: 90px; resize: vertical; line-height: 1.6; }
+    .send-btn {
+      background: rgba(255,255,255,0.15);
+      border: 2px solid rgba(255,255,255,0.45);
+      color: #ffffff;
+      font-family: var(--font-mono);
+      font-weight: 800;
+      font-size: 0.9rem;
+      padding: 11px 28px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      align-self: flex-start;
+      letter-spacing: 0.04em;
+    }
+    .send-btn:hover { background: rgba(255,255,255,0.28); border-color: rgba(255,255,255,0.7); transform: translateY(-1px); }
+    .send-btn:active { transform: translateY(0); }
+
+    /* ─── Notification Cards ──────────────────── */
+    .notif-feed { display: flex; flex-direction: column; gap: 10px; }
+    .notif-card {
+      background: rgba(255,255,255,0.05);
+      border: 1.5px solid rgba(255,255,255,0.14);
+      border-left: 4px solid rgba(255,255,255,0.6);
+      border-radius: 10px;
+      padding: 13px 16px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      animation: slideIn 0.35s ease;
+    }
+    .notif-card.priority-CRITICAL { border-left-color: rgba(255,255,255,1); background: rgba(255,255,255,0.1); }
+    .notif-card.priority-HIGH     { border-left-color: rgba(255,255,255,0.8); }
+    .notif-card.priority-MEDIUM   { border-left-color: rgba(255,255,255,0.5); }
+    .notif-card.priority-INFO     { border-left-color: rgba(255,255,255,0.28); }
+    @keyframes slideIn { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:translateY(0); } }
+    .notif-icon { font-size: 1.3rem; flex-shrink: 0; margin-top: 2px; }
+    .notif-body { flex: 1; }
+    .notif-header { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
+    .notif-type-tag {
+      font-family: var(--font-mono); font-size: 0.65rem; font-weight: 800;
+      color: #ffffff; background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      padding: 2px 7px; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    .notif-train { font-family: var(--font-mono); font-size: 0.75rem; color: #e2e8f0; font-weight: 700; }
+    .notif-time { font-family: var(--font-mono); font-size: 0.68rem; color: #94a3b8; margin-left: auto; }
+    .notif-message { font-size: 0.84rem; color: #e2e8f0; line-height: 1.5; }
+    .notif-targets { font-family: var(--font-mono); font-size: 0.68rem; color: #94a3b8; margin-top:5px; }
+    .notif-dismiss { background: transparent; border: none; color: rgba(255,255,255,0.35); font-size: 0.9rem; cursor: pointer; padding: 2px 6px; border-radius: 4px; transition: color 0.18s; flex-shrink:0; align-self:flex-start; }
+    .notif-dismiss:hover { color: rgba(255,255,255,0.8); }
+
+    /* ─── Channel Pills ───────────────────────── */
+    .channel-grid { display: flex; gap: 10px; flex-wrap: wrap; }
+    .channel-pill {
+      background: rgba(255,255,255,0.07);
+      border: 1.5px solid rgba(255,255,255,0.18);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #e2e8f0;
+      cursor: pointer;
+      transition: all 0.18s;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .channel-pill.active { background: rgba(255,255,255,0.22); border-color: rgba(255,255,255,0.6); color: #ffffff; }
+    .channel-pill:hover { background: rgba(255,255,255,0.14); }
+
+    /* ─── Toast Notification ──────────────────── */
+    #toast {
+      position: fixed; top: 20px; right: 20px; z-index: 9999;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(12px);
+      border: 1.5px solid rgba(255,255,255,0.4);
+      border-radius: 10px;
+      padding: 14px 20px;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #ffffff;
+      display: none;
+      animation: slideInRight 0.3s ease;
+      max-width: 320px;
+    }
+    @keyframes slideInRight { from { opacity:0; transform:translateX(30px); } to { opacity:1; transform:translateX(0); } }
+
+    /* ─── Stats ───────────────────────────────── */
+    .notif-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .nstat { background: rgba(255,255,255,0.06); border: 1.5px solid rgba(255,255,255,0.14); border-radius: 8px; padding: 12px 14px; }
+    .nstat-val { font-family: var(--font-mono); font-size: 1.4rem; font-weight: 900; color: #ffffff; }
+    .nstat-lbl { font-family: var(--font-mono); font-size: 0.65rem; color: #94a3b8; font-weight: 700; text-transform:uppercase; margin-top:3px; }
+  </style>
+</head>
+<body>
+  <nav class="sidebar" id="sidebar"></nav>
+  <div id="toast"></div>
+
+  <main class="content page-backdrop bg-terminal">
+    <header>
+      <div>
+        <h1>Controller Notification Center</h1>
+        <p style="color:#e2e8f0; font-size:0.88rem; margin-top:4px;">
+          Broadcast real-time alerts to passengers, station staff, and field officers &mdash;
+          Delay advisories, platform changes, TSR warnings, and emergency notices via SMS, PRS, and Station PA.
+        </p>
+      </div>
+      <div class="header-meta">
+        <div class="status-pill">
+          <span class="pulse"></span>
+          <span id="notif-feed-label">NOTIFICATION ENGINE READY</span>
+        </div>
+        <div class="clock-box" id="live-clock">--:--:-- IST</div>
+      </div>
+    </header>
+
+    <!-- Stats Strip -->
+    <div class="notif-stats">
+      <div class="nstat">
+        <div class="nstat-val" id="stat-sent">0</div>
+        <div class="nstat-lbl">Sent Today</div>
+      </div>
+      <div class="nstat">
+        <div class="nstat-val" id="stat-critical">0</div>
+        <div class="nstat-lbl">Critical Alerts</div>
+      </div>
+      <div class="nstat">
+        <div class="nstat-val" id="stat-trains">10</div>
+        <div class="nstat-lbl">Trains Covered</div>
+      </div>
+      <div class="nstat">
+        <div class="nstat-val" id="stat-channels">3</div>
+        <div class="nstat-lbl">Active Channels</div>
+      </div>
+    </div>
+
+    <!-- Two-column layout -->
+    <div style="display: grid; grid-template-columns: 480px 1fr; gap: 14px; align-items: start;">
+
+      <!-- LEFT: Compose Panel -->
+      <div class="card" style="position: sticky; top: 20px;">
+        <div class="card-title-bar" style="margin-bottom: 14px;">
+          <h3>Compose Notification</h3>
+          <span class="badge">Controller Broadcast</span>
+        </div>
+
+        <div class="composer-form" id="compose-form">
+          <!-- Type & Priority -->
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="notif-type">Notification Type</label>
+              <select id="notif-type" class="form-control">
+                <option value="DELAY_ALERT">⚠ Delay Alert</option>
+                <option value="PLATFORM_CHANGE">🔄 Platform Change</option>
+                <option value="TSR_WARNING">⛔ TSR Speed Restriction</option>
+                <option value="SERVICE_CANCEL">❌ Service Cancellation</option>
+                <option value="ETA_UPDATE">🕐 ETA Update</option>
+                <option value="EMERGENCY">🚨 Emergency Notice</option>
+                <option value="GENERAL">ℹ General Advisory</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="notif-priority">Priority Level</label>
+              <select id="notif-priority" class="form-control">
+                <option value="CRITICAL">🔴 CRITICAL</option>
+                <option value="HIGH" selected>🟠 HIGH</option>
+                <option value="MEDIUM">🟡 MEDIUM</option>
+                <option value="INFO">🔵 INFO</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Train + Station -->
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="notif-train">Affected Train</label>
+              <select id="notif-train" class="form-control">
+                <option value="ALL">All Trains</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="notif-station">Target Station</label>
+              <select id="notif-station" class="form-control">
+                <option value="ALL_STATIONS">All Stations</option>
+                <option value="NDLS">New Delhi (NDLS)</option>
+                <option value="HWH">Howrah (HWH)</option>
+                <option value="CNB">Kanpur Central (CNB)</option>
+                <option value="ALD">Allahabad Jn (ALD)</option>
+                <option value="NGP">Nagpur (NGP)</option>
+                <option value="AGC">Agra Cantt (AGC)</option>
+                <option value="BPL">Bhopal Jn (BPL)</option>
+                <option value="DDU">Pt. DDU Jn (DDU)</option>
+                <option value="BBS">Bhubaneswar (BBS)</option>
+                <option value="MAS">Chennai (MAS)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Message -->
+          <div class="form-group">
+            <label class="form-label" for="notif-message">Message</label>
+            <textarea id="notif-message" class="form-control" placeholder="Type the notification message here..." rows="4"></textarea>
+          </div>
+
+          <!-- Channels -->
+          <div class="form-group">
+            <label class="form-label">Broadcast Channels</label>
+            <div class="channel-grid">
+              <div class="channel-pill active" data-channel="SMS" onclick="toggleChannel(this)">📱 SMS</div>
+              <div class="channel-pill active" data-channel="PRS" onclick="toggleChannel(this)">🖥 PRS Board</div>
+              <div class="channel-pill active" data-channel="PA" onclick="toggleChannel(this)">📢 Station PA</div>
+              <div class="channel-pill" data-channel="APP" onclick="toggleChannel(this)">📲 IR App</div>
+              <div class="channel-pill" data-channel="EMAIL" onclick="toggleChannel(this)">📧 Email</div>
+            </div>
+          </div>
+
+          <!-- Auto-fill button -->
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="send-btn" onclick="sendNotification()" id="send-btn">
+              ▶ Send Notification
+            </button>
+            <button onclick="autoFill()" style="background:rgba(255,255,255,0.06); border:1.5px solid rgba(255,255,255,0.2); color:#e2e8f0; padding:10px 16px; border-radius:7px; font-family:var(--font-mono); font-size:0.78rem; font-weight:700; cursor:pointer; transition:all 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.14)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">
+              ⚡ Auto-Fill Sample
+            </button>
+            <button onclick="clearForm()" style="background:rgba(255,255,255,0.04); border:1.5px solid rgba(255,255,255,0.12); color:#94a3b8; padding:10px 16px; border-radius:7px; font-family:var(--font-mono); font-size:0.78rem; font-weight:700; cursor:pointer; transition:all 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.04)'">
+              ✕ Clear
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Notification Feed -->
+      <div>
+        <div class="card" style="margin-bottom: 14px;">
+          <div class="card-title-bar">
+            <h3>Live Notification Feed</h3>
+            <div style="display:flex; gap:8px; align-items:center;">
+              <span id="feed-count" style="font-family:var(--font-mono); font-size:0.72rem; color:#94a3b8;">0 notifications</span>
+              <button onclick="clearFeed()" style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15); color:#94a3b8; padding:4px 10px; border-radius:4px; font-family:var(--font-mono); font-size:0.72rem; font-weight:700; cursor:pointer;">Clear Feed</button>
+            </div>
+          </div>
+          <div id="notif-feed" class="notif-feed">
+            <div style="font-family:var(--font-mono); font-size:0.8rem; color:#475569; text-align:center; padding:40px 0;">
+              No notifications sent yet.<br>
+              <span style="font-size:0.72rem;">Compose a message and click Send.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pre-Loaded System Notifications Table -->
+    <div class="card table-card">
+      <div class="card-title-bar">
+        <h3>Auto-Generated ETA Alert Log (System Notifications)</h3>
+        <span class="badge">GBM-ETA-v3.2 Triggered</span>
+      </div>
+      <p style="font-size:0.78rem; color:#e2e8f0; margin-bottom:10px;">
+        These notifications are automatically generated by the ML engine when a train's ETA delta exceeds the threshold (>30 min = HIGH, >50 min = CRITICAL).
+      </p>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Train</th>
+              <th>Type</th>
+              <th>Priority</th>
+              <th>Message</th>
+              <th>Channels</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="system-notif-table"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <span>CRIS ETA Predict &middot; Controller Notification Center &middot; SIH 26028</span>
+      <span>Channels: SMS &middot; PRS &middot; Station PA &middot; IR App &middot; Email &middot; Auto-triggered by GBM-ETA-v3.2</span>
+    </footer>
+  </main>
+
+  <script src="/src/dashboard/shared.js"></script>
+  <script src="/src/dashboard/api.js"></script>
+  <script>
+    renderSharedNav("notifications");
+
+    // Populate train selector
+    const trainSel = document.getElementById("notif-train");
+    LIVE_TRAIN_REGISTRY.forEach(t => {
+      const opt = document.createElement("option");
+      opt.value = t.train_no;
+      opt.textContent = `${t.train_no} — ${t.train_name}`;
+      trainSel.appendChild(opt);
+    });
+
+    // Stats counters
+    let sentCount = 0, criticalCount = 0;
+
+    // Channel toggle
+    function toggleChannel(el) {
+      el.classList.toggle("active");
+    }
+
+    // Notification type icons
+    const TYPE_ICONS = {
+      DELAY_ALERT:     "⚠️",
+      PLATFORM_CHANGE: "🔄",
+      TSR_WARNING:     "⛔",
+      SERVICE_CANCEL:  "❌",
+      ETA_UPDATE:      "🕐",
+      EMERGENCY:       "🚨",
+      GENERAL:         "ℹ️",
+    };
+
+    // Notification feed array
+    let notifications = [];
+
+    function getActiveChannels() {
+      return [...document.querySelectorAll(".channel-pill.active")].map(el => el.dataset.channel);
+    }
+
+    function getNow() {
+      const d = new Date();
+      const p = n => String(n).padStart(2,"0");
+      return `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())} IST`;
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById("toast");
+      toast.textContent = msg;
+      toast.style.display = "block";
+      setTimeout(() => { toast.style.display = "none"; }, 3000);
+    }
+
+    function renderFeed() {
+      const feed = document.getElementById("notif-feed");
+      document.getElementById("feed-count").textContent = `${notifications.length} notification${notifications.length !== 1 ? "s" : ""}`;
+
+      if (notifications.length === 0) {
+        feed.innerHTML = `<div style="font-family:var(--font-mono); font-size:0.8rem; color:#475569; text-align:center; padding:40px 0;">No notifications sent yet.<br><span style="font-size:0.72rem;">Compose a message and click Send.</span></div>`;
+        return;
+      }
+
+      feed.innerHTML = notifications.slice().reverse().map((n, i) => `
+        <div class="notif-card priority-${n.priority}" id="notif-${n.id}">
+          <div class="notif-icon">${TYPE_ICONS[n.type] || "📢"}</div>
+          <div class="notif-body">
+            <div class="notif-header">
+              <span class="notif-type-tag">${n.type.replace(/_/g," ")}</span>
+              <span class="notif-train">${n.train_label}</span>
+              <span class="badge" style="font-size:0.65rem;">${n.priority}</span>
+              <span class="notif-time">${n.time}</span>
+            </div>
+            <div class="notif-message">${n.message}</div>
+            <div class="notif-targets">
+              📍 ${n.station} &nbsp;·&nbsp; 📡 ${n.channels.join(" · ")} &nbsp;·&nbsp; ✓ Delivered
+            </div>
+          </div>
+          <button class="notif-dismiss" onclick="dismissNotif(${n.id})" title="Dismiss">✕</button>
+        </div>
+      `).join("");
+    }
+
+    function dismissNotif(id) {
+      notifications = notifications.filter(n => n.id !== id);
+      renderFeed();
+      updateStats();
+    }
+
+    function clearFeed() {
+      notifications = [];
+      renderFeed();
+      updateStats();
+    }
+
+    function updateStats() {
+      sentCount = notifications.length;
+      criticalCount = notifications.filter(n => n.priority === "CRITICAL").length;
+      document.getElementById("stat-sent").textContent = sentCount;
+      document.getElementById("stat-critical").textContent = criticalCount;
+    }
+
+    let notifIdCounter = 1;
+
+    function sendNotification() {
+      const type = document.getElementById("notif-type").value;
+      const priority = document.getElementById("notif-priority").value;
+      const trainVal = document.getElementById("notif-train").value;
+      const stationVal = document.getElementById("notif-station").value;
+      const message = document.getElementById("notif-message").value.trim();
+      const channels = getActiveChannels();
+
+      if (!message) {
+        document.getElementById("notif-message").style.borderColor = "rgba(255,100,100,0.6)";
+        setTimeout(() => document.getElementById("notif-message").style.borderColor = "rgba(255,255,255,0.18)", 1500);
+        return;
+      }
+      if (channels.length === 0) {
+        showToast("⚠ Select at least one broadcast channel.");
+        return;
+      }
+
+      const trainLabel = trainVal === "ALL" ? "All Trains" :
+        (LIVE_TRAIN_REGISTRY.find(t => t.train_no === trainVal)?.train_name || trainVal) + ` (${trainVal})`;
+
+      const stationLabel = stationVal === "ALL_STATIONS" ? "All Stations" : stationVal;
+
+      const notif = {
+        id: notifIdCounter++,
+        type, priority, message,
+        train_label: trainLabel,
+        station: stationLabel,
+        channels,
+        time: getNow(),
+      };
+
+      notifications.push(notif);
+      renderFeed();
+      updateStats();
+
+      // Feedback
+      document.getElementById("notif-feed-label").textContent = `SENT: ${notif.type.replace(/_/g," ")} → ${channels.join(", ")}`;
+      showToast(`✓ Notification sent via ${channels.join(", ")}`);
+
+      // Pulse send button
+      const btn = document.getElementById("send-btn");
+      btn.textContent = "✓ Sent!";
+      btn.style.background = "rgba(255,255,255,0.3)";
+      setTimeout(() => {
+        btn.textContent = "▶ Send Notification";
+        btn.style.background = "rgba(255,255,255,0.15)";
+        document.getElementById("notif-feed-label").textContent = "NOTIFICATION ENGINE READY";
+      }, 2000);
+
+      // Clear message
+      document.getElementById("notif-message").value = "";
+    }
+
+    // Auto-fill sample
+    const SAMPLE_TEMPLATES = [
+      { type: "DELAY_ALERT", priority: "HIGH", train: "12301", message: "Train 12301 Rajdhani Express is running approximately 43 minutes late due to dense fog conditions on the NDLS-CNB corridor (visibility: 300m). Revised ETA at New Delhi: 10:43 IST. Passengers are requested to check PRS boards for updates." },
+      { type: "TSR_WARNING", priority: "CRITICAL", train: "ALL", message: "URGENT: Temporary Speed Restriction (TSR-NDLS-CNB-001) active on Kanpur–New Delhi section (km 412–438). Speed limited to 30 km/h. Trains 12301, 12377, 12229 will be delayed by 15–22 minutes. Staff at CNB, ALD, NDLS to coordinate platform allocation." },
+      { type: "PLATFORM_CHANGE", priority: "MEDIUM", train: "12377", message: "Garib Rath Express (12377) arriving New Delhi will use Platform 8 instead of Platform 3 due to operational requirements. Passengers and coolies please note." },
+      { type: "ETA_UPDATE", priority: "INFO", train: "12002", message: "ETA Update: Shatabdi Express (12002) revised arrival at RKMP is 14:27 IST (delay: +27 min). Reason: TSR on GWL–MTJ section (bridge inspection). All booked passengers notified via SMS." },
+      { type: "EMERGENCY", priority: "CRITICAL", train: "15906", message: "EMERGENCY ADVISORY: Vivek Express (15906) delayed by 97 minutes at Bhubaneswar due to severe rainfall on VSKP corridor (visibility 1.5km). Medical team to be deployed at next halt. SM Visakhapatnam to be notified." },
+    ];
+    let sampleIdx = 0;
+
+    function autoFill() {
+      const s = SAMPLE_TEMPLATES[sampleIdx % SAMPLE_TEMPLATES.length];
+      sampleIdx++;
+      document.getElementById("notif-type").value = s.type;
+      document.getElementById("notif-priority").value = s.priority;
+      document.getElementById("notif-train").value = s.train;
+      document.getElementById("notif-message").value = s.message;
+    }
+
+    function clearForm() {
+      document.getElementById("notif-type").value = "DELAY_ALERT";
+      document.getElementById("notif-priority").value = "HIGH";
+      document.getElementById("notif-train").value = "ALL";
+      document.getElementById("notif-station").value = "ALL_STATIONS";
+      document.getElementById("notif-message").value = "";
+    }
+
+    // System auto-generated alerts from ML engine
+    async function loadSystemAlerts() {
+      const trains = await fetchAllETAs();
+      const tbody = document.getElementById("system-notif-table");
+
+      const sysAlerts = trains.filter(t => t.total_delay_min > 15).map(t => {
+        const priority = t.total_delay_min >= 50 ? "CRITICAL" : t.total_delay_min >= 30 ? "HIGH" : "MEDIUM";
+        const type = t.tsr_penalty_min > 0 ? "TSR_WARNING" : t.cascade_penalty_min > 0 ? "DELAY_ALERT" : t.weather_penalty_min > 0 ? "DELAY_ALERT" : "ETA_UPDATE";
+        const icon = TYPE_ICONS[type];
+        const mins = t.total_delay_min;
+        const channels = ["SMS", "PRS"];
+        if (priority === "CRITICAL") channels.push("PA");
+
+        const causes = [];
+        if (t.base_delay_min > 0) causes.push(`base +${t.base_delay_min}min`);
+        if (t.weather_penalty_min > 0) causes.push(`${t.weather} +${t.weather_penalty_min}min`);
+        if (t.congestion_penalty_min > 0) causes.push(`congestion +${t.congestion_penalty_min}min`);
+        if (t.tsr_penalty_min > 0) causes.push(`TSR +${t.tsr_penalty_min}min`);
+        if (t.cascade_penalty_min > 0) causes.push(`cascade +${t.cascade_penalty_min}min`);
+
+        // Fake sent time
+        const d = new Date(); d.setMinutes(d.getMinutes() - Math.floor(Math.random()*45));
+        const tp = n => String(n).padStart(2,"0");
+        const sentTime = `${tp(d.getHours())}:${tp(d.getMinutes())} IST`;
+
+        return { t, priority, type, icon, mins, channels, causes, sentTime };
+      });
+
+      tbody.innerHTML = sysAlerts.map(({ t, priority, type, icon, mins, channels, causes, sentTime }) => `
+        <tr>
+          <td style="font-family:var(--font-mono); color:#94a3b8; font-size:0.75rem;">${sentTime}</td>
+          <td>
+            <strong style="color:#ffffff; font-family:var(--font-mono);">${t.train_no}</strong>
+            <div style="font-size:0.72rem; color:#e2e8f0;">${t.train_name}</div>
+          </td>
+          <td><span style="font-size:0.8rem;">${icon}</span> <span style="font-family:var(--font-mono); font-size:0.72rem; color:#e2e8f0;">${type.replace(/_/g," ")}</span></td>
+          <td><span class="badge" style="${priority==="CRITICAL"?"background:rgba(255,255,255,0.2);":""}">${priority}</span></td>
+          <td style="font-size:0.78rem; color:#e2e8f0; max-width:260px;">
+            Train running +${mins} min late. Causes: ${causes.join(", ")}. Dynamic ETA: ${t.dynamic_eta} IST.
+          </td>
+          <td style="font-family:var(--font-mono); font-size:0.72rem; color:#cbd5e1;">${channels.join(", ")}</td>
+          <td><span class="badge">DELIVERED ✓</span></td>
+        </tr>
+      `).join("");
+    }
+
+    loadSystemAlerts();
+
+    // Keyboard shortcut: Ctrl+Enter to send
+    document.addEventListener("keydown", e => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+        sendNotification();
+      }
+    });
+  </script>
+</body>
+</html>
