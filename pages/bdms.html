@@ -3,275 +3,225 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BDMS & Shadow Block Engine — CRIS AI Block Scheduler</title>
+  <title>TSR & Track Maintenance Impact — CRIS ETA Predict (SIH 26028)</title>
+  <meta name="description" content="Active Temporary Speed Restrictions and their ETA penalty impact on Indian Railways coaching trains.">
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <link rel="stylesheet" href="/src/dashboard/styles.css?v=3" />
+  <link rel="stylesheet" href="/src/dashboard/styles.css?v=4" />
 </head>
 <body>
-  <!-- Sidebar Navigation -->
   <nav class="sidebar" id="sidebar"></nav>
 
-  <!-- Main Content Area -->
   <main class="content page-backdrop bg-bdms">
     <header>
       <div>
-        <h1>BDMS & "Shadow Block" Synchronization Engine</h1>
+        <h1>Temporary Speed Restrictions (TSR) &amp; Maintenance Impact</h1>
         <p style="color:#e2e8f0; font-size:0.88rem; margin-top:4px;">
-          Automated multi-department engineering block co-registration (Track, OHE, Signaling) to synthesize unified "Shadow Blocks"
+          4 active TSRs across 3 IR corridors &mdash; each restriction contributes directly to the ETA delay computation in GBM-ETA-v3.2.
+          Real-time P-Way, OHE, and S&amp;T restriction registry.
         </p>
       </div>
       <div class="header-meta">
         <div class="status-pill">
           <span class="pulse"></span>
-          <span>BDMS-3.0 MERGE ENGINE ACTIVE</span>
+          <span>4 ACTIVE TSRs &middot; TSR REGISTRY SYNCED</span>
         </div>
         <div class="clock-box" id="live-clock">--:--:-- IST</div>
       </div>
     </header>
 
-    <!-- Hero Stats -->
+    <!-- KPI Strip -->
     <div class="hero-stats">
       <div class="hero-stat-card">
-        <div class="hstat-label">Merge Efficiency</div>
-        <div class="hstat-val" id="hero-eff-gain">+840 train-min</div>
+        <div class="hstat-label">Active TSRs</div>
+        <div class="hstat-val">4 Restrictions</div>
       </div>
       <div class="hero-stat-card">
-        <div class="hstat-label">Depts Synced</div>
-        <div class="hstat-val">3 Departments</div>
+        <div class="hstat-label">Affected Trains</div>
+        <div class="hstat-val">9 Services</div>
       </div>
       <div class="hero-stat-card">
-        <div class="hstat-label">Optimizer Confidence</div>
-        <div class="hstat-val">91%</div>
+        <div class="hstat-label">Max ETA Penalty</div>
+        <div class="hstat-val">+22 min</div>
       </div>
       <div class="hero-stat-card">
-        <div class="hstat-label">Power Block</div>
-        <div class="hstat-val">AUTO-SYNC</div>
+        <div class="hstat-label">Avg Speed Reduction</div>
+        <div class="hstat-val">72% Drop</div>
       </div>
     </div>
 
-    <!-- Corridor Block Selector -->
-    <div class="card" style="padding: 16px 20px;">
-      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
-        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-          <span style="font-size: 0.85rem; font-weight: 800; color: #ffffff;">Select Corridor Candidate:</span>
-          <select id="corridor-selector" class="form-select" style="min-width: 380px;">
-            <!-- Populated via JS -->
-          </select>
-        </div>
-        <button id="btn-copy-bdms-json" class="btn">Copy BDMS Payload JSON</button>
+    <!-- TSR Summary Cards -->
+    <div id="tsr-card-grid" style="display:grid; grid-template-columns: repeat(2, 1fr); gap:14px;"></div>
+
+    <!-- TSR Detail Table -->
+    <div class="card table-card">
+      <div class="card-title-bar">
+        <h3>Active TSR Registry — ETA Impact Analysis</h3>
+        <span class="badge">P-Way &middot; OHE &middot; S&T</span>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>TSR ID</th>
+              <th>Section</th>
+              <th>Chainage (km)</th>
+              <th>Normal Speed</th>
+              <th>Restricted Speed</th>
+              <th>Reason</th>
+              <th>Duration</th>
+              <th>Active Since</th>
+              <th>Expires</th>
+              <th>Trains Affected</th>
+              <th>ETA Penalty (min)</th>
+            </tr>
+          </thead>
+          <tbody id="tsr-table-body"></tbody>
+        </table>
       </div>
     </div>
 
-    <!-- Main Architecture Grid -->
-    <div class="grid-2">
-      <!-- Left: Multi-Dept Merge Visualizer -->
-      <div class="card">
-        <div class="card-title-bar">
-          <h3>AI Multi-Department Shadow Block Synthesis</h3>
-          <span class="badge">AI Merged</span>
-        </div>
-
-        <div style="display: flex; flex-direction: column; gap: 12px; margin: 10px 0;">
-          <!-- 3 Department Nodes (Clean White / Dark Glass) -->
-          <div style="display: flex; gap: 10px; justify-content: space-between;">
-            <div class="card" style="flex:1; background:rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.18); text-align:center; padding:12px;">
-              <div style="font-family:var(--font-mono); font-size:0.8rem; font-weight:800; color:#ffffff;">TRACK (P-Way)</div>
-              <div style="font-size:0.68rem; color:#cbd5e1; margin-top:4px; font-weight:600;" id="dept-track-work">Deep Ballast Tamping</div>
-            </div>
-            <div class="card" style="flex:1; background:rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.18); text-align:center; padding:12px;">
-              <div style="font-family:var(--font-mono); font-size:0.8rem; font-weight:800; color:#ffffff;">OHE (Electrical)</div>
-              <div style="font-size:0.68rem; color:#cbd5e1; margin-top:4px; font-weight:600;" id="dept-ohe-work">Cantilever Tensioning</div>
-            </div>
-            <div class="card" style="flex:1; background:rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.18); text-align:center; padding:12px;">
-              <div style="font-family:var(--font-mono); font-size:0.8rem; font-weight:800; color:#ffffff;">SIGNALING (S&T)</div>
-              <div style="font-size:0.68rem; color:#cbd5e1; margin-top:4px; font-weight:600;" id="dept-sig-work">Track Circuit Testing</div>
-            </div>
-          </div>
-
-          <!-- Convergence Banner -->
-          <div style="text-align: center; background: rgba(0,0,0,0.6); padding: 14px; border-radius: var(--radius-sm); border: 1px dashed rgba(255,255,255,0.35);">
-            <div style="font-size: 0.78rem; font-weight: 800; color: #ffffff; letter-spacing:0.5px;">
-              AI SYNTHESIZED SHADOW BLOCK WINDOW
-            </div>
-            <div style="font-family: var(--font-mono); font-size: 1.25rem; font-weight: 800; color: #ffffff; margin-top: 4px;" id="sb-id-banner">
-              SB-CR-20240815-007
-            </div>
-            <div style="font-size: 0.76rem; color: #e2e8f0; margin-top: 2px; font-weight: 600;" id="sb-window-text">
-              01:30 IST &rarr; 04:15 IST (165 Minutes · Zero Conflict)
-            </div>
-          </div>
-        </div>
-
-        <!-- Sync Flags Matrix -->
-        <div>
-          <div style="font-size: 0.76rem; font-weight: 800; color: #cbd5e1; text-transform: uppercase; margin-bottom: 8px;">Multi-Department Synchronization Flags</div>
-          <div class="grid-3" style="gap: 8px;">
-            <div class="hero-stat-card" style="text-align:center;">
-              <div class="hstat-label">Track Synced</div>
-              <div class="hstat-val">YES</div>
-            </div>
-            <div class="hero-stat-card" style="text-align:center;">
-              <div class="hstat-label">OHE Synced</div>
-              <div class="hstat-val">YES</div>
-            </div>
-            <div class="hero-stat-card" style="text-align:center;">
-              <div class="hstat-label">Signaling Synced</div>
-              <div class="hstat-val">YES</div>
-            </div>
-            <div class="hero-stat-card" style="text-align:center;">
-              <div class="hstat-label">Power Block (OHE Off)</div>
-              <div class="hstat-val">ENFORCED</div>
-            </div>
-            <div class="hero-stat-card" style="text-align:center;">
-              <div class="hstat-label">Caution On Adjacent</div>
-              <div class="hstat-val">ISSUED</div>
-            </div>
-            <div class="hero-stat-card" style="text-align:center;">
-              <div class="hstat-label">CRS Concurrence</div>
-              <div class="hstat-val">GRANTED</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Right: Conflict Matrix & Affected Real Trains -->
-      <div class="card">
-        <div class="card-title-bar">
-          <h3>Affected Real Train Services in Section</h3>
-          <span class="badge" id="affected-count-badge">5 Trains</span>
-        </div>
-
-        <p style="font-size: 0.8rem; color: #e2e8f0;">
-          Trains from our 2016–2025 dataset traversing this block section during the requested maintenance window:
-        </p>
-
-        <div class="table-wrap">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Train</th>
-                <th>Category</th>
-                <th>Dynamic P_i</th>
-                <th>Delay Budget</th>
-                <th>Sensitivity</th>
-              </tr>
-            </thead>
-            <tbody id="affected-trains-table">
-              <!-- Populated via JS -->
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Efficiency Gain Breakdown -->
-        <div style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); border-radius: var(--radius-sm); padding: 14px; margin-top: auto;">
-          <div style="font-size: 0.82rem; font-weight: 800; color: #ffffff;">
-            Line Clearance & Efficiency Metric
-          </div>
-          <div style="font-size: 0.76rem; color: #e2e8f0; margin-top: 4px; font-weight: 600;" id="eff-metric-expl">
-            Merging 3 separate department blocks (Track 180m + OHE 120m + S&T 90m = 390m total) into a single 180-minute Shadow Block saves <strong style="color:#ffffff;">840 train-minutes</strong> of cascading delay on the corridor.
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Live BDMS JSON Output -->
+    <!-- ETA Penalty Bar Chart -->
     <div class="card">
       <div class="card-title-bar">
-        <h3>Real-Time BDMSShadowBlockPayload JSON (cris.bdms.block-request.v3)</h3>
-        <span class="badge">JSON Payload</span>
+        <h3>ETA Penalty Contribution per TSR</h3>
+        <span class="badge">Direct Input to GBM-ETA-v3.2</span>
       </div>
-      <pre class="json-block" id="json-bdms-stream"></pre>
+      <p style="font-size:0.78rem; color:#e2e8f0; margin-bottom:10px;">
+        Each TSR's ETA penalty is computed as: (Section_Length / Restricted_Speed - Section_Length / Normal_Speed) × 60 minutes.
+        These values feed directly into the <code style="color:#ffffff;">tsr_penalty_min</code> feature of the ML model.
+      </p>
+      <div style="height: 220px; position: relative;">
+        <canvas id="tsrPenaltyChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Affected Trains by TSR -->
+    <div class="card table-card">
+      <div class="card-title-bar">
+        <h3>Trains Affected by TSR — Dynamic ETA Adjustment</h3>
+        <span class="badge">Real-Time Impact</span>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Train No</th>
+              <th>Train Name</th>
+              <th>Category</th>
+              <th>Corridor</th>
+              <th>Active TSR</th>
+              <th>Scheduled Arrival</th>
+              <th>TSR Penalty (min)</th>
+              <th>Adjusted ETA</th>
+            </tr>
+          </thead>
+          <tbody id="affected-trains-body"></tbody>
+        </table>
+      </div>
     </div>
 
     <footer class="footer">
-      <span>CRIS Protocol 2 — Block & Disruption Management System (BDMS-3.0)</span>
-      <span>Integrated with CRIS Train Describer & Management System (TDMS)</span>
+      <span>CRIS ETA Predict &middot; TSR &amp; Track Impact Module &middot; SIH 26028</span>
+      <span>Registry Source: IR P-Way TSR Register &middot; Dept: TRACK / OHE / S&T</span>
     </footer>
   </main>
 
   <script src="/src/dashboard/shared.js"></script>
+  <script src="/src/dashboard/api.js"></script>
   <script>
     renderSharedNav("bdms");
 
-    const sel = document.getElementById("corridor-selector");
-    sel.innerHTML = CORRIDOR_BLOCK_CANDIDATES.map(b => `
-      <option value="${b.block_id}">${b.block_id}: ${b.corridor_name} (${b.min_duration_min} min)</option>
-    `).join("");
+    async function loadTSRPage() {
+      const tsrs = await fetchActiveTSRs();
+      const trains = await fetchAllETAs();
 
-    let activeBlock = CORRIDOR_BLOCK_CANDIDATES[0];
+      // TSR Summary Cards
+      const cardGrid = document.getElementById("tsr-card-grid");
+      cardGrid.innerHTML = tsrs.map(tsr => `
+        <div class="card" style="border-left: 4px solid rgba(255,255,255,0.7);">
+          <div class="card-title-bar" style="margin-bottom:10px;">
+            <h3 style="font-size:0.85rem;">${tsr.tsr_id}</h3>
+            <span class="badge">+${tsr.eta_penalty_min} min ETA</span>
+          </div>
+          <div style="font-size:0.82rem; color:#e2e8f0; margin-bottom:6px;"><strong style="color:#ffffff;">Section:</strong> ${tsr.section}</div>
+          <div style="font-size:0.82rem; color:#e2e8f0; margin-bottom:6px;"><strong style="color:#ffffff;">Chainage:</strong> km ${tsr.from_km} – ${tsr.to_km}</div>
+          <div style="font-size:0.82rem; color:#e2e8f0; margin-bottom:6px;"><strong style="color:#ffffff;">Speed:</strong> <span style="text-decoration:line-through; color:#94a3b8;">${tsr.normal_speed_kmph} km/h</span> &rarr; <span style="color:#ffffff; font-weight:800;">${tsr.restricted_speed_kmph} km/h</span></div>
+          <div style="font-size:0.78rem; color:#cbd5e1; margin-bottom:6px;"><strong style="color:#ffffff;">Reason:</strong> ${tsr.reason}</div>
+          <div style="font-size:0.78rem; color:#94a3b8;">Active ${tsr.active_since} &rarr; Expires ${tsr.expires_at} &middot; Duration: ${tsr.duration_min} min</div>
+          <div style="font-size:0.78rem; color:#e2e8f0; margin-top:8px;"><strong style="color:#ffffff;">Trains:</strong> ${tsr.affected_trains.join(", ")}</div>
+        </div>
+      `).join("");
 
-    sel.addEventListener("change", (e) => {
-      activeBlock = CORRIDOR_BLOCK_CANDIDATES.find(b => b.block_id === e.target.value) || CORRIDOR_BLOCK_CANDIDATES[0];
-      updateView();
-    });
-
-    document.getElementById("btn-copy-bdms-json").addEventListener("click", () => {
-      const text = document.getElementById("json-bdms-stream").textContent;
-      navigator.clipboard.writeText(text);
-      alert("BDMS JSON Payload copied to clipboard!");
-    });
-
-    function updateView() {
-      document.getElementById("sb-id-banner").textContent = `SB-CR-${activeBlock.block_id.replace("BLK-", "")}-007`;
-      document.getElementById("sb-window-text").textContent = `01:30 IST → 04:30 IST (${activeBlock.min_duration_min} Minutes · Co-Synchronized)`;
-
-      const affected = activeBlock.affected_trains.map(tNo => TRAIN_PROFILE_MAP.get(tNo)).filter(Boolean);
-      document.getElementById("affected-count-badge").textContent = `${affected.length} Trains Affected`;
-
-      document.getElementById("affected-trains-table").innerHTML = affected.map(p => `
+      // TSR Table
+      document.getElementById("tsr-table-body").innerHTML = tsrs.map(tsr => `
         <tr>
-          <td><strong style="color:#ffffff; font-family:var(--font-mono);">${p.train_no}</strong> <span style="font-size:0.75rem; color:#cbd5e1;">${p.train_name}</span></td>
-          <td><span class="badge">${p.category}</span></td>
-          <td style="font-family:var(--font-mono); color:#ffffff; font-weight:700;">${p.P_i}</td>
-          <td style="font-family:var(--font-mono); color:#ffffff; font-weight:700;">${p.delta_d_i} min</td>
-          <td><span class="badge">${p.sensitivity}</span></td>
+          <td><strong style="color:#ffffff; font-family:var(--font-mono);">${tsr.tsr_id}</strong></td>
+          <td style="color:#e2e8f0; font-size:0.8rem;">${tsr.section}</td>
+          <td style="font-family:var(--font-mono); color:#cbd5e1;">km ${tsr.from_km} – ${tsr.to_km}</td>
+          <td style="font-family:var(--font-mono); color:#94a3b8;">${tsr.normal_speed_kmph} km/h</td>
+          <td><strong style="color:#ffffff; font-family:var(--font-mono);">${tsr.restricted_speed_kmph} km/h</strong></td>
+          <td style="color:#e2e8f0; font-size:0.78rem; max-width:200px;">${tsr.reason}</td>
+          <td style="font-family:var(--font-mono); color:#e2e8f0;">${tsr.duration_min} min</td>
+          <td style="font-family:var(--font-mono); color:#e2e8f0;">${tsr.active_since}</td>
+          <td style="font-family:var(--font-mono); color:#94a3b8;">${tsr.expires_at}</td>
+          <td style="font-family:var(--font-mono); color:#ffffff; font-size:0.8rem;">${tsr.affected_trains.join(", ")}</td>
+          <td><span class="badge">+${tsr.eta_penalty_min} min</span></td>
         </tr>
       `).join("");
 
-      const payload = {
-        protocol_version: "BDMS-3.0",
-        event_id: "a9f2d3b1-88c4-4d07-b5e1-3f7c9a1e4d82",
-        created_at: new Date().toISOString(),
-        request_id: `BR-${activeBlock.section_id}-042`,
-        status: "MERGED",
-        priority: 3,
-        section_id: activeBlock.section_id,
-        from_station: activeBlock.from_station,
-        to_station: activeBlock.to_station,
-        track_config: "DOUBLE_LINE",
-        km_span: activeBlock.track_km,
-        primary_department: "TRACK",
-        co_departments: activeBlock.departments.filter(d => d !== "TRACK"),
-        work_details: {
-          work_type: activeBlock.work_type,
-          work_description: activeBlock.work_description,
-          staff_count: 38,
-          min_block_duration_min: activeBlock.min_duration_min,
-          is_splittable: false
+      // ETA Penalty Chart
+      new Chart(document.getElementById("tsrPenaltyChart"), {
+        type: "bar",
+        data: {
+          labels: tsrs.map(t => t.tsr_id.replace("TSR-","").split("-").slice(0,2).join("-")),
+          datasets: [{
+            label: "ETA Penalty (min)", data: tsrs.map(t => t.eta_penalty_min),
+            backgroundColor: ["rgba(255,255,255,0.9)","rgba(255,255,255,0.7)","rgba(255,255,255,0.55)","rgba(255,255,255,0.4)"],
+            borderColor: "#ffffff", borderWidth: 1.5, borderRadius: 6
+          }]
         },
-        shadow_block: {
-          shadow_block_id: `SB-CR-${activeBlock.block_id.replace("BLK-", "")}-007`,
-          merged_request_count: activeBlock.departments.length,
-          optimized_duration_min: activeBlock.min_duration_min,
-          efficiency_gain_train_minutes: 840,
-          optimizer_confidence: 0.91,
-          sync_flags: {
-            track_synced: true,
-            ohe_synced: activeBlock.departments.includes("OHE"),
-            signaling_synced: activeBlock.departments.includes("SIGNALING"),
-            power_block_required: true,
-            caution_order_on_adjacent: true
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { color: "#ffffff", font: { size: 11, family: "JetBrains Mono", weight: "700" } }, grid: { color: "rgba(255,255,255,0.12)" } },
+            y: { title: { display: true, text: "ETA Penalty (min)", color: "#ffffff", font: { weight: "800" } }, ticks: { color: "#ffffff", font: { size: 10, family: "JetBrains Mono", weight: "700" } }, grid: { color: "rgba(255,255,255,0.12)" } }
           }
         }
-      };
+      });
 
-      document.getElementById("json-bdms-stream").textContent = JSON.stringify(payload, null, 2);
+      // Affected Trains Table
+      const affectedRows = [];
+      tsrs.forEach(tsr => {
+        tsr.affected_trains.forEach(tn => {
+          const train = trains.find(t => t.train_no === tn);
+          if (!train) return;
+          const [sh, sm] = train.scheduled_arrival.split(":").map(Number);
+          const adjMin = (sh * 60 + sm) + tsr.eta_penalty_min;
+          const adjH = Math.floor(adjMin / 60) % 24, adjM = adjMin % 60;
+          const adjEta = `${String(adjH).padStart(2,"0")}:${String(adjM).padStart(2,"0")}`;
+          affectedRows.push({ train, tsr, adjEta });
+        });
+      });
+
+      document.getElementById("affected-trains-body").innerHTML = affectedRows.map(({ train, tsr, adjEta }) => `
+        <tr>
+          <td><strong style="color:#ffffff; font-family:var(--font-mono);">${train.train_no}</strong></td>
+          <td style="color:#e2e8f0;">${train.train_name}</td>
+          <td><span class="badge">${train.category}</span></td>
+          <td style="font-family:var(--font-mono); color:#cbd5e1; font-size:0.78rem;">${train.corridor}</td>
+          <td style="font-family:var(--font-mono); color:#ffffff; font-size:0.78rem;">${tsr.tsr_id}</td>
+          <td style="font-family:var(--font-mono); color:#94a3b8;">${train.scheduled_arrival}</td>
+          <td><span class="badge">+${tsr.eta_penalty_min} min</span></td>
+          <td style="font-family:var(--font-mono); font-weight:800; color:#ffffff;">${adjEta}</td>
+        </tr>
+      `).join("");
     }
 
-    updateView();
+    loadTSRPage();
   </script>
 </body>
 </html>

@@ -3,308 +3,290 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>COA Telemetry Lab — CRIS AI Block Scheduler</title>
+  <title>ISRO RTIS Live GPS Telemetry — CRIS ETA Predict (SIH 26028)</title>
+  <meta name="description" content="ISRO Real-Time Train Information System (RTIS) live GPS telemetry viewer — speed, GPS, signal aspect, and dynamic ETA updates every 3 seconds.">
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <link rel="stylesheet" href="/src/dashboard/styles.css?v=3" />
+  <link rel="stylesheet" href="/src/dashboard/styles.css?v=4" />
+  <style>
+    .telemetry-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 14px; }
+    .telem-card { background: rgba(255,255,255,0.06); border: 1.5px solid rgba(255,255,255,0.18); border-radius: 10px; padding: 14px 16px; }
+    .telem-label { font-family: var(--font-mono); font-size: 0.68rem; color: #94a3b8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+    .telem-val { font-family: var(--font-mono); font-size: 1.8rem; font-weight: 900; color: #ffffff; line-height: 1; }
+    .telem-unit { font-size: 0.75rem; color: #e2e8f0; font-weight: 700; margin-top: 4px; }
+    .signal-CLEAR { color: #ffffff; }
+    .signal-CAUTION { color: #e2e8f0; }
+    .signal-PROCEED { color: #f0f9ff; }
+    .signal-STOP { color: #ffffff; }
+    .rtis-stream { font-family: var(--font-mono); font-size: 0.72rem; color: #94a3b8; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 12px; max-height: 180px; overflow-y: auto; white-space: pre; line-height: 1.7; }
+    .rtis-stream .new-line { color: #ffffff; animation: fadeIn 0.4s ease; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .update-pulse { display: inline-block; width: 8px; height: 8px; background: #ffffff; border-radius: 50%; animation: blink 1s infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+  </style>
 </head>
 <body>
-  <!-- Sidebar Navigation -->
   <nav class="sidebar" id="sidebar"></nav>
 
-  <!-- Main Content Area -->
   <main class="content page-backdrop bg-coa">
     <header>
       <div>
-        <h1>COA Live Telemetry & Ingestion Lab</h1>
+        <h1>ISRO RTIS Live GPS Telemetry</h1>
         <p style="color:#e2e8f0; font-size:0.88rem; margin-top:4px;">
-          Real-time train positioning, loco speed telemetry, ATP status, and line berth occupancy across 10 Indian Railways services
+          Real-Time Train Information System (RTIS-v2) &mdash; ISRO satellite-based GPS telemetry feed. 3-second update cycle. Speed, GPS, Signal Aspect, Dynamic ETA recalculated on each update.
         </p>
       </div>
       <div class="header-meta">
         <div class="status-pill">
           <span class="pulse"></span>
-          <span>COA-2.1 INGESTION ACTIVE</span>
+          <span id="rtis-feed-status">RTIS FEED CONNECTING...</span>
         </div>
         <div class="clock-box" id="live-clock">--:--:-- IST</div>
       </div>
     </header>
 
-    <!-- Hero Stats -->
-    <div class="hero-stats">
-      <div class="hero-stat-card">
-        <div class="hstat-label">Ingestion Rate</div>
-        <div class="hstat-val">100 ms</div>
+    <!-- Train Selector -->
+    <div class="card" style="margin-bottom:0;">
+      <div class="card-title-bar">
+        <h3>Select Train for Live Telemetry</h3>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span class="update-pulse" id="update-pulse" style="display:none;"></span>
+          <span id="update-counter" style="font-family:var(--font-mono); font-size:0.75rem; color:#e2e8f0;"></span>
+        </div>
       </div>
-      <div class="hero-stat-card">
-        <div class="hstat-label">ATP Link</div>
-        <div class="hstat-val">KAVACH SYNC</div>
+      <select id="rtis-train-selector" style="background:#1e293b; color:#fff; border:1px solid rgba(255,255,255,0.2); padding:8px 14px; border-radius:6px; font-size:0.85rem; font-family:var(--font-mono); font-weight:700; min-width:300px;">
+      </select>
+    </div>
+
+    <!-- Live Telemetry Tiles -->
+    <div class="telemetry-grid" id="telem-grid">
+      <div class="telem-card">
+        <div class="telem-label">Current Speed</div>
+        <div class="telem-val" id="t-speed">---</div>
+        <div class="telem-unit">km/h</div>
       </div>
-      <div class="hero-stat-card">
-        <div class="hstat-label">Active Section</div>
-        <div class="hstat-val" id="hero-section-id">CNB-NDLS-084</div>
+      <div class="telem-card">
+        <div class="telem-label">GPS Latitude</div>
+        <div class="telem-val" id="t-lat">--.-</div>
+        <div class="telem-unit">° N (WGS-84)</div>
       </div>
-      <div class="hero-stat-card">
-        <div class="hstat-label">Signal Aspect</div>
-        <div class="hstat-val">PROCEED</div>
+      <div class="telem-card">
+        <div class="telem-label">GPS Longitude</div>
+        <div class="telem-val" id="t-lon">--.-</div>
+        <div class="telem-unit">° E (WGS-84)</div>
+      </div>
+      <div class="telem-card">
+        <div class="telem-label">Signal Aspect</div>
+        <div class="telem-val" id="t-signal">---</div>
+        <div class="telem-unit">Next Signal Block</div>
+      </div>
+      <div class="telem-card">
+        <div class="telem-label">Scheduled Arrival</div>
+        <div class="telem-val" id="t-sched">---</div>
+        <div class="telem-unit">IST (Original Schedule)</div>
+      </div>
+      <div class="telem-card" style="border-color: rgba(255,255,255,0.6);">
+        <div class="telem-label">Dynamic ML ETA</div>
+        <div class="telem-val" id="t-eta">---</div>
+        <div class="telem-unit" id="t-delta">Δ --- min from schedule</div>
       </div>
     </div>
 
-    <!-- Interactive Train Selector -->
-    <div class="card" style="padding: 16px 20px;">
-      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
-        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-          <span style="font-size: 0.85rem; font-weight: 800; color: #ffffff;">Select Live Train Service:</span>
-          <select id="train-selector" class="form-select" style="min-width: 320px;">
-            <!-- Populated via JS with all 10 real trains -->
-          </select>
-        </div>
-        <div style="display: flex; align-items: center; gap: 10px;">
-          <button id="btn-toggle-sim" class="btn btn-secondary">Pause Simulation</button>
-          <button id="btn-copy-json" class="btn">Copy Payload JSON</button>
-        </div>
+    <!-- Additional Info Row -->
+    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:12px; margin-bottom:14px;">
+      <div class="telem-card">
+        <div class="telem-label">Current Station</div>
+        <div style="font-family:var(--font-mono); font-size:0.88rem; font-weight:800; color:#ffffff; margin-top:4px;" id="t-cur-stn">---</div>
+      </div>
+      <div class="telem-card">
+        <div class="telem-label">Next Station</div>
+        <div style="font-family:var(--font-mono); font-size:0.88rem; font-weight:800; color:#e2e8f0; margin-top:4px;" id="t-nxt-stn">---</div>
+      </div>
+      <div class="telem-card">
+        <div class="telem-label">GPS Heading / Weather</div>
+        <div style="font-family:var(--font-mono); font-size:0.88rem; font-weight:800; color:#ffffff; margin-top:4px;" id="t-head">---</div>
       </div>
     </div>
 
-    <!-- Active Train Telemetry Strip & Gauges -->
-    <div class="grid-1-2">
-      <!-- Left: Loco Gauges & Status -->
-      <div class="card">
-        <div class="card-title-bar">
-          <h3>Loco Telemetry & Speedometer</h3>
-          <span class="badge" id="loco-signal-aspect">ASPECT: CLEAR</span>
-        </div>
-
-        <div style="text-align: center; margin: 12px 0;">
-          <div class="speed-display" id="gauge-speed">
-            128.5 <span style="font-size: 1.1rem; color: #cbd5e1;">km/h</span>
-          </div>
-          <div style="font-size: 0.76rem; color: #e2e8f0; margin-top: 2px; font-weight: 600;">
-            Target Section MPS: 130 km/h · ATP Restricted
-          </div>
-        </div>
-
-        <div class="grid-2" style="gap: 12px;">
-          <div class="hero-stat-card" style="text-align: center;">
-            <div class="hstat-label">Traction Current</div>
-            <div class="hstat-val" id="tele-current">1,520 A</div>
-          </div>
-          <div class="hero-stat-card" style="text-align: center;">
-            <div class="hstat-label">Brake Pressure</div>
-            <div class="hstat-val" id="tele-brake">5.0 bar</div>
-          </div>
-          <div class="hero-stat-card" style="text-align: center;">
-            <div class="hstat-label">ATP Override</div>
-            <div class="hstat-val" id="tele-atp">DISABLED</div>
-          </div>
-          <div class="hero-stat-card" style="text-align: center;">
-            <div class="hstat-label">GSM-R Link</div>
-            <div class="hstat-val" id="tele-gap">ACTIVE</div>
-          </div>
-        </div>
-
-        <div style="background: rgba(0, 0, 0, 0.5); padding: 12px; border-radius: var(--radius-sm); border: 1px solid rgba(255, 255, 255, 0.12); margin-top: auto;">
-          <div style="font-size: 0.68rem; color: #cbd5e1; text-transform: uppercase; font-weight:800;">WGS-84 GPS Position</div>
-          <div style="font-family: var(--font-mono); font-size: 0.85rem; color: #ffffff; font-weight: 700; margin-top: 4px;" id="tele-coords">
-            28.6139° N, 77.2090° E (Heading: 312°)
-          </div>
-        </div>
-      </div>
-
-      <!-- Right: Route Topology & Interactive Berth Tracking -->
-      <div class="card">
-        <div class="card-title-bar">
-          <h3>Route Section & Line Berth Matrix</h3>
-          <span class="badge" id="route-span-label">Howrah &rarr; New Delhi</span>
-        </div>
-
-        <!-- Track Line Progression -->
-        <div style="background: rgba(0, 0, 0, 0.5); padding: 16px; border-radius: var(--radius-sm); border: 1px solid rgba(255, 255, 255, 0.12);">
-          <div style="display: flex; justify-content: space-between; font-size: 0.76rem; color: #ffffff; font-weight: 700; margin-bottom: 8px;">
-            <span id="prog-source">Howrah (HWH)</span>
-            <span id="prog-mid" style="color: #ffffff; font-weight: 800;">Section: CNB-NDLS-084</span>
-            <span id="prog-dest">New Delhi (NDLS)</span>
-          </div>
-          <div style="height: 8px; background: rgba(255, 255, 255, 0.15); border-radius: 4px; position: relative; overflow: hidden;">
-            <div id="prog-bar" style="width: 78%; height: 100%; background: #ffffff; border-radius: 4px;"></div>
-          </div>
-        </div>
-
-        <!-- Section Berth Occupancy Grid -->
-        <div>
-          <div style="font-size: 0.76rem; font-weight: 800; color: #cbd5e1; text-transform: uppercase; margin-bottom: 8px;">Current Section Berths (Line Occupancy State)</div>
-          <div class="grid-3" id="berth-container">
-            <!-- Dynamically populated -->
-          </div>
-        </div>
-
-        <!-- Station Event Log -->
-        <div>
-          <div style="font-size: 0.76rem; font-weight: 800; color: #cbd5e1; text-transform: uppercase; margin-bottom: 8px;">Station Event Log & Punctuality Tracker</div>
-          <div class="table-wrap">
-            <table class="data-table" style="font-size: 0.74rem;">
-              <thead>
-                <tr>
-                  <th>Station</th>
-                  <th>Scheduled Arr/Dep</th>
-                  <th>Actual Arr/Dep</th>
-                  <th>Delay Status</th>
-                  <th>Halt Status</th>
-                </tr>
-              </thead>
-              <tbody id="station-timeline-body">
-                <!-- Populated via JS -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Live COA JSON Stream -->
+    <!-- Speed Trend Chart -->
     <div class="card">
       <div class="card-title-bar">
-        <h3>Real-Time COAIngestionPayload JSON Stream (cris.coa.train-telemetry.v2)</h3>
-        <span class="badge">Live Stream</span>
+        <h3>Live Speed Trend (Last 20 RTIS Updates)</h3>
+        <span class="badge">3-Second Feed</span>
       </div>
-      <pre class="json-block" id="json-coa-stream"></pre>
+      <div style="height: 180px; position: relative;">
+        <canvas id="speedChart"></canvas>
+      </div>
+    </div>
+
+    <!-- ETA Trend Chart -->
+    <div class="card">
+      <div class="card-title-bar">
+        <h3>Dynamic ETA Delta Trend (Delay in Minutes)</h3>
+        <span class="badge">GBM-ETA-v3.2 Re-inference</span>
+      </div>
+      <div style="height: 180px; position: relative;">
+        <canvas id="etaChart"></canvas>
+      </div>
+    </div>
+
+    <!-- RTIS JSON Stream -->
+    <div class="card">
+      <div class="card-title-bar">
+        <h3>Live RTIS JSON Stream — <code>rtis.gps-feed.v2</code></h3>
+        <span class="badge">Raw Telemetry Log</span>
+      </div>
+      <div class="rtis-stream" id="rtis-stream">Waiting for RTIS connection...</div>
     </div>
 
     <footer class="footer">
-      <span>CRIS Protocol 1 — Control Office Application Ingestion (COA-2.1)</span>
-      <span>Real-Time Frequency: 100ms · Auto-reconnect enabled</span>
+      <span>CRIS ETA Predict &middot; RTIS GPS Telemetry Module &middot; SIH 26028</span>
+      <span>Feed: ISRO RTIS-v2 &middot; Protocol: rtis.gps-feed.v2 &middot; Update: 3s &middot; GBM-ETA-v3.2</span>
     </footer>
   </main>
 
   <script src="/src/dashboard/shared.js"></script>
+  <script src="/src/dashboard/api.js"></script>
   <script>
     renderSharedNav("coa");
 
-    let activeTrain = TRAIN_PROFILES[0];
-    let isPaused = false;
-
-    // Populate dropdown
-    const select = document.getElementById("train-selector");
-    select.innerHTML = TRAIN_PROFILES.map(p => `
-      <option value="${p.train_no}">${p.train_no} — ${p.train_name} (${p.source.split(" ")[0]} &rarr; ${p.destination.split(" ")[0]})</option>
-    `).join("");
-
-    select.addEventListener("change", (e) => {
-      activeTrain = TRAIN_PROFILE_MAP.get(e.target.value) || TRAIN_PROFILES[0];
-      updateView();
+    // Populate selector
+    const sel = document.getElementById("rtis-train-selector");
+    LIVE_TRAIN_REGISTRY.forEach(t => {
+      const opt = document.createElement("option");
+      opt.value = t.train_no;
+      opt.textContent = `${t.train_no} — ${t.train_name} (→ ${t.destination})`;
+      sel.appendChild(opt);
     });
 
-    document.getElementById("btn-toggle-sim").addEventListener("click", () => {
-      isPaused = !isPaused;
-      document.getElementById("btn-toggle-sim").textContent = isPaused ? "Resume Simulation" : "Pause Simulation";
+    // Speed and ETA history buffers (20 points)
+    const MAXPTS = 20;
+    let speedHistory = new Array(MAXPTS).fill(null);
+    let etaHistory = new Array(MAXPTS).fill(null);
+    let timeLabels = new Array(MAXPTS).fill("");
+    let updateCount = 0;
+
+    // Speed Chart
+    const speedCtx = document.getElementById("speedChart").getContext("2d");
+    const speedChart = new Chart(speedCtx, {
+      type: "line",
+      data: {
+        labels: timeLabels,
+        datasets: [{
+          label: "Speed (km/h)", data: speedHistory,
+          borderColor: "rgba(255,255,255,0.9)", backgroundColor: "rgba(255,255,255,0.08)",
+          pointBackgroundColor: "#ffffff", tension: 0.4, borderWidth: 2.5, pointRadius: 3, fill: true
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false, animation: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { color: "#ffffff", font: { size: 9, family: "JetBrains Mono", weight: "700" }, maxTicksLimit: 10 }, grid: { color: "rgba(255,255,255,0.08)" } },
+          y: { title: { display: true, text: "km/h", color: "#ffffff", font: { weight: "700" } }, ticks: { color: "#ffffff", font: { size: 9, family: "JetBrains Mono", weight: "700" } }, grid: { color: "rgba(255,255,255,0.08)" } }
+        }
+      }
     });
 
-    document.getElementById("btn-copy-json").addEventListener("click", () => {
-      const text = document.getElementById("json-coa-stream").textContent;
-      navigator.clipboard.writeText(text);
-      alert("COA JSON Payload copied to clipboard!");
+    // ETA Chart
+    const etaCtx = document.getElementById("etaChart").getContext("2d");
+    const etaChart = new Chart(etaCtx, {
+      type: "line",
+      data: {
+        labels: timeLabels,
+        datasets: [{
+          label: "Delay (min)", data: etaHistory,
+          borderColor: "rgba(255,255,255,0.85)", backgroundColor: "rgba(255,255,255,0.06)",
+          pointBackgroundColor: "#ffffff", tension: 0.4, borderWidth: 2.5, pointRadius: 3, fill: true
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false, animation: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { color: "#ffffff", font: { size: 9, family: "JetBrains Mono", weight: "700" }, maxTicksLimit: 10 }, grid: { color: "rgba(255,255,255,0.08)" } },
+          y: { title: { display: true, text: "Delay (min)", color: "#ffffff", font: { weight: "700" } }, ticks: { color: "#ffffff", font: { size: 9, family: "JetBrains Mono", weight: "700" } }, grid: { color: "rgba(255,255,255,0.08)" } }
+        }
+      }
     });
 
-    function updateView() {
-      document.getElementById("hero-section-id").textContent = activeTrain.route_sections[0] || "MAIN-01";
-      document.getElementById("gauge-speed").innerHTML = `${activeTrain.speed_kmph.toFixed(1)} <span style="font-size:1.1rem; color:#cbd5e1;">km/h</span>`;
-      document.getElementById("tele-current").textContent = `${activeTrain.traction_current_A} A`;
-      document.getElementById("tele-brake").textContent = `${activeTrain.brake_pressure_bar} bar`;
-      document.getElementById("route-span-label").textContent = `${activeTrain.source} → ${activeTrain.destination}`;
-      document.getElementById("prog-source").textContent = activeTrain.source;
-      document.getElementById("prog-dest").textContent = activeTrain.destination;
-
-      // Berths
-      const berthHtml = `
-        <div class="card" style="background:rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.2); text-align:center; padding:12px;">
-          <div style="font-family:var(--font-mono); font-size:1.05rem; color:#ffffff; font-weight:800;">MAIN UP (B1)</div>
-          <div style="font-size:0.65rem; color:#ffffff; font-weight:800; margin-top:2px;">OCCUPIED</div>
-          <div style="font-family:var(--font-mono); font-size:0.74rem; color:#cbd5e1; margin-top:4px;">Train ${activeTrain.train_no}</div>
-        </div>
-        <div class="card" style="background:rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.2); text-align:center; padding:12px;">
-          <div style="font-family:var(--font-mono); font-size:1.05rem; color:#ffffff; font-weight:800;">MAIN DOWN (B2)</div>
-          <div style="font-size:0.65rem; color:#cbd5e1; font-weight:800; margin-top:2px;">CLEAR</div>
-          <div style="font-family:var(--font-mono); font-size:0.74rem; color:#cbd5e1; margin-top:4px;">Clearance Granted</div>
-        </div>
-        <div class="card" style="background:rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.2); text-align:center; padding:12px;">
-          <div style="font-family:var(--font-mono); font-size:1.05rem; color:#ffffff; font-weight:800;">LOOP LINE (L1)</div>
-          <div style="font-size:0.65rem; color:#cbd5e1; font-weight:800; margin-top:2px;">RESERVED</div>
-          <div style="font-family:var(--font-mono); font-size:0.74rem; color:#cbd5e1; margin-top:4px;">Maintenance Slot</div>
-        </div>
-      `;
-      document.getElementById("berth-container").innerHTML = berthHtml;
-
-      // Station Timeline
-      const timelineHtml = `
-        <tr>
-          <td><strong style="color:#ffffff;">${activeTrain.source}</strong></td>
-          <td style="font-family:var(--font-mono); color:#cbd5e1;">Dep: 06:00 IST</td>
-          <td style="font-family:var(--font-mono); color:#ffffff; font-weight:700;">Dep: 06:05 IST</td>
-          <td><span class="badge">On-Time (+5m)</span></td>
-          <td style="color:#e2e8f0;">Origin Station</td>
-        </tr>
-        <tr>
-          <td><strong style="color:#ffffff;">Junction Hub (Midway)</strong></td>
-          <td style="font-family:var(--font-mono); color:#cbd5e1;">Arr: 08:30 · Dep: 08:40</td>
-          <td style="font-family:var(--font-mono); color:#ffffff; font-weight:700;">Arr: 08:42 · Dep: 08:50</td>
-          <td><span class="badge">Delayed (+12m)</span></td>
-          <td style="color:#e2e8f0;">Crew Change (Yes)</td>
-        </tr>
-        <tr>
-          <td><strong style="color:#ffffff;">${activeTrain.destination}</strong></td>
-          <td style="font-family:var(--font-mono); color:#cbd5e1;">Sch: ${activeTrain.scheduled_arrival}</td>
-          <td style="font-family:var(--font-mono); color:#ffffff; font-weight:700;">Est: In Transit</td>
-          <td><span class="badge">P_i=${activeTrain.P_i}</span></td>
-          <td style="color:#e2e8f0;">Destination Terminal</td>
-        </tr>
-      `;
-      document.getElementById("station-timeline-body").innerHTML = timelineHtml;
-
-      // JSON Stream
-      const payload = {
-        protocol_version: "COA-2.1",
-        event_id: "cfa918b2-4d7a-4281-9b1c-38d61e938f42",
-        source_node: `COA-${activeTrain.source.slice(0,3).toUpperCase()}-DIV-01`,
-        ingested_at: new Date().toISOString(),
-        train_number: activeTrain.train_no,
-        train_name: activeTrain.train_name,
-        operational_status: activeTrain.mean_delay > 40 ? "DELAYED" : "ON_TIME",
-        direction: "UP",
-        origin_station: activeTrain.source,
-        destination_station: activeTrain.destination,
-        telemetry: {
-          timestamp_ms: Date.now(),
-          speed_kmph: activeTrain.speed_kmph,
-          heading_deg: 312,
-          traction_current_A: activeTrain.traction_current_A,
-          brake_pressure_bar: activeTrain.brake_pressure_bar,
-          signal_aspect: "CLEAR",
-          atp_override_active: false
-        },
-        current_section: {
-          section_id: activeTrain.route_sections[0] || "MAIN-01",
-          from_station: activeTrain.source,
-          to_station: activeTrain.destination,
-          is_ctc_section: true
-        },
-        priority_weight_P_i: activeTrain.P_i,
-        allowed_delay_budget_delta_d_i_min: activeTrain.delta_d_i,
-      };
-
-      document.getElementById("json-coa-stream").textContent = JSON.stringify(payload, null, 2);
+    function pushToHistory(arr, val) {
+      arr.shift(); arr.push(val);
     }
 
-    updateView();
+    async function doUpdate() {
+      const trainNo = sel.value;
+      const telem = await fetchLiveTelemetry(trainNo);
+      const etaResult = await predictDynamicETA(trainNo);
+      if (!telem || !etaResult) return;
 
-    // Live speed jitter animation
-    setInterval(() => {
-      if (isPaused) return;
-      const jitter = (Math.random() * 2 - 1).toFixed(1);
-      activeTrain.speed_kmph = Math.max(80, Math.min(140, activeTrain.speed_kmph + parseFloat(jitter)));
-      document.getElementById("gauge-speed").innerHTML = `${activeTrain.speed_kmph.toFixed(1)} <span style="font-size:1.1rem; color:#cbd5e1;">km/h</span>`;
-    }, 2000);
+      updateCount++;
+      const now = new Date();
+      const timeStr = `${String(now.getHours()).padStart(2,"0")}:${String(now.getMinutes()).padStart(2,"0")}:${String(now.getSeconds()).padStart(2,"0")}`;
+
+      // Update tiles
+      document.getElementById("t-speed").textContent = telem.current_speed_kmph.toFixed(1);
+      document.getElementById("t-lat").textContent = telem.gps.lat.toFixed(4);
+      document.getElementById("t-lon").textContent = telem.gps.lon.toFixed(4);
+      document.getElementById("t-signal").textContent = telem.signal_aspect;
+      document.getElementById("t-sched").textContent = telem.scheduled_arrival;
+      document.getElementById("t-eta").textContent = etaResult.dynamic_eta;
+      document.getElementById("t-delta").textContent = `Δ +${etaResult.delta_min} min from schedule`;
+      document.getElementById("t-cur-stn").textContent = telem.current_station;
+      document.getElementById("t-nxt-stn").textContent = telem.next_station;
+      document.getElementById("t-head").textContent = `${telem.gps.heading}° · ${telem.weather} (${telem.visibility_km}km vis)`;
+
+      // RTIS status
+      document.getElementById("rtis-feed-status").textContent = `RTIS SYNCED · ${telem.source} · Update #${updateCount}`;
+      document.getElementById("update-pulse").style.display = "inline-block";
+      document.getElementById("update-counter").textContent = `Update #${updateCount} @ ${timeStr}`;
+
+      // Update charts
+      pushToHistory(speedHistory, telem.current_speed_kmph);
+      pushToHistory(etaHistory, etaResult.delta_min);
+      pushToHistory(timeLabels, timeStr);
+      speedChart.update();
+      etaChart.update();
+
+      // RTIS Stream log
+      const stream = document.getElementById("rtis-stream");
+      const obj = {
+        "rtis.version": "2.0",
+        timestamp: telem.fetched_at,
+        train_no: telem.train_no,
+        train_name: telem.train_name,
+        gps: { lat: telem.gps.lat, lon: telem.gps.lon, heading: telem.gps.heading },
+        speed_kmph: telem.current_speed_kmph,
+        current_station: telem.current_station,
+        next_station: telem.next_station,
+        signal_aspect: telem.signal_aspect,
+        scheduled_arrival: telem.scheduled_arrival,
+        dynamic_eta: etaResult.dynamic_eta,
+        delay_min: etaResult.delta_min,
+        weather: telem.weather,
+        model: "GBM-ETA-v3.2"
+      };
+      const line = document.createElement("div");
+      line.className = "new-line";
+      line.textContent = `[${timeStr}] ${JSON.stringify(obj, null, 0)}`;
+      stream.insertBefore(line, stream.firstChild);
+      if (stream.children.length > 15) stream.removeChild(stream.lastChild);
+    }
+
+    // Start 3-second update loop
+    doUpdate();
+    setInterval(doUpdate, 3000);
+
+    // Reset history on train change
+    sel.addEventListener("change", () => {
+      speedHistory.fill(null);
+      etaHistory.fill(null);
+      timeLabels.fill("");
+      updateCount = 0;
+      doUpdate();
+    });
   </script>
 </body>
 </html>

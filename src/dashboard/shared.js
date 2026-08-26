@@ -496,25 +496,25 @@ function renderSharedNav(activePage) {
   if (!sidebar) return;
 
   const links = [
-    { id: "overview", label: "System Overview", url: "/" },
-    { id: "analytics", label: "Dataset & Analytics", url: "/pages/analytics.html" },
-    { id: "bdms", label: "BDMS Shadow Block", url: "/pages/bdms.html" },
-    { id: "milp", label: "MILP Optimizer Studio", url: "/pages/milp.html" },
-    { id: "coa", label: "COA Live Telemetry", url: "/pages/coa.html" },
-    { id: "fois", label: "FOIS Priority Matrix", url: "/pages/fois.html" },
-    { id: "terminal", label: "Operations Terminal", url: "/pages/terminal.html" },
+    { id: "overview", label: "ETA Command Center", url: "/" },
+    { id: "analytics", label: "Historical ML Analytics", url: "/pages/analytics.html" },
+    { id: "bdms", label: "TSR & Track Impact", url: "/pages/bdms.html" },
+    { id: "milp", label: "XAI ETA Studio", url: "/pages/milp.html" },
+    { id: "coa", label: "RTIS GPS Telemetry", url: "/pages/coa.html" },
+    { id: "fois", label: "Cascade Delay Risk", url: "/pages/fois.html" },
+    { id: "terminal", label: "CLI Dispatch Terminal", url: "/pages/terminal.html" },
   ];
 
   sidebar.innerHTML = `
     <div class="sidebar-header">
       <div class="logo-icon">IR</div>
       <div>
-        <div class="logo-title">CRIS AI SCHEDULER</div>
-        <div class="logo-sub">INDIAN RAILWAYS CORRIDORS</div>
+        <div class="logo-title">CRIS ETA PREDICT</div>
+        <div class="logo-sub">SIH 26028 · DYNAMIC ETA</div>
       </div>
     </div>
 
-    <div class="nav-label">COMMAND & CONTROL</div>
+    <div class="nav-label">ML OPERATIONS</div>
     <ul class="nav-links">
       ${links.map(l => `
         <li class="nav-item">
@@ -527,14 +527,14 @@ function renderSharedNav(activePage) {
 
     <div class="sidebar-footer">
       <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-        <span style="color:#fbcfe8; font-weight:700;">Network Status:</span>
+        <span style="color:#fbcfe8; font-weight:700;">ML Engine:</span>
         <span class="badge" style="font-size:0.68rem; background:rgba(236,72,153,0.25); color:#ffffff; border:1px solid rgba(236,72,153,0.6);">ONLINE</span>
       </div>
       <div style="font-size:0.72rem; color:#fbcfe8; font-weight:700;">
-        8,990 Stations · 5,208 Trains
+        RTIS: SYNCED · GBM-ETA-v3.2
       </div>
       <div style="font-size:0.7rem; color:#f472b6; margin-top:4px;">
-        Highs MILP Solver v2.4
+        ISRO RTIS · NWSF Weather Feed
       </div>
     </div>
   `;

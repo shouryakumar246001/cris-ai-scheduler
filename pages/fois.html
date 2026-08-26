@@ -3,313 +3,313 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FOIS & ICMS Priority Matrix — CRIS AI Block Scheduler</title>
+  <title>Cascading Delay Network Risk — CRIS ETA Predict (SIH 26028)</title>
+  <meta name="description" content="Cascading delay chain visualization — how a delayed high-priority train propagates ETA impact to lower-priority services.">
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <link rel="stylesheet" href="/src/dashboard/styles.css?v=3" />
+  <link rel="stylesheet" href="/src/dashboard/styles.css?v=4" />
+  <style>
+    .cascade-chain { display: flex; flex-direction: column; gap: 0; }
+    .cascade-node {
+      display: flex; align-items: stretch; gap: 0;
+    }
+    .cascade-node-inner {
+      flex: 1; background: rgba(255,255,255,0.06); border: 1.5px solid rgba(255,255,255,0.18);
+      border-radius: 10px; padding: 14px 18px; position: relative;
+    }
+    .cascade-node-inner.root-node { border-color: rgba(255,255,255,0.6); background: rgba(255,255,255,0.12); }
+    .cascade-arrow {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      width: 50px; flex-shrink: 0;
+    }
+    .cascade-arrow-line {
+      width: 2px; flex: 1; background: rgba(255,255,255,0.35);
+    }
+    .cascade-arrow-head {
+      font-size: 1.2rem; color: rgba(255,255,255,0.7); margin: 0;
+    }
+    .node-train-no { font-family: var(--font-mono); font-size: 1.1rem; font-weight: 900; color: #ffffff; }
+    .node-train-name { font-size: 0.85rem; color: #e2e8f0; font-weight: 700; margin-bottom: 6px; }
+    .node-action { font-family: var(--font-mono); font-size: 0.75rem; color: #94a3b8; margin-top:6px; }
+    .node-eta-push { font-family: var(--font-mono); font-size: 0.9rem; font-weight: 800; color: #ffffff; margin-top:4px; }
+    .chain-connector { height: 24px; display: flex; align-items: center; justify-content: flex-start; padding-left: 25px; }
+    .chain-connector-line { width: 2px; height: 100%; background: rgba(255,255,255,0.3); margin-left: 24px; }
+  </style>
 </head>
 <body>
-  <!-- Sidebar Navigation -->
   <nav class="sidebar" id="sidebar"></nav>
 
-  <!-- Main Content Area -->
   <main class="content page-backdrop bg-fois">
     <header>
       <div>
-        <h1>FOIS & ICMS Dynamic Priority Intelligence</h1>
+        <h1>Cascading Delay Network Risk</h1>
         <p style="color:#e2e8f0; font-size:0.88rem; margin-top:4px;">
-          Dynamic train priority weighting (P_i ∈ [1, 10]) and cascading delay budget (Δd_i) calibrated against 10-year delay volatility
+          When a high-priority train (Rajdhani/Shatabdi) accumulates delay, lower-priority trains are forced to loop or slow down &mdash;
+          cascading ETA impact across the network. Select the root delay event to trace the chain.
         </p>
       </div>
       <div class="header-meta">
         <div class="status-pill">
           <span class="pulse"></span>
-          <span>FOIS-ICMS-2.0 CALIBRATION ACTIVE</span>
+          <span>2 ACTIVE CASCADE CHAINS &middot; NETWORK RISK: HIGH</span>
         </div>
         <div class="clock-box" id="live-clock">--:--:-- IST</div>
       </div>
     </header>
 
-    <!-- Hero Stats -->
+    <!-- KPI Strip -->
     <div class="hero-stats">
       <div class="hero-stat-card">
-        <div class="hstat-label">Highest Priority P_i</div>
-        <div class="hstat-val">7.2 (Vivek Exp)</div>
+        <div class="hstat-label">Active Chains</div>
+        <div class="hstat-val">2 Chains</div>
       </div>
       <div class="hero-stat-card">
-        <div class="hstat-label">Coaching SLA Rate</div>
-        <div class="hstat-val">₹15,000/min</div>
+        <div class="hstat-label">Trains in Cascade</div>
+        <div class="hstat-val">5 Services</div>
       </div>
       <div class="hero-stat-card">
-        <div class="hstat-label">Coefficients Sum</div>
-        <div class="hstat-val">α + β + γ + δ = 1.0</div>
+        <div class="hstat-label">Max Cascade Impact</div>
+        <div class="hstat-val">+28 min</div>
       </div>
       <div class="hero-stat-card">
-        <div class="hstat-label">Sensitivity Band</div>
-        <div class="hstat-val">CRITICAL SLA</div>
+        <div class="hstat-label">Network Risk Score</div>
+        <div class="hstat-val">HIGH</div>
       </div>
     </div>
 
-    <!-- Interactive Priority Explorer -->
-    <div class="card" style="padding: 16px 20px;">
-      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
-        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-          <span style="font-size: 0.85rem; font-weight: 800; color: #ffffff;">Select Train for Priority Deep Dive:</span>
-          <select id="fois-train-selector" class="form-select" style="min-width: 340px;">
-            <!-- Populated via JS -->
-          </select>
-        </div>
-        <button id="btn-copy-fois-json" class="btn">Copy FOIS/ICMS Payload JSON</button>
+    <!-- Chain Selector -->
+    <div class="card" style="margin-bottom:0;">
+      <div class="card-title-bar">
+        <h3>Select Cascade Chain to Visualize</h3>
+        <span class="badge">Real-Time Cascade Analysis</span>
+      </div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;" id="chain-selector-btns">
       </div>
     </div>
 
-    <!-- Priority Weight & Delay Budget Grid -->
-    <div class="grid-2">
-      <!-- Left: P_i Mathematical Decomposition -->
+    <!-- Chain Visualization + Impact Table side by side -->
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:14px;">
+      <!-- Chain Diagram -->
       <div class="card">
         <div class="card-title-bar">
-          <h3>Dynamic Priority Weight P<sub>i</sub> Decomposition</h3>
-          <span class="badge" id="pi-badge-val">P_i = 6.9 / 10.0</span>
+          <h3>Cascade Chain Diagram</h3>
+          <span class="badge" id="chain-badge">CAS-001</span>
         </div>
-
-        <div style="text-align: center; margin: 12px 0;">
-          <div class="speed-display" id="pi-display-val">
-            6.9
-          </div>
-          <div style="font-size: 0.76rem; color: #f1f5f9; font-family: var(--font-mono); margin-top: 4px; font-weight: 700;">
-            P<sub>i</sub> = α·B<sub>cat</sub> + β·L<sub>dist</sub> + γ·V<sub>vol</sub> + δ·C<sub>casc</sub>
-          </div>
-        </div>
-
-        <!-- 4 Component Bars (Clean White / Silver) -->
-        <div style="display: flex; flex-direction: column; gap: 12px;">
-          <div>
-            <div style="display: flex; justify-content: space-between; font-size: 0.76rem; font-weight: 700; color: #ffffff; margin-bottom: 4px;">
-              <span>α · Category Base (Rajdhani / Shatabdi / SF)</span>
-              <strong id="score-cat" style="color: #ffffff;">4.0</strong>
-            </div>
-            <div style="height: 8px; background: rgba(255,255,255,0.15); border-radius: 4px; overflow:hidden;">
-              <div id="bar-cat" style="width: 100%; height: 100%; background: #ffffff; border-radius:4px;"></div>
-            </div>
-          </div>
-
-          <div>
-            <div style="display: flex; justify-content: space-between; font-size: 0.76rem; font-weight: 700; color: #ffffff; margin-bottom: 4px;">
-              <span>β · Distance & Load Factor (Up to 4,198 km)</span>
-              <strong id="score-dist" style="color: #ffffff;">0.82</strong>
-            </div>
-            <div style="height: 8px; background: rgba(255,255,255,0.15); border-radius: 4px; overflow:hidden;">
-              <div id="bar-dist" style="width: 41%; height: 100%; background: #ffffff; border-radius:4px;"></div>
-            </div>
-          </div>
-
-          <div>
-            <div style="display: flex; justify-content: space-between; font-size: 0.76rem; font-weight: 700; color: #ffffff; margin-bottom: 4px;">
-              <span>γ · 10-Yr Delay Volatility Risk (σ = 24.2 min)</span>
-              <strong id="score-vol" style="color: #ffffff;">0.85</strong>
-            </div>
-            <div style="height: 8px; background: rgba(255,255,255,0.15); border-radius: 4px; overflow:hidden;">
-              <div id="bar-vol" style="width: 42%; height: 100%; background: #ffffff; border-radius:4px;"></div>
-            </div>
-          </div>
-
-          <div>
-            <div style="display: flex; justify-content: space-between; font-size: 0.76rem; font-weight: 700; color: #ffffff; margin-bottom: 4px;">
-              <span>δ · Interlocking & Junction Cascade Factor</span>
-              <strong id="score-casc" style="color: #ffffff;">1.90</strong>
-            </div>
-            <div style="height: 8px; background: rgba(255,255,255,0.15); border-radius: 4px; overflow:hidden;">
-              <div id="bar-casc" style="width: 95%; height: 100%; background: #ffffff; border-radius:4px;"></div>
-            </div>
-          </div>
-        </div>
+        <div id="chain-diagram" style="padding:8px 0;"></div>
       </div>
 
-      <!-- Right: Cascading Delay Budget Δd_i & SLA Exposure -->
+      <!-- Impact Details -->
       <div class="card">
         <div class="card-title-bar">
-          <h3>Cascading Delay Budget &Delta;d<sub>i</sub> (Tolerance Limit)</h3>
-          <span class="badge" id="budget-badge-val">20 min budget</span>
+          <h3>Cascade Impact Summary</h3>
+          <span class="badge">ETA Push per Train</span>
         </div>
-
-        <div style="text-align: center; margin: 12px 0;">
-          <div style="font-family: var(--font-mono); font-size: 3.2rem; font-weight: 800; color: #ffffff;" id="delta-d-val">
-            20 <span style="font-size: 1.1rem; color: #cbd5e1;">min</span>
-          </div>
-          <div style="font-size: 0.76rem; color: #e2e8f0; margin-top: 2px; font-weight: 600;">
-            Delays beyond &Delta;d<sub>i</sub> trigger exponential penalty in MILP cost function
-          </div>
-        </div>
-
-        <div class="grid-2" style="gap: 12px;">
-          <div class="hero-stat-card" style="text-align:center;">
-            <div class="hstat-label">Passenger Count</div>
-            <div class="hstat-val" id="fois-pax">1,200 pax</div>
-          </div>
-          <div class="hero-stat-card" style="text-align:center;">
-            <div class="hstat-label">PNR Revenue</div>
-            <div class="hstat-val" id="fois-rev">₹58.5 Lakhs</div>
-          </div>
-          <div class="hero-stat-card" style="text-align:center;">
-            <div class="hstat-label">SLA Breach Rate</div>
-            <div class="hstat-val" id="fois-sla">₹15,000 / min</div>
-          </div>
-          <div class="hero-stat-card" style="text-align:center;">
-            <div class="hstat-label">Sensitivity Class</div>
-            <div class="hstat-val" id="fois-sens">CRITICAL</div>
-          </div>
-        </div>
-
-        <div style="background: rgba(0, 0, 0, 0.5); padding: 14px; border-radius: var(--radius-sm); border: 1px solid rgba(255, 255, 255, 0.12); margin-top: auto;">
-          <div style="font-size: 0.68rem; color: #cbd5e1; text-transform: uppercase; font-weight:800;">Regulatory Mandate & Protection</div>
-          <div style="font-size: 0.78rem; color: #f1f5f9; margin-top: 4px; font-weight: 600;" id="mandate-text">
-            Coaching service operates under Indian Railways Punctuality Directive 2023. Top priority clearance enforced at block interfaces.
-          </div>
-        </div>
+        <div id="cascade-root-info" style="margin-bottom:14px; padding:12px; background:rgba(255,255,255,0.07); border-radius:8px;"></div>
+        <div id="cascade-impact-table"></div>
       </div>
     </div>
 
-    <!-- Priority Comparison Chart across All 10 Real Trains -->
+    <!-- ETA Push Bar Chart -->
     <div class="card">
       <div class="card-title-bar">
-        <h3>All 10 Train Services — Priority Spectrum</h3>
-        <span class="badge">Derived from 2016–2025 Dataset</span>
+        <h3>ETA Delay Amplification — Root → Downstream Trains</h3>
+        <span class="badge">Cascade Propagation</span>
       </div>
-      <div style="height: 260px; position: relative;">
-        <canvas id="foisPriorityComparisonChart"></canvas>
+      <p style="font-size:0.78rem; color:#e2e8f0; margin-bottom:10px;">
+        Each downstream train absorbs a fraction of the root delay. The cascade penalty is fed as <code style="color:#fff;">cascade_penalty_min</code> into GBM-ETA-v3.2.
+      </p>
+      <div style="height: 200px; position: relative;">
+        <canvas id="cascadeChart"></canvas>
       </div>
     </div>
 
-    <!-- Live FOIS/ICMS JSON Output -->
-    <div class="card">
+    <!-- All Trains Impact Table -->
+    <div class="card table-card">
       <div class="card-title-bar">
-        <h3>Real-Time FOISICMSPriorityPayload JSON (cris.fois-icms.priority-metadata.v2)</h3>
-        <span class="badge">JSON Stream</span>
+        <h3>Full Network Cascade Impact Table</h3>
+        <span class="badge">All Affected Trains</span>
       </div>
-      <pre class="json-block" id="json-fois-stream"></pre>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Chain ID</th>
+              <th>Root Train</th>
+              <th>Root Delay (min)</th>
+              <th>Affected Train</th>
+              <th>Category</th>
+              <th>Forced Action</th>
+              <th>Wait Time (min)</th>
+              <th>ETA Push (min)</th>
+            </tr>
+          </thead>
+          <tbody id="cascade-full-table"></tbody>
+        </table>
+      </div>
     </div>
 
     <footer class="footer">
-      <span>CRIS Protocol 3 — Freight Operations & Coaching Priority Layer (FOIS-ICMS-2.0)</span>
-      <span>Dynamic Weight Formula Calibrated to Winter Fog & Disruption Profiles</span>
+      <span>CRIS ETA Predict &middot; Cascading Delay Risk Module &middot; SIH 26028</span>
+      <span>Data: FOIS Priority Matrix &middot; GBM-ETA-v3.2 Cascade Feature &middot; IR Train Priority Rules</span>
     </footer>
   </main>
 
   <script src="/src/dashboard/shared.js"></script>
+  <script src="/src/dashboard/api.js"></script>
   <script>
     renderSharedNav("fois");
+    let cascadeBarChart = null;
+    let allChains = [];
 
-    const sel = document.getElementById("fois-train-selector");
-    sel.innerHTML = TRAIN_PROFILES.map(p => `
-      <option value="${p.train_no}">${p.train_no} — ${p.train_name} (P_i = ${p.P_i})</option>
-    `).join("");
+    async function loadPage() {
+      allChains = await fetchCascadeNetwork();
 
-    let activeProf = TRAIN_PROFILES[0];
+      // Chain selector buttons
+      const btnContainer = document.getElementById("chain-selector-btns");
+      allChains.forEach((chain, idx) => {
+        const btn = document.createElement("button");
+        btn.textContent = `${chain.chain_id} — ${chain.root_train_name} (+${chain.root_delay_min} min)`;
+        btn.id = `chain-btn-${chain.chain_id}`;
+        btn.style.cssText = `background:rgba(255,255,255,${idx===0?'0.18':'0.06'}); border:1.5px solid rgba(255,255,255,${idx===0?'0.5':'0.2'}); color:#fff; padding:8px 16px; border-radius:6px; font-family:var(--font-mono); font-weight:700; font-size:0.8rem; cursor:pointer; transition:all 0.2s;`;
+        btn.onclick = () => renderChain(chain.chain_id);
+        btnContainer.appendChild(btn);
+      });
 
-    sel.addEventListener("change", (e) => {
-      activeProf = TRAIN_PROFILE_MAP.get(e.target.value) || TRAIN_PROFILES[0];
-      updateView();
-    });
+      // Full cascade table
+      const tbody = document.getElementById("cascade-full-table");
+      const rows = [];
+      allChains.forEach(chain => {
+        chain.chain.forEach(affected => {
+          rows.push({ chain, affected });
+        });
+      });
+      tbody.innerHTML = rows.map(({ chain, affected }) => `
+        <tr>
+          <td><strong style="color:#ffffff; font-family:var(--font-mono);">${chain.chain_id}</strong></td>
+          <td><span style="font-family:var(--font-mono); font-weight:800; color:#fff;">${chain.root_train_no} — ${chain.root_train_name}</span></td>
+          <td><span class="badge">+${chain.root_delay_min} min</span></td>
+          <td style="font-family:var(--font-mono); color:#e2e8f0;">${affected.train_no} — ${affected.train_name}</td>
+          <td><span class="badge">${affected.category}</span></td>
+          <td style="color:#e2e8f0; font-size:0.78rem; max-width:200px;">${affected.forced_action}</td>
+          <td style="font-family:var(--font-mono); color:#94a3b8;">${affected.wait_min} min</td>
+          <td><span class="badge">+${affected.eta_push_min} min</span></td>
+        </tr>
+      `).join("");
 
-    document.getElementById("btn-copy-fois-json").addEventListener("click", () => {
-      const text = document.getElementById("json-fois-stream").textContent;
-      navigator.clipboard.writeText(text);
-      alert("FOIS/ICMS JSON Payload copied to clipboard!");
-    });
-
-    function updateView() {
-      document.getElementById("pi-badge-val").textContent = `P_i = ${activeProf.P_i} / 10.0`;
-      document.getElementById("pi-display-val").textContent = activeProf.P_i;
-      document.getElementById("budget-badge-val").textContent = `${activeProf.delta_d_i} min budget`;
-      document.getElementById("delta-d-val").innerHTML = `${activeProf.delta_d_i} <span style="font-size:1.1rem; color:#cbd5e1;">min</span>`;
-
-      document.getElementById("score-cat").textContent = activeProf.category_base.toFixed(1);
-      document.getElementById("bar-cat").style.width = `${(activeProf.category_base / 4.0) * 100}%`;
-
-      document.getElementById("score-dist").textContent = activeProf.distance_factor.toFixed(2);
-      document.getElementById("bar-dist").style.width = `${(activeProf.distance_factor / 2.0) * 100}%`;
-
-      document.getElementById("score-vol").textContent = activeProf.volatility_factor.toFixed(2);
-      document.getElementById("bar-vol").style.width = `${(activeProf.volatility_factor / 2.0) * 100}%`;
-
-      document.getElementById("score-casc").textContent = activeProf.cascade_factor.toFixed(2);
-      document.getElementById("bar-casc").style.width = `${(activeProf.cascade_factor / 2.0) * 100}%`;
-
-      document.getElementById("fois-pax").textContent = `${activeProf.passenger_capacity.toLocaleString("en-IN")} pax`;
-      document.getElementById("fois-rev").textContent = formatINR(activeProf.pnr_revenue_inr);
-      document.getElementById("fois-sla").textContent = activeProf.category === "RAJDHANI" || activeProf.category === "SHATABDI" ? "₹15,000 / min" : "₹8,000 / min";
-      document.getElementById("fois-sens").textContent = activeProf.sensitivity;
-
-      const payload = {
-        protocol_version: "FOIS-ICMS-2.0",
-        event_id: "c3e7a841-f2d9-4b03-9e16-7a2c4f8d1b55",
-        created_at: new Date().toISOString(),
-        source_system: "HYBRID",
-        train_number: activeProf.train_no,
-        train_name: activeProf.train_name,
-        train_category: activeProf.category,
-        priority_weight: {
-          P_i: activeProf.P_i,
-          category_base_score: activeProf.category_base,
-          distance_load_factor: activeProf.distance_factor,
-          volatility_risk_factor: activeProf.volatility_factor,
-          cascade_network_factor: activeProf.cascade_factor
-        },
-        delay_threshold: {
-          delta_d_i_minutes: activeProf.delta_d_i,
-          sensitivity: activeProf.sensitivity,
-          mean_10yr_delay_min: activeProf.mean_delay,
-          sla_penalty_per_min_inr: activeProf.category === "RAJDHANI" ? 15000 : 8000
-        },
-        passenger_metrics: {
-          total_passengers: activeProf.passenger_capacity,
-          ticket_revenue_inr: activeProf.pnr_revenue_inr
-        }
-      };
-
-      document.getElementById("json-fois-stream").textContent = JSON.stringify(payload, null, 2);
+      // Auto-render first chain
+      renderChain(allChains[0].chain_id);
     }
 
-    updateView();
+    function renderChain(chainId) {
+      const chain = allChains.find(c => c.chain_id === chainId);
+      if (!chain) return;
 
-    // Render 10-train comparison chart in Solid White & Silver
-    new Chart(document.getElementById("foisPriorityComparisonChart").getContext("2d"), {
-      type: "bar",
-      data: {
-        labels: TRAIN_PROFILES.map(p => `${p.train_no} (${p.train_name.split(" ")[0]})`),
-        datasets: [
-          {
-            label: "Priority Weight P_i",
-            data: TRAIN_PROFILES.map(p => p.P_i),
-            backgroundColor: "rgba(255, 255, 255, 0.9)",
-            borderColor: "#ffffff",
-            borderWidth: 1.5,
-            borderRadius: 4,
-            yAxisID: "y",
-          },
-          {
-            label: "Allowed Threshold Δd_i (min)",
-            data: TRAIN_PROFILES.map(p => p.delta_d_i),
-            backgroundColor: "rgba(255, 255, 255, 0.45)",
-            borderColor: "#ffffff",
-            borderWidth: 1.5,
-            borderRadius: 4,
-            yAxisID: "y1",
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          x: { ticks: { color: "#ffffff", font: { size: 10, family: "JetBrains Mono", weight: "700" } }, grid: { color: "rgba(255, 255, 255, 0.12)" } },
-          y: { type: "linear", position: "left", title: { display: true, text: "P_i (1-10)", color: "#ffffff", font: { weight: "800" } }, ticks: { color: "#ffffff", font: { family: "JetBrains Mono", weight: "700" } }, grid: { color: "rgba(255, 255, 255, 0.12)" } },
-          y1: { type: "linear", position: "right", title: { display: true, text: "Δd_i (min)", color: "#ffffff", font: { weight: "800" } }, ticks: { color: "#ffffff", font: { family: "JetBrains Mono", weight: "700" } }, grid: { drawOnChartArea: false } }
+      // Update button styles
+      allChains.forEach(c => {
+        const btn = document.getElementById(`chain-btn-${c.chain_id}`);
+        if (btn) {
+          btn.style.background = c.chain_id === chainId ? "rgba(255,255,255,0.18)" : "rgba(255,255,255,0.06)";
+          btn.style.borderColor = c.chain_id === chainId ? "rgba(255,255,255,0.5)" : "rgba(255,255,255,0.2)";
         }
-      }
-    });
+      });
+
+      document.getElementById("chain-badge").textContent = chainId;
+
+      // Chain Diagram
+      const diag = document.getElementById("chain-diagram");
+      let diagHtml = `
+        <div class="cascade-chain">
+          <div class="cascade-node">
+            <div class="cascade-node-inner root-node">
+              <div class="node-train-no">${chain.root_train_no} — ${chain.root_train_name}</div>
+              <div class="node-train-name">ROOT DELAY EVENT &mdash; HIGH PRIORITY</div>
+              <div style="font-size:0.78rem; color:#e2e8f0; font-family:var(--font-mono); margin-top:4px;">
+                Reason: ${chain.reason}
+              </div>
+              <div class="node-eta-push">Primary Delay: +${chain.root_delay_min} min</div>
+            </div>
+          </div>
+      `;
+      chain.chain.forEach((affected, idx) => {
+        diagHtml += `
+          <div style="display:flex; align-items:center; padding:0 24px; height:36px;">
+            <div style="width:2px; height:36px; background:rgba(255,255,255,0.3);"></div>
+            <div style="font-family:var(--font-mono); font-size:0.72rem; color:#94a3b8; margin-left:10px;">↓ PRIORITY CONFLICT → ${affected.forced_action.split("(")[0].trim()}</div>
+          </div>
+          <div class="cascade-node">
+            <div class="cascade-node-inner" style="margin-left:${(idx+1)*20}px;">
+              <div class="node-train-no">${affected.train_no} — ${affected.train_name}</div>
+              <div class="node-train-name">${affected.category} &mdash; DOWNSTREAM</div>
+              <div class="node-action">${affected.forced_action}</div>
+              <div class="node-eta-push">ETA Impact: +${affected.eta_push_min} min &middot; Wait: ${affected.wait_min} min</div>
+            </div>
+          </div>
+        `;
+      });
+      diagHtml += "</div>";
+      diag.innerHTML = diagHtml;
+
+      // Root info
+      document.getElementById("cascade-root-info").innerHTML = `
+        <div style="font-family:var(--font-mono); font-size:0.78rem; line-height:1.9; color:#e2e8f0;">
+          <div><span style="color:#fff; font-weight:700;">Chain ID:</span> ${chain.chain_id}</div>
+          <div><span style="color:#fff; font-weight:700;">Root Train:</span> ${chain.root_train_no} — ${chain.root_train_name}</div>
+          <div><span style="color:#fff; font-weight:700;">Root Delay:</span> +${chain.root_delay_min} min</div>
+          <div><span style="color:#fff; font-weight:700;">Cause:</span> ${chain.reason}</div>
+          <div><span style="color:#fff; font-weight:700;">Downstream Trains:</span> ${chain.chain.length}</div>
+          <div><span style="color:#fff; font-weight:700;">Total Network Impact:</span> +${chain.chain.reduce((s,t)=>s+t.eta_push_min,0)} min cumulative</div>
+        </div>
+      `;
+
+      // Impact table
+      document.getElementById("cascade-impact-table").innerHTML = `
+        <table class="data-table" style="font-size:0.78rem;">
+          <thead><tr><th>Train</th><th>Action</th><th>ETA Push</th></tr></thead>
+          <tbody>
+            ${chain.chain.map(t => `
+              <tr>
+                <td><strong style="color:#fff; font-family:var(--font-mono);">${t.train_no}</strong><br><span style="color:#cbd5e1;">${t.train_name}</span></td>
+                <td style="color:#e2e8f0; max-width:160px;">${t.forced_action}</td>
+                <td><span class="badge">+${t.eta_push_min} min</span></td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `;
+
+      // Bar chart
+      if (cascadeBarChart) cascadeBarChart.destroy();
+      const allTrains = [
+        { label: `${chain.root_train_no} (Root)`, delay: chain.root_delay_min, color: "rgba(255,255,255,0.95)" },
+        ...chain.chain.map((t, i) => ({
+          label: `${t.train_no} (↓${i+1})`, delay: t.eta_push_min,
+          color: `rgba(255,255,255,${0.6 - i * 0.15})`
+        }))
+      ];
+      cascadeBarChart = new Chart(document.getElementById("cascadeChart"), {
+        type: "bar",
+        data: {
+          labels: allTrains.map(t => t.label),
+          datasets: [{
+            label: "ETA Delay (min)", data: allTrains.map(t => t.delay),
+            backgroundColor: allTrains.map(t => t.color),
+            borderColor: "#ffffff", borderWidth: 1.5, borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { color: "#ffffff", font: { size: 11, family: "JetBrains Mono", weight: "700" } }, grid: { color: "rgba(255,255,255,0.10)" } },
+            y: { title: { display: true, text: "Delay (min)", color: "#ffffff", font: { weight: "800" } }, ticks: { color: "#ffffff", font: { size: 10, family: "JetBrains Mono", weight: "700" } }, grid: { color: "rgba(255,255,255,0.10)" } }
+          }
+        }
+      });
+    }
+
+    loadPage();
   </script>
 </body>
 </html>

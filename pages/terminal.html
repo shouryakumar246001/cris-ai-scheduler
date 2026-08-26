@@ -1,230 +1,342 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Operations Terminal — CRIS AI Block Scheduler</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <link rel="stylesheet" href="/src/dashboard/styles.css?v=3">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CLI Dispatch Terminal — CRIS ETA Predict (SIH 26028)</title>
+  <meta name="description" content="Interactive CLI terminal for CRIS ETA Prediction platform. Commands: help, status, get-eta, list-trains, tsr-status, clear.">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/dashboard/styles.css?v=4" />
   <style>
-    .terminal-window {
-      background: #0f172a;
-      border: 1px solid #1e293b;
-      border-radius: var(--radius-md);
-      padding: 18px;
-      font-family: var(--font-mono);
-      font-size: 0.8rem;
-      color: #f8fafc;
-      min-height: 480px;
+    .terminal-container {
+      background: rgba(0, 0, 0, 0.65);
+      border: 1.5px solid rgba(255,255,255,0.2);
+      border-radius: 12px;
+      overflow: hidden;
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      height: calc(100vh - 320px);
+      min-height: 420px;
     }
-    .terminal-logs {
-      flex: 1;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      max-height: 400px;
-    }
-    .term-line {
-      display: flex;
-      gap: 10px;
-      line-height: 1.5;
-    }
-    .term-time { color: #94a3b8; font-weight: 700; }
-    .term-tag-ok { color: #38bdf8; font-weight: 700; }
-    .term-tag-warn { color: #facc15; font-weight: 700; }
-    .term-tag-crit { color: #f87171; font-weight: 700; }
-    .term-input-row {
+    .terminal-titlebar {
+      background: rgba(255,255,255,0.06);
+      padding: 10px 16px;
       display: flex;
       align-items: center;
       gap: 8px;
-      border-top: 1px solid #334155;
-      padding-top: 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
     }
-    .term-prompt {
-      color: #ffffff;
-      font-weight: 800;
+    .terminal-dot { width: 11px; height: 11px; border-radius: 50%; }
+    .terminal-title {
+      font-family: var(--font-mono); font-size: 0.78rem; color: #e2e8f0;
+      font-weight: 700; margin-left: 8px;
     }
-    .term-input {
+    .terminal-output {
+      flex: 1;
+      padding: 16px 18px;
+      overflow-y: auto;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      line-height: 1.7;
+      color: #e2e8f0;
+    }
+    .terminal-output .line-cmd { color: #ffffff; font-weight: 800; }
+    .terminal-output .line-out { color: #e2e8f0; white-space: pre-wrap; }
+    .terminal-output .line-success { color: #ffffff; font-weight: 700; }
+    .terminal-output .line-error { color: #94a3b8; }
+    .terminal-output .line-info { color: #cbd5e1; }
+    .terminal-output .line-heading { color: #ffffff; font-weight: 900; font-size: 0.88rem; }
+    .terminal-output .prompt { color: #94a3b8; }
+    .terminal-input-row {
+      display: flex;
+      align-items: center;
+      padding: 10px 18px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      background: rgba(0,0,0,0.3);
+      gap: 8px;
+    }
+    .terminal-prompt-symbol {
+      font-family: var(--font-mono); font-weight: 900;
+      color: #ffffff; font-size: 0.9rem; flex-shrink: 0;
+    }
+    #terminal-input {
       flex: 1;
       background: transparent;
       border: none;
-      color: #ffffff;
+      outline: none;
       font-family: var(--font-mono);
       font-size: 0.85rem;
-      outline: none;
+      font-weight: 700;
+      color: #ffffff;
+      caret-color: #ffffff;
+    }
+    #terminal-input::placeholder { color: rgba(255,255,255,0.3); }
+    .cmd-hint {
+      font-family: var(--font-mono); font-size: 0.72rem; color: rgba(255,255,255,0.5);
+      flex-shrink: 0;
     }
   </style>
 </head>
 <body>
-  <!-- Sidebar Navigation -->
   <nav class="sidebar" id="sidebar"></nav>
 
-  <!-- Main Content Area -->
-  <main class="content page-backdrop bg-terminal">
+  <main class="content page-backdrop bg-terminal" style="display:flex; flex-direction:column;">
     <header>
       <div>
-        <h1>CRIS Central CLI & Telemetry Terminal</h1>
-        <p style="color:#334155; font-size:0.88rem; margin-top:4px;">
-          Direct telemetry command line and operational dispatch gateway for CRIS Railway Systems Architecture
+        <h1>CLI Dispatch Terminal</h1>
+        <p style="color:#e2e8f0; font-size:0.88rem; margin-top:4px;">
+          Interactive command-line interface for the CRIS ETA Prediction Platform. Type <code style="color:#fff; background:rgba(255,255,255,0.12); padding:2px 6px; border-radius:3px;">help</code> to see all available commands.
         </p>
       </div>
       <div class="header-meta">
         <div class="status-pill">
           <span class="pulse"></span>
-          <span>SSH / REST STREAM ACTIVE</span>
+          <span>TERMINAL READY &middot; GBM-ETA-v3.2</span>
         </div>
         <div class="clock-box" id="live-clock">--:--:-- IST</div>
       </div>
     </header>
 
-    <div class="hero-stats">
-      <div class="hero-stat-card">
-        <div class="hstat-label">Active Socket</div>
-        <div class="hstat-val">CRIS-WSS-01</div>
-      </div>
-      <div class="hero-stat-card">
-        <div class="hstat-label">Buffer Health</div>
-        <div class="hstat-val">100% OK</div>
-      </div>
-      <div class="hero-stat-card">
-        <div class="hstat-label">Stream Latency</div>
-        <div class="hstat-val">8ms</div>
-      </div>
-      <div class="hero-stat-card">
-        <div class="hstat-label">Node Zone</div>
-        <div class="hstat-val">NR / CR GRAND</div>
-      </div>
+    <!-- Quick Command Buttons -->
+    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;">
+      <span style="font-family:var(--font-mono); font-size:0.78rem; color:#94a3b8; align-self:center;">Quick commands:</span>
+      <button class="quick-cmd" onclick="runQuick('help')">help</button>
+      <button class="quick-cmd" onclick="runQuick('status')">status</button>
+      <button class="quick-cmd" onclick="runQuick('list-trains')">list-trains</button>
+      <button class="quick-cmd" onclick="runQuick('get-eta 12301')">get-eta 12301</button>
+      <button class="quick-cmd" onclick="runQuick('tsr-status')">tsr-status</button>
+      <button class="quick-cmd" onclick="runQuick('clear')">clear</button>
     </div>
 
-    <!-- Terminal Command Area -->
-    <div class="card">
-      <div class="card-title-bar">
-        <h3>Real-Time Operational Log & Command Console</h3>
-        <span class="badge">Interactive CLI</span>
-      </div>
+    <style>
+      .quick-cmd { background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.2); color:#ffffff; padding:5px 12px; border-radius:4px; font-family:var(--font-mono); font-size:0.78rem; font-weight:700; cursor:pointer; transition:all 0.18s; }
+      .quick-cmd:hover { background:rgba(255,255,255,0.2); border-color:rgba(255,255,255,0.5); }
+    </style>
 
-      <div class="terminal-window">
-        <div class="terminal-logs" id="term-logs">
-          <div class="term-line"><span class="term-time">[SYSTEM]</span><span class="term-tag-ok">[INIT]</span> Initializing Indian Railways CRIS AI Kernel v2.1...</div>
-          <div class="term-line"><span class="term-time">[SYSTEM]</span><span class="term-tag-ok">[COA-2.1]</span> Ingestion node online: 10 live train services calibrated.</div>
-          <div class="term-line"><span class="term-time">[SYSTEM]</span><span class="term-tag-ok">[BDMS-3.0]</span> Multi-department synchronization engine loaded (Track + OHE + S&T).</div>
-          <div class="term-line"><span class="term-time">[SYSTEM]</span><span class="term-tag-ok">[FOIS-2.0]</span> P_i formula loaded: α·B_cat + β·L_dist + γ·V_vol + δ·C_casc.</div>
-          <div class="term-line"><span class="term-time">[SYSTEM]</span><span class="term-tag-ok">[MILP-1.0]</span> HiGHS global optimizer solver initialized (gap: 0.00%).</div>
-          <div class="term-line"><span class="term-time">[TELEMETRY]</span><span class="term-tag-ok">[NOTICE]</span> 12301 Rajdhani (HWH→NDLS) speed at 128.5 km/h · Aspect: CLEAR.</div>
-          <div class="term-line"><span class="term-time">[SOLVER]</span><span class="term-tag-ok">[SOLVED]</span> Evaluated SB-CR-20240815-007 on NGP→SEG · Net objective +39.40.</div>
+    <!-- Terminal Window -->
+    <div class="terminal-container" style="flex:1;">
+      <div class="terminal-titlebar">
+        <div class="terminal-dot" style="background:#ffffff;"></div>
+        <div class="terminal-dot" style="background:rgba(255,255,255,0.5);"></div>
+        <div class="terminal-dot" style="background:rgba(255,255,255,0.25);"></div>
+        <div class="terminal-title">cris-eta-terminal — CRIS ETA Predict CLI v1.0 &middot; SIH 26028</div>
+      </div>
+      <div class="terminal-output" id="terminal-output">
+        <div class="line-heading">
+╔══════════════════════════════════════════════════════════════════╗
+║     CRIS ETA PREDICTION PLATFORM — CLI Dispatch Terminal v1.0   ║
+║     SIH Problem Statement 26028 — Indian Railways ISRO RTIS     ║
+╚══════════════════════════════════════════════════════════════════╝
         </div>
-
-        <div class="term-input-row">
-          <span class="term-prompt">cris-admin@railway:~$</span>
-          <input type="text" id="term-input" class="term-input" placeholder="Type command (e.g. status, solve, fleet, ping, clear)..." autofocus autocomplete="off" />
-          <button class="btn" id="btn-term-exec" style="padding:4px 12px; font-size:0.75rem;">Run ↵</button>
-        </div>
+        <div class="line-info"> </div>
+        <div class="line-success">System Health: OK  |  ML Engine: ONLINE  |  RTIS: SYNCED</div>
+        <div class="line-info">Model: GBM-ETA-v3.2  |  Training: 2016–2025  |  RMSE: 4.2 min</div>
+        <div class="line-info">Active Trains: 10  |  Active TSRs: 4  |  Cascade Chains: 2</div>
+        <div class="line-info"> </div>
+        <div class="line-out">Type <span style="color:#ffffff; font-weight:800;">help</span> for a list of commands.</div>
+        <div class="line-info"> </div>
+      </div>
+      <div class="terminal-input-row">
+        <span class="terminal-prompt-symbol">cris-eta:~$</span>
+        <input type="text" id="terminal-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Type a command and press Enter..." />
+        <span class="cmd-hint">↵ Enter to execute</span>
       </div>
     </div>
 
-    <!-- Quick Telemetry Shortcuts -->
-    <div class="grid-3">
-      <div class="card">
-        <h3>Ingest COA Event</h3>
-        <p>Trigger simulated COA telemetry refresh across all 10 monitored corridors.</p>
-        <button class="card-btn" onclick="executeCmd('telemetry')">Trigger Ingestion &rarr;</button>
-      </div>
-
-      <div class="card">
-        <h3>Run MILP Highs Solver</h3>
-        <p>Execute Mixed Integer Linear Programming solver across all corridor candidates.</p>
-        <button class="card-btn" onclick="executeCmd('solve')">Run Solver &rarr;</button>
-      </div>
-
-      <div class="card">
-        <h3>Dump Fleet P_i Matrix</h3>
-        <p>Print calculated dynamic priority weights (P_i) and delay budgets (Δd_i).</p>
-        <button class="card-btn" onclick="executeCmd('fleet')">Dump Matrix &rarr;</button>
-      </div>
-    </div>
-
-    <footer class="footer">
-      <span>CRIS Central Command Terminal · Indian Railways Control Systems</span>
-      <span>Session: TLS-1.3 Encrypted</span>
+    <footer class="footer" style="margin-top:12px;">
+      <span>CRIS ETA Predict &middot; CLI Dispatch Terminal &middot; SIH 26028</span>
+      <span>GBM-ETA-v3.2 &middot; Commands: help | status | get-eta | list-trains | tsr-status | clear</span>
     </footer>
   </main>
 
   <script src="/src/dashboard/shared.js"></script>
+  <script src="/src/dashboard/api.js"></script>
   <script>
     renderSharedNav("terminal");
 
-    const input = document.getElementById("term-input");
-    const logs = document.getElementById("term-logs");
+    const output = document.getElementById("terminal-output");
+    const input = document.getElementById("terminal-input");
+    let cmdHistory = [];
+    let histIdx = -1;
 
-    function addLog(tag, type, msg) {
-      const now = new Date();
-      const pad = n => String(n).padStart(2, "0");
-      const timeStr = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
-      
-      let typeClass = "term-tag-ok";
-      if (type === "WARN" || type === "ORANGE") typeClass = "term-tag-warn";
-      if (type === "CRIT" || type === "RED") typeClass = "term-tag-crit";
-
-      const line = document.createElement("div");
-      line.className = "term-line";
-      line.innerHTML = `<span class="term-time">[${timeStr}]</span><span class="${typeClass}">[${tag}]</span> ${msg}`;
-      logs.appendChild(line);
-      logs.scrollTop = logs.scrollHeight;
+    function print(text, cls = "line-out") {
+      const div = document.createElement("div");
+      div.className = cls;
+      div.innerHTML = text;
+      output.appendChild(div);
+      output.scrollTop = output.scrollHeight;
     }
 
-    function executeCmd(cmd) {
-      cmd = cmd.trim().toLowerCase();
+    function printBlank() { print(" "); }
+
+    function printPrompt(cmd) {
+      print(`<span class="prompt">cris-eta:~$</span> <span class="line-cmd">${escapeHtml(cmd)}</span>`);
+    }
+
+    function escapeHtml(s) {
+      return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    }
+
+    async function executeCommand(rawCmd) {
+      const cmd = rawCmd.trim();
       if (!cmd) return;
 
-      addLog("USER", "OK", `cris-admin@railway:~$ ${cmd}`);
+      cmdHistory.unshift(cmd);
+      histIdx = -1;
+      printPrompt(cmd);
 
-      if (cmd === "clear") {
-        logs.innerHTML = "";
-        return;
-      }
-      if (cmd === "status") {
-        addLog("SYSTEM", "OK", "All 4 Protocols Active: COA-2.1 [ONLINE], BDMS-3.0 [ONLINE], FOIS-2.0 [ONLINE], MILP-XAI-1.0 [ONLINE].");
-      } else if (cmd === "solve") {
-        addLog("SOLVER", "OK", "Running HiGHS solver on 4 corridors...");
-        CORRIDOR_BLOCK_CANDIDATES.forEach(b => {
-          const res = runMILPOptimizer(b.block_id, 1.5, 0);
-          addLog("SOLVER", "OK", `${b.block_id}: Decision x_j=${res.decision_xj} (${res.verdict}) · Net Objective: ${res.net_objective.toFixed(2)}`);
-        });
-      } else if (cmd === "fleet") {
-        addLog("FOIS", "OK", "Fleet Priority Weights P_i & Delay Budgets Δd_i:");
-        TRAIN_PROFILES.forEach(p => {
-          addLog("FOIS", "OK", `${p.train_no} ${p.train_name}: P_i=${p.P_i} | Δd_i=${p.delta_d_i}m | 10yr Mean Delay=${p.mean_delay}m`);
-        });
-      } else if (cmd === "telemetry") {
-        addLog("COA", "OK", "Triggered live GPS position updates for 10 active train services.");
-      } else if (cmd === "ping") {
-        addLog("NETWORK", "OK", "Ping to CRIS-NDLS Central Server: 8.4 ms (0.0% packet loss)");
-      } else {
-        addLog("SHELL", "CRIT", `Command not recognized: '${cmd}'. Try 'status', 'solve', 'fleet', 'telemetry', 'ping', 'clear'.`);
+      const parts = cmd.split(/\s+/);
+      const verb = parts[0].toLowerCase();
+
+      switch (verb) {
+        case "help":
+          printBlank();
+          print(`<span class="line-heading">┌─ CRIS ETA CLI — Available Commands ──────────────────────────┐</span>`);
+          print(`<span class="line-success"> help             </span><span class="line-info">  Show this help message.</span>`);
+          print(`<span class="line-success"> status           </span><span class="line-info">  Show overall system and ML engine health.</span>`);
+          print(`<span class="line-success"> get-eta [train#] </span><span class="line-info">  Fetch dynamic ETA prediction for a specific train.</span>`);
+          print(`<span class="line-success">                  </span><span class="line-info">  Example: get-eta 12301</span>`);
+          print(`<span class="line-success"> list-trains      </span><span class="line-info">  List all 10 monitored train services.</span>`);
+          print(`<span class="line-success"> tsr-status       </span><span class="line-info">  Show all active Temporary Speed Restrictions.</span>`);
+          print(`<span class="line-success"> cascade-status   </span><span class="line-info">  Show all active cascade delay chains.</span>`);
+          print(`<span class="line-success"> clear            </span><span class="line-info">  Clear the terminal output.</span>`);
+          print(`<span class="line-heading">└───────────────────────────────────────────────────────────────┘</span>`);
+          printBlank();
+          break;
+
+        case "status":
+          printBlank();
+          print(`<span class="line-heading">═══ CRIS ETA Platform — System Status Report ═══</span>`);
+          print(`<span class="line-success"> System Health     :  OK ✓</span>`);
+          print(`<span class="line-success"> ML Engine         :  GBM-ETA-v3.2  ONLINE ✓</span>`);
+          print(`<span class="line-success"> RTIS GPS Feed     :  ISRO RTIS-v2  SYNCED ✓ (3s update cycle)</span>`);
+          print(`<span class="line-success"> Weather Feed      :  NWSF Integration  SYNCED ✓</span>`);
+          print(`<span class="line-info"> Training Data     :  100 records (2016–2025 Winter Seasons)</span>`);
+          print(`<span class="line-info"> Model RMSE        :  4.2 min  |  MAE: 3.1 min  |  R²: 0.89</span>`);
+          print(`<span class="line-info"> Active Trains     :  10 monitored / 32 total</span>`);
+          print(`<span class="line-info"> Active TSRs       :  4 restrictions across 3 corridors</span>`);
+          print(`<span class="line-info"> Cascade Chains    :  2 active  |  Risk Level: HIGH</span>`);
+          print(`<span class="line-info"> API Latency (avg) :  280ms  |  Inference time: 350ms</span>`);
+          printBlank();
+          break;
+
+        case "get-eta":
+          if (!parts[1]) {
+            print(`<span class="line-error">✗ Usage: get-eta [train_no]  Example: get-eta 12301</span>`);
+          } else {
+            print(`<span class="line-info">⟳ Querying RTIS + invoking GBM-ETA-v3.2 inference for train ${parts[1]}...</span>`);
+            const result = await predictDynamicETA(parts[1]);
+            if (!result) {
+              print(`<span class="line-error">✗ Train ${parts[1]} not found in registry. Use <span style="color:#fff;">list-trains</span> to see available trains.</span>`);
+            } else {
+              const b = result.breakdown;
+              printBlank();
+              print(`<span class="line-heading">═══ Dynamic ETA Report — Train ${result.train_no} ═══</span>`);
+              print(`<span class="line-success"> Train Name        :  ${result.train_name}</span>`);
+              print(`<span class="line-info"> Current Station   :  ${result.current_station}</span>`);
+              print(`<span class="line-info"> Weather           :  ${result.weather} (Visibility: ${result.visibility_km} km)</span>`);
+              print(`<span class="line-info"> Scheduled Arrival :  ${result.scheduled_arrival} IST</span>`);
+              print(`<span class="line-success"> Dynamic ML ETA    :  ${result.dynamic_eta} IST  (Δ +${result.delta_min} min)</span>`);
+              print(`<span class="line-info"> ML Confidence     :  ${result.confidence_pct}%</span>`);
+              print(`<span class="line-heading">── Delay Breakdown ──────────────────────────────────</span>`);
+              print(`<span class="line-info">   Base Delay       :  +${b.base_delay_min} min</span>`);
+              print(`<span class="line-info">   Weather Penalty  :  +${b.weather_penalty_min} min</span>`);
+              print(`<span class="line-info">   Congestion       :  +${b.congestion_penalty_min} min</span>`);
+              print(`<span class="line-info">   TSR Penalty      :  +${b.tsr_penalty_min} min</span>`);
+              print(`<span class="line-info">   Cascade Penalty  :  +${b.cascade_penalty_min} min</span>`);
+              print(`<span class="line-success">   ─────────────────────────────────────────────────</span>`);
+              print(`<span class="line-success">   Total Delay      :  +${b.total_delay_min} min</span>`);
+              print(`<span class="line-info"> Model             :  ${result.model}</span>`);
+              printBlank();
+            }
+          }
+          break;
+
+        case "list-trains":
+          printBlank();
+          print(`<span class="line-heading">═══ Monitored Train Services (10 Active) ═══</span>`);
+          LIVE_TRAIN_REGISTRY.forEach(t => {
+            const total = t.base_delay_min + t.weather_penalty_min + t.congestion_penalty_min + t.tsr_penalty_min + t.cascade_penalty_min;
+            const [sh, sm] = t.scheduled_arrival.split(":").map(Number);
+            const etaM = (sh * 60 + sm) + total;
+            const eta = `${String(Math.floor(etaM/60)%24).padStart(2,"0")}:${String(etaM%60).padStart(2,"0")}`;
+            print(`<span class="line-success"> ${t.train_no.padEnd(6)} </span><span class="line-info">${t.train_name.padEnd(28)}</span><span class="line-info"> ${t.category.padEnd(12)}</span><span class="line-info"> Sched:${t.scheduled_arrival}  ETA:${eta}  Δ+${total}min  ${t.weather}</span>`);
+          });
+          printBlank();
+          break;
+
+        case "tsr-status":
+          printBlank();
+          print(`<span class="line-heading">═══ Active Temporary Speed Restrictions (4) ═══</span>`);
+          ACTIVE_TSRS.forEach(tsr => {
+            print(`<span class="line-success"> ${tsr.tsr_id}  </span><span class="line-info">Section: ${tsr.section}</span>`);
+            print(`<span class="line-info">   Speed: ${tsr.normal_speed_kmph}km/h → ${tsr.restricted_speed_kmph}km/h  |  ETA Penalty: +${tsr.eta_penalty_min} min  |  ${tsr.active_since} → ${tsr.expires_at}</span>`);
+            print(`<span class="line-info">   Reason: ${tsr.reason}</span>`);
+            print(`<span class="line-info">   Trains: ${tsr.affected_trains.join(", ")}</span>`);
+            printBlank();
+          });
+          break;
+
+        case "cascade-status":
+          printBlank();
+          const chains = await fetchCascadeNetwork();
+          print(`<span class="line-heading">═══ Active Cascade Delay Chains (${chains.length}) ═══</span>`);
+          chains.forEach(chain => {
+            print(`<span class="line-success"> ${chain.chain_id}  Root: ${chain.root_train_no} — ${chain.root_train_name}  Delay: +${chain.root_delay_min} min</span>`);
+            print(`<span class="line-info">   Cause: ${chain.reason}</span>`);
+            chain.chain.forEach(a => {
+              print(`<span class="line-info">   ↓ ${a.train_no} (${a.train_name}): ${a.forced_action} → ETA push +${a.eta_push_min} min</span>`);
+            });
+            printBlank();
+          });
+          break;
+
+        case "clear":
+          output.innerHTML = "";
+          print(`<span class="line-success">Terminal cleared. Type <span style="color:#fff;">help</span> for available commands.</span>`);
+          printBlank();
+          break;
+
+        default:
+          print(`<span class="line-error">✗ Unknown command: <span style="color:#fff;">${escapeHtml(verb)}</span></span>`);
+          print(`<span class="line-info">  Type <span style="color:#fff; font-weight:800;">help</span> to see all available commands.</span>`);
+          printBlank();
       }
     }
 
-    input.addEventListener("keydown", (e) => {
+    input.addEventListener("keydown", async (e) => {
       if (e.key === "Enter") {
-        const val = input.value;
+        const cmd = input.value;
         input.value = "";
-        executeCmd(val);
+        input.disabled = true;
+        await executeCommand(cmd);
+        input.disabled = false;
+        input.focus();
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        if (histIdx < cmdHistory.length - 1) { histIdx++; input.value = cmdHistory[histIdx]; }
+      } else if (e.key === "ArrowDown") {
+        e.preventDefault();
+        if (histIdx > 0) { histIdx--; input.value = cmdHistory[histIdx]; }
+        else { histIdx = -1; input.value = ""; }
+      } else if (e.key === "Tab") {
+        e.preventDefault();
+        const cmds = ["help","status","get-eta ","list-trains","tsr-status","cascade-status","clear"];
+        const partial = input.value.toLowerCase();
+        const match = cmds.find(c => c.startsWith(partial));
+        if (match) input.value = match;
       }
     });
 
-    document.getElementById("btn-term-exec").addEventListener("click", () => {
-      const val = input.value;
-      input.value = "";
-      executeCmd(val);
-    });
+    function runQuick(cmd) {
+      input.value = cmd;
+      input.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
+    }
+
+    // Auto-focus
+    input.focus();
   </script>
 </body>
 </html>
