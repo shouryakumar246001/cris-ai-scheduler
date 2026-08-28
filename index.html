@@ -116,27 +116,128 @@
       </div>
     </div>
 
-    <!-- Two Charts: Weather Impact and Corridor Delays -->
-    <div class="grid-2" style="grid-column: 1 / -1;">
-      <div class="card">
+    <!-- Dual Live Widgets: CLI Dispatch Terminal & Controller Notification Center -->
+    <div class="grid-2" style="grid-column: 1 / -1; gap: 20px;">
+      
+      <!-- CLI Dispatch Terminal Widget -->
+      <div class="card" style="display: flex; flex-direction: column; min-height: 380px;">
         <div class="card-title-bar">
-          <h3>Average Delay by Weather Condition (Historical ML Training Data)</h3>
-          <span class="badge">2016–2025</span>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="display: flex; gap: 6px;">
+              <span style="width: 10px; height: 10px; border-radius: 50%; background: #ffffff; display: inline-block;"></span>
+              <span style="width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.4); display: inline-block;"></span>
+              <span style="width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.2); display: inline-block;"></span>
+            </div>
+            <h3>CLI Dispatch Terminal</h3>
+          </div>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <span class="badge">v1.0 PROD</span>
+            <a href="/pages/terminal.html" class="card-btn" style="padding: 4px 10px; font-size: 0.72rem;">Full CLI &rarr;</a>
+          </div>
         </div>
-        <div style="height: 220px; position: relative;">
-          <canvas id="weatherDelayChart"></canvas>
+
+        <!-- Quick Command Pills -->
+        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: -4px;">
+          <button class="quick-cmd" onclick="runDashCmd('help')">help</button>
+          <button class="quick-cmd" onclick="runDashCmd('status')">status</button>
+          <button class="quick-cmd" onclick="runDashCmd('list-trains')">list-trains</button>
+          <button class="quick-cmd" onclick="runDashCmd('get-eta 12301')">get-eta 12301</button>
+          <button class="quick-cmd" onclick="runDashCmd('tsr-status')">tsr-status</button>
+          <button class="quick-cmd" onclick="runDashCmd('clear')">clear</button>
+        </div>
+
+        <!-- Terminal Output -->
+        <div id="dash-terminal-output" style="flex: 1; min-height: 180px; max-height: 220px; overflow-y: auto; background: rgba(0,0,0,0.55); border: 1px solid rgba(255,255,255,0.12); border-radius: 6px; padding: 12px 14px; font-family: var(--font-mono); font-size: 0.76rem; line-height: 1.6; color: #e2e8f0; margin-top: 8px;">
+          <div style="color:#ffffff; font-weight:800;">cris-eta-terminal v1.0 &middot; ML Engine: ONLINE &middot; RTIS: SYNCED</div>
+          <div style="color:#94a3b8; font-size:0.72rem;">Type <span style="color:#fff; font-weight:700;">help</span> or click a quick command above to execute.</div>
+        </div>
+
+        <!-- Terminal Input Bar -->
+        <div style="display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; padding: 6px 12px; margin-top: 6px;">
+          <span style="font-family: var(--font-mono); font-weight: 900; color: #ffffff; font-size: 0.85rem;">cris-eta:$</span>
+          <input type="text" id="dash-terminal-input" placeholder="Type command (e.g. status, list-trains)..." style="flex: 1; background: transparent; border: none; outline: none; font-family: var(--font-mono); font-size: 0.8rem; font-weight: 600; color: #ffffff; caret-color: #ffffff;" />
+          <button onclick="execDashInput()" style="background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25); color: #ffffff; border-radius: 4px; padding: 3px 10px; font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700; cursor: pointer;">Run &crarr;</button>
         </div>
       </div>
-      <div class="card">
+
+      <!-- Controller Notification Center Widget -->
+      <div class="card" style="display: flex; flex-direction: column; min-height: 380px;">
         <div class="card-title-bar">
-          <h3>Mean ETA Delta by Corridor (Active Predictions)</h3>
-          <span class="badge">Live Monitoring</span>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <h3>Controller Notification Center</h3>
+            <span class="badge" style="background: rgba(255,255,255,0.18);">LIVE FEED</span>
+          </div>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <span class="badge" id="notif-count-badge">4 Active Alerts</span>
+            <a href="/pages/notifications.html" class="card-btn" style="padding: 4px 10px; font-size: 0.72rem;">Broadcast &rarr;</a>
+          </div>
         </div>
-        <div style="height: 220px; position: relative;">
-          <canvas id="corridorDelayChart"></canvas>
+
+        <!-- Active Broadcast Channels Indicator -->
+        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: -4px;">
+          <span class="channel-pill active" style="font-size:0.68rem; padding:3px 8px;">SMS Gateway</span>
+          <span class="channel-pill active" style="font-size:0.68rem; padding:3px 8px;">Station PA</span>
+          <span class="channel-pill active" style="font-size:0.68rem; padding:3px 8px;">Display Boards</span>
+          <span class="channel-pill active" style="font-size:0.68rem; padding:3px 8px;">NTES Mobile</span>
+          <span class="channel-pill" style="font-size:0.68rem; padding:3px 8px;">VHF Radio</span>
+        </div>
+
+        <!-- Live Notifications Feed -->
+        <div id="dash-notif-feed" style="flex: 1; min-height: 230px; max-height: 270px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
+          <!-- Populated by JS -->
         </div>
       </div>
+
     </div>
+
+    <style>
+      .quick-cmd {
+        background: rgba(255,255,255,0.08);
+        border: 1px solid rgba(255,255,255,0.18);
+        color: #ffffff;
+        padding: 4px 10px;
+        border-radius: 4px;
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.18s ease;
+      }
+      .quick-cmd:hover {
+        background: rgba(255,255,255,0.22);
+        border-color: rgba(255,255,255,0.5);
+        transform: translateY(-1px);
+      }
+      .dash-notif-item {
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.12);
+        border-left: 3px solid #ffffff;
+        border-radius: 6px;
+        padding: 10px 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        transition: all 0.2s ease;
+      }
+      .dash-notif-item:hover {
+        background: rgba(255,255,255,0.10);
+        border-color: rgba(255,255,255,0.25);
+        transform: translateX(3px);
+      }
+      .channel-pill {
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.15);
+        border-radius: 14px;
+        font-family: var(--font-mono);
+        color: #cbd5e1;
+        font-weight: 700;
+      }
+      .channel-pill.active {
+        background: rgba(255,255,255,0.18);
+        border-color: rgba(255,255,255,0.45);
+        color: #ffffff;
+      }
+    </style>
 
     <footer class="footer">
       <span>Indian Railways &middot; CRIS ETA Prediction Platform &middot; SIH 26028</span>
@@ -176,50 +277,82 @@
 
     loadWatchlist();
 
-    // Weather delay chart
-    new Chart(document.getElementById("weatherDelayChart").getContext("2d"), {
-      type: "bar",
-      data: {
-        labels: ["Dense Fog (<1km)", "Heavy Rain", "Haze", "Clear"],
-        datasets: [{
-          label: "Avg Delay (min)",
-          data: [38, 22, 14, 8],
-          backgroundColor: ["rgba(255,255,255,0.9)", "rgba(255,255,255,0.7)", "rgba(255,255,255,0.5)", "rgba(255,255,255,0.35)"],
-          borderColor: "#ffffff", borderWidth: 1.5, borderRadius: 6
-        }]
-      },
-      options: {
-        responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
-        scales: {
-          x: { ticks: { color: "#ffffff", font: { size: 10, family: "JetBrains Mono", weight: "700" } }, grid: { color: "rgba(255,255,255,0.12)" } },
-          y: { title: { display: true, text: "Minutes", color: "#ffffff", font: { weight: "800" } }, ticks: { color: "#ffffff", font: { size: 10, family: "JetBrains Mono", weight: "700" } }, grid: { color: "rgba(255,255,255,0.12)" } }
-        }
+    // ── Interactive Dashboard CLI Terminal ────────────────────────
+    function appendTerminal(text, color = "#e2e8f0", isHtml = false) {
+      const box = document.getElementById("dash-terminal-output");
+      const div = document.createElement("div");
+      div.style.color = color;
+      div.style.marginTop = "3px";
+      if (isHtml) { div.innerHTML = text; } else { div.textContent = text; }
+      box.appendChild(div);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function runDashCmd(cmdStr) {
+      const raw = cmdStr.trim();
+      if (!raw) return;
+      appendTerminal(`cris-eta:$ ${raw}`, "#ffffff");
+      const parts = raw.split(/\s+/);
+      const cmd = parts[0].toLowerCase();
+      const arg = parts[1] || "";
+
+      if (cmd === "help") {
+        appendTerminal("Available Commands: status, list-trains, get-eta <no>, tsr-status, clear", "#cbd5e1");
+      } else if (cmd === "status") {
+        appendTerminal("CRIS ETA System: ONLINE | Model: GBM-ETA-v3.2 | RTIS: SYNCED (100ms) | Active Trains: 10 | TSRs: 4", "#ffffff");
+      } else if (cmd === "list-trains") {
+        appendTerminal("Active Trains: 12301 (Rajdhani), 12002 (Shatabdi), 22436 (Vande Bharat), 12952 (Mumbai Raj), 12259 (Sealdah Duronto)", "#cbd5e1");
+      } else if (cmd === "get-eta") {
+        const tNo = arg || "12301";
+        appendTerminal(`[ETA Engine] Train ${tNo}: Scheduled 10:00 IST -> Dynamic ML ETA 10:43 IST (+43 min delay). Weather: FOG. Confidence: 94%`, "#ffffff");
+      } else if (cmd === "tsr-status") {
+        appendTerminal("TSR Registry: 4 active restrictions on NDLS-CNB (30 km/h), NGP-BPQ (20 km/h), GWL-MTJ (45 km/h), MAS-GTL (30 km/h)", "#cbd5e1");
+      } else if (cmd === "clear") {
+        document.getElementById("dash-terminal-output").innerHTML = '<div style="color:#ffffff; font-weight:800;">cris-eta-terminal v1.0 &middot; Ready</div>';
+      } else {
+        appendTerminal(`Unknown command: "${raw}". Type "help" for available commands.`, "#94a3b8");
+      }
+    }
+
+    function execDashInput() {
+      const inp = document.getElementById("dash-terminal-input");
+      if (inp.value.trim()) {
+        runDashCmd(inp.value);
+        inp.value = "";
+      }
+    }
+
+    document.getElementById("dash-terminal-input").addEventListener("keydown", function(e) {
+      if (e.key === "Enter") {
+        execDashInput();
       }
     });
 
-    // Corridor delay chart
-    new Chart(document.getElementById("corridorDelayChart").getContext("2d"), {
-      type: "bar",
-      data: {
-        labels: CORRIDOR_DELAY_TABLE.map(c => c.label.split("(")[0].trim()),
-        datasets: [{
-          label: "Mean Delay (min)",
-          data: CORRIDOR_DELAY_TABLE.map(c => c.avg_delay_min),
-          backgroundColor: "rgba(255,255,255,0.8)",
-          borderColor: "#ffffff", borderWidth: 1.5, borderRadius: 4
-        }]
-      },
-      options: {
-        indexAxis: "y",
-        responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
-        scales: {
-          x: { ticks: { color: "#ffffff", font: { size: 10, family: "JetBrains Mono", weight: "700" } }, grid: { color: "rgba(255,255,255,0.12)" } },
-          y: { ticks: { color: "#ffffff", font: { size: 9, family: "JetBrains Mono", weight: "700" } }, grid: { color: "rgba(255,255,255,0.08)" } }
-        }
-      }
-    });
+    // ── Live Notification Feed Widget ─────────────────────────────
+    const DASH_NOTIFS = [
+      { id: 1, type: "CRITICAL", train: "12301 Rajdhani Express", msg: "Dense Fog Alert on CNB-NDLS corridor. Speed capped at 60 km/h. Dynamic ETA revised to +43 min.", time: "2 min ago", border: "#ffffff" },
+      { id: 2, type: "HIGH", train: "12002 Shatabdi Express", msg: "TSR at Chainage km 412.2 active (30 km/h limit). Route delay penalty +15.5 min added to schedule.", time: "8 min ago", border: "rgba(255,255,255,0.75)" },
+      { id: 3, type: "MEDIUM", train: "22436 Vande Bharat Exp", msg: "Platform reassigned to Platform 4 at Kanpur Central (CNB). Signal aspect Green on UP main.", time: "14 min ago", border: "rgba(255,255,255,0.5)" },
+      { id: 4, type: "INFO", train: "Network Fleet Broadcast", msg: "ISRO RTIS GPS Telemetry sync complete for all 32 active locomotives across Northern Railway zone.", time: "22 min ago", border: "rgba(255,255,255,0.3)" }
+    ];
+
+    function renderDashNotifs() {
+      const feed = document.getElementById("dash-notif-feed");
+      feed.innerHTML = DASH_NOTIFS.map(n => `
+        <div class="dash-notif-item" style="border-left-color: ${n.border};">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; gap:6px; align-items:center;">
+              <span class="badge" style="font-size:0.62rem; padding:2px 6px;">${n.type}</span>
+              <strong style="font-size:0.76rem; color:#ffffff; font-family:var(--font-mono);">${n.train}</strong>
+            </div>
+            <span style="font-size:0.65rem; color:#94a3b8; font-family:var(--font-mono);">${n.time}</span>
+          </div>
+          <div style="font-size:0.75rem; color:#cbd5e1; line-height:1.45;">${n.msg}</div>
+        </div>
+      `).join("");
+    }
+
+    renderDashNotifs();
   </script>
 </body>
 </html>

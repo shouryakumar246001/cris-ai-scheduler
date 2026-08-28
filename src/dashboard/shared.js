@@ -496,59 +496,174 @@ function renderSharedNav(activePage) {
   if (!sidebar) return;
 
   const links = [
-    { id: "overview", label: "ETA Command Center", url: "/" },
-    { id: "analytics", label: "Historical ML Analytics", url: "/pages/analytics.html" },
-    { id: "bdms", label: "TSR & Track Impact", url: "/pages/bdms.html" },
-    { id: "milp", label: "XAI ETA Studio", url: "/pages/milp.html" },
-    { id: "coa", label: "RTIS GPS Telemetry", url: "/pages/coa.html" },
-    { id: "fois", label: "Cascade Delay Risk", url: "/pages/fois.html" },
-    { id: "terminal", label: "CLI Dispatch Terminal", url: "/pages/terminal.html" },
-    { id: "notifications", label: "Notification Center", url: "/pages/notifications.html" },
+    { id: "overview", label: "ETA Command Center", url: "/", abbr: "CMD" },
+    { id: "analytics", label: "Historical ML Analytics", url: "/pages/analytics.html", abbr: "MLA" },
+    { id: "bdms", label: "TSR & Track Impact", url: "/pages/bdms.html", abbr: "TSR" },
+    { id: "milp", label: "XAI ETA Studio", url: "/pages/milp.html", abbr: "XAI" },
+    { id: "coa", label: "RTIS GPS Telemetry", url: "/pages/coa.html", abbr: "GPS" },
+    { id: "fois", label: "Cascade Delay Risk", url: "/pages/fois.html", abbr: "CDR" },
+    { id: "terminal", label: "CLI Dispatch Terminal", url: "/pages/terminal.html", abbr: "CLI" },
+    { id: "notifications", label: "Notification Center", url: "/pages/notifications.html", abbr: "NTC" },
   ];
+
+  // Restore saved collapse state
+  const isCollapsed = localStorage.getItem("cris_sidebar_collapsed") === "true";
+  if (isCollapsed) {
+    document.body.classList.add("sidebar-collapsed");
+  } else {
+    document.body.classList.remove("sidebar-collapsed");
+  }
 
   sidebar.innerHTML = `
     <div class="sidebar-header">
-      <div class="logo-icon">IR</div>
-      <div>
-        <div class="logo-title">CRIS ETA PREDICT</div>
-        <div class="logo-sub">SIH 26028 · DYNAMIC ETA</div>
-      </div>
+      <a href="/" class="sidebar-brand">
+        <div class="logo-icon" title="Indian Railways CRIS AI">IR</div>
+        <div class="logo-info-wrapper">
+          <div class="logo-title">CRIS ETA PREDICT</div>
+          <div class="logo-sub">SIH 26028 · DYNAMIC ETA</div>
+        </div>
+      </a>
+      <button class="sidebar-toggle-btn" id="sidebar-toggle-btn" title="Toggle Sidebar (Ctrl+B)" aria-label="Toggle Sidebar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
     </div>
 
     <div class="nav-label">ML OPERATIONS</div>
     <ul class="nav-links">
       ${links.map(l => `
         <li class="nav-item">
-          <a href="${l.url}" class="nav-link ${l.id === activePage ? 'active' : ''}">
-            ${l.label}
+          <a href="${l.url}" class="nav-link ${l.id === activePage ? 'active' : ''}" title="${l.label}">
+            <span class="nav-link-icon">${l.abbr}</span>
+            <span class="nav-link-text">${l.label}</span>
+            <span class="nav-tooltip">${l.label}</span>
           </a>
         </li>
       `).join("")}
     </ul>
 
     <div class="sidebar-footer">
-      <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-        <span style="color:#fbcfe8; font-weight:700;">ML Engine:</span>
-        <span class="badge" style="font-size:0.68rem; background:rgba(236,72,153,0.25); color:#ffffff; border:1px solid rgba(236,72,153,0.6);">ONLINE</span>
+      <div class="footer-full-content">
+        <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+          <span style="color:#ffffff; font-weight:700;">ML Engine:</span>
+          <span class="badge" style="font-size:0.68rem; background:rgba(255,255,255,0.14); color:#ffffff; border:1px solid rgba(255,255,255,0.3);">ONLINE</span>
+        </div>
+        <div style="font-size:0.72rem; color:#e2e8f0; font-weight:700;">
+          RTIS: SYNCED · GBM-ETA-v3.2
+        </div>
+        <div style="font-size:0.7rem; color:#94a3b8; margin-top:4px;">
+          ISRO RTIS · NWSF Weather Feed
+        </div>
       </div>
-      <div style="font-size:0.72rem; color:#fbcfe8; font-weight:700;">
-        RTIS: SYNCED · GBM-ETA-v3.2
-      </div>
-      <div style="font-size:0.7rem; color:#f472b6; margin-top:4px;">
-        ISRO RTIS · NWSF Weather Feed
+      <div class="footer-compact-status" id="footer-compact-status" title="ML Engine ONLINE · RTIS SYNCED">
+        <span class="pulse-dot"></span>
+        <span class="nav-tooltip">ML ONLINE · RTIS SYNCED</span>
       </div>
     </div>
   `;
 
-  // Start live clock if element present
-  const clockEl = document.getElementById("live-clock");
-  if (clockEl) {
+  // ── Single toggle function (no duplicates) ──
+  window.toggleSidebar = function() {
+    const willCollapse = !document.body.classList.contains("sidebar-collapsed");
+    document.body.classList.toggle("sidebar-collapsed", willCollapse);
+    localStorage.setItem("cris_sidebar_collapsed", willCollapse ? "true" : "false");
+    setTimeout(function() { window.dispatchEvent(new Event("resize")); }, 320);
+  };
+
+  // ── Direct addEventListener only (NO inline onclick — fixes double-toggle bug) ──
+  document.getElementById("sidebar-toggle-btn").addEventListener("click", function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    window.toggleSidebar();
+  });
+
+  // ── Compact footer dot also expands sidebar ──
+  var footerDot = document.getElementById("footer-compact-status");
+  if (footerDot) {
+    footerDot.addEventListener("click", function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      window.toggleSidebar();
+    });
+  }
+
+  // ── Keyboard shortcut: Ctrl+B or [ ──
+  if (!window._sidebarKeyboardBound) {
+    window._sidebarKeyboardBound = true;
+    document.addEventListener("keydown", function(e) {
+      if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA" || e.target.isContentEditable) return;
+      if ((e.ctrlKey && (e.key === "b" || e.key === "B")) || e.key === "[") {
+        e.preventDefault();
+        window.toggleSidebar();
+      }
+    });
+  }
+
+  // ── Live Clock ──
+  var clockEl = document.getElementById("live-clock");
+  if (clockEl && !window._liveClockStarted) {
+    window._liveClockStarted = true;
     function updateClock() {
-      const d = new Date();
-      const pad = n => String(n).padStart(2, "0");
-      clockEl.textContent = `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())} IST`;
+      var d = new Date();
+      var pad = function(n) { return String(n).padStart(2, "0"); };
+      clockEl.textContent = pad(d.getHours()) + ":" + pad(d.getMinutes()) + ":" + pad(d.getSeconds()) + " IST";
     }
     updateClock();
     setInterval(updateClock, 1000);
   }
+}
+
+// ─── Indian Railways Official Emblem Badge ──────────────────
+function injectIREmblem() {
+  if (document.getElementById("ir-emblem-badge")) return;
+
+  var style = document.createElement("style");
+  style.textContent = `
+    #ir-emblem-badge {
+      position: fixed;
+      top: 14px;
+      right: 18px;
+      z-index: 9999;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      pointer-events: auto;
+      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), filter 0.25s ease;
+      filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.65));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #ir-emblem-badge:hover {
+      transform: scale(1.08) translateY(-2px);
+      filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.85)) drop-shadow(0 0 10px rgba(255, 255, 255, 0.35));
+    }
+    #ir-emblem-badge img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 50%;
+      display: block;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+  `;
+  document.head.appendChild(style);
+
+  var badge = document.createElement("div");
+  badge.id = "ir-emblem-badge";
+  badge.title = "Indian Railways — Official Emblem";
+  badge.innerHTML = '<img src="/assets/ir-emblem.png" alt="Indian Railways Official Emblem" />';
+  document.body.appendChild(badge);
+}
+
+// Auto-inject on page load
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", injectIREmblem);
+} else {
+  injectIREmblem();
 }

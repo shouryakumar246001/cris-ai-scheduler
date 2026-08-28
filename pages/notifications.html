@@ -11,9 +11,9 @@
   <link rel="stylesheet" href="/src/dashboard/styles.css?v=4" />
   <style>
     /* ─── Composer ─────────────────────────────── */
-    .composer-form { display: flex; flex-direction: column; gap: 14px; }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .composer-form { display: flex; flex-direction: column; gap: 14px; width: 100%; }
+    .form-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; width: 100%; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; min-width: 0; width: 100%; }
     .form-label {
       font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700;
       color: #94a3b8; text-transform: uppercase; letter-spacing: 0.07em;
@@ -29,18 +29,21 @@
       padding: 9px 13px;
       outline: none;
       transition: border-color 0.2s;
+      width: 100%;
+      box-sizing: border-box;
+      min-width: 0;
     }
     .form-control:focus { border-color: rgba(255,255,255,0.55); }
     .form-control option { background: #1e293b; color: #fff; }
-    textarea.form-control { min-height: 90px; resize: vertical; line-height: 1.6; }
+    textarea.form-control { min-height: 90px; resize: vertical; line-height: 1.6; width: 100%; box-sizing: border-box; }
     .send-btn {
       background: rgba(255,255,255,0.15);
       border: 2px solid rgba(255,255,255,0.45);
       color: #ffffff;
       font-family: var(--font-mono);
       font-weight: 800;
-      font-size: 0.9rem;
-      padding: 11px 28px;
+      font-size: 0.88rem;
+      padding: 10px 24px;
       border-radius: 8px;
       cursor: pointer;
       transition: all 0.2s;
@@ -59,17 +62,16 @@
       border-radius: 10px;
       padding: 13px 16px;
       display: flex;
-      gap: 14px;
+      gap: 12px;
       align-items: flex-start;
       animation: slideIn 0.35s ease;
     }
-    .notif-card.priority-CRITICAL { border-left-color: rgba(255,255,255,1); background: rgba(255,255,255,0.1); }
+    .notif-card.priority-CRITICAL { border-left-color: #ffffff; background: rgba(255,255,255,0.1); }
     .notif-card.priority-HIGH     { border-left-color: rgba(255,255,255,0.8); }
     .notif-card.priority-MEDIUM   { border-left-color: rgba(255,255,255,0.5); }
     .notif-card.priority-INFO     { border-left-color: rgba(255,255,255,0.28); }
     @keyframes slideIn { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:translateY(0); } }
-    .notif-icon { font-size: 1.3rem; flex-shrink: 0; margin-top: 2px; }
-    .notif-body { flex: 1; }
+    .notif-body { flex: 1; min-width: 0; }
     .notif-header { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
     .notif-type-tag {
       font-family: var(--font-mono); font-size: 0.65rem; font-weight: 800;
@@ -79,13 +81,13 @@
     }
     .notif-train { font-family: var(--font-mono); font-size: 0.75rem; color: #e2e8f0; font-weight: 700; }
     .notif-time { font-family: var(--font-mono); font-size: 0.68rem; color: #94a3b8; margin-left: auto; }
-    .notif-message { font-size: 0.84rem; color: #e2e8f0; line-height: 1.5; }
+    .notif-message { font-size: 0.84rem; color: #e2e8f0; line-height: 1.5; word-break: break-word; }
     .notif-targets { font-family: var(--font-mono); font-size: 0.68rem; color: #94a3b8; margin-top:5px; }
     .notif-dismiss { background: transparent; border: none; color: rgba(255,255,255,0.35); font-size: 0.9rem; cursor: pointer; padding: 2px 6px; border-radius: 4px; transition: color 0.18s; flex-shrink:0; align-self:flex-start; }
     .notif-dismiss:hover { color: rgba(255,255,255,0.8); }
 
     /* ─── Channel Pills ───────────────────────── */
-    .channel-grid { display: flex; gap: 10px; flex-wrap: wrap; }
+    .channel-grid { display: flex; gap: 8px; flex-wrap: wrap; }
     .channel-pill {
       background: rgba(255,255,255,0.07);
       border: 1.5px solid rgba(255,255,255,0.18);
@@ -170,10 +172,10 @@
     </div>
 
     <!-- Two-column layout -->
-    <div style="display: grid; grid-template-columns: 480px 1fr; gap: 14px; align-items: start;">
+    <div class="grid-2" style="grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 20px; align-items: start;">
 
       <!-- LEFT: Compose Panel -->
-      <div class="card" style="position: sticky; top: 20px;">
+      <div class="card" style="position: sticky; top: 20px; overflow: hidden; width: 100%; box-sizing: border-box;">
         <div class="card-title-bar" style="margin-bottom: 14px;">
           <h3>Compose Notification</h3>
           <span class="badge">Controller Broadcast</span>
@@ -185,22 +187,22 @@
             <div class="form-group">
               <label class="form-label" for="notif-type">Notification Type</label>
               <select id="notif-type" class="form-control">
-                <option value="DELAY_ALERT">⚠ Delay Alert</option>
-                <option value="PLATFORM_CHANGE">🔄 Platform Change</option>
-                <option value="TSR_WARNING">⛔ TSR Speed Restriction</option>
-                <option value="SERVICE_CANCEL">❌ Service Cancellation</option>
-                <option value="ETA_UPDATE">🕐 ETA Update</option>
-                <option value="EMERGENCY">🚨 Emergency Notice</option>
-                <option value="GENERAL">ℹ General Advisory</option>
+                <option value="DELAY_ALERT">Delay Alert</option>
+                <option value="PLATFORM_CHANGE">Platform Change</option>
+                <option value="TSR_WARNING">TSR Speed Restriction</option>
+                <option value="SERVICE_CANCEL">Service Cancellation</option>
+                <option value="ETA_UPDATE">ETA Update</option>
+                <option value="EMERGENCY">Emergency Notice</option>
+                <option value="GENERAL">General Advisory</option>
               </select>
             </div>
             <div class="form-group">
               <label class="form-label" for="notif-priority">Priority Level</label>
               <select id="notif-priority" class="form-control">
-                <option value="CRITICAL">🔴 CRITICAL</option>
-                <option value="HIGH" selected>🟠 HIGH</option>
-                <option value="MEDIUM">🟡 MEDIUM</option>
-                <option value="INFO">🔵 INFO</option>
+                <option value="CRITICAL">CRITICAL</option>
+                <option value="HIGH" selected>HIGH</option>
+                <option value="MEDIUM">MEDIUM</option>
+                <option value="INFO">INFO</option>
               </select>
             </div>
           </div>
@@ -241,24 +243,24 @@
           <div class="form-group">
             <label class="form-label">Broadcast Channels</label>
             <div class="channel-grid">
-              <div class="channel-pill active" data-channel="SMS" onclick="toggleChannel(this)">📱 SMS</div>
-              <div class="channel-pill active" data-channel="PRS" onclick="toggleChannel(this)">🖥 PRS Board</div>
-              <div class="channel-pill active" data-channel="PA" onclick="toggleChannel(this)">📢 Station PA</div>
-              <div class="channel-pill" data-channel="APP" onclick="toggleChannel(this)">📲 IR App</div>
-              <div class="channel-pill" data-channel="EMAIL" onclick="toggleChannel(this)">📧 Email</div>
+              <div class="channel-pill active" data-channel="SMS" onclick="toggleChannel(this)">SMS</div>
+              <div class="channel-pill active" data-channel="PRS" onclick="toggleChannel(this)">PRS Board</div>
+              <div class="channel-pill active" data-channel="PA" onclick="toggleChannel(this)">Station PA</div>
+              <div class="channel-pill" data-channel="APP" onclick="toggleChannel(this)">IR App</div>
+              <div class="channel-pill" data-channel="EMAIL" onclick="toggleChannel(this)">Email</div>
             </div>
           </div>
 
-          <!-- Auto-fill button -->
+          <!-- Action buttons -->
           <div style="display:flex; gap:8px; flex-wrap:wrap;">
             <button class="send-btn" onclick="sendNotification()" id="send-btn">
-              ▶ Send Notification
+              Send Notification
             </button>
             <button onclick="autoFill()" style="background:rgba(255,255,255,0.06); border:1.5px solid rgba(255,255,255,0.2); color:#e2e8f0; padding:10px 16px; border-radius:7px; font-family:var(--font-mono); font-size:0.78rem; font-weight:700; cursor:pointer; transition:all 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.14)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">
-              ⚡ Auto-Fill Sample
+              Auto-Fill Sample
             </button>
             <button onclick="clearForm()" style="background:rgba(255,255,255,0.04); border:1.5px solid rgba(255,255,255,0.12); color:#94a3b8; padding:10px 16px; border-radius:7px; font-family:var(--font-mono); font-size:0.78rem; font-weight:700; cursor:pointer; transition:all 0.18s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.04)'">
-              ✕ Clear
+              Clear Form
             </button>
           </div>
         </div>
@@ -339,15 +341,15 @@
       el.classList.toggle("active");
     }
 
-    // Notification type icons
-    const TYPE_ICONS = {
-      DELAY_ALERT:     "⚠️",
-      PLATFORM_CHANGE: "🔄",
-      TSR_WARNING:     "⛔",
-      SERVICE_CANCEL:  "❌",
-      ETA_UPDATE:      "🕐",
-      EMERGENCY:       "🚨",
-      GENERAL:         "ℹ️",
+    // Notification type badges
+    const TYPE_BADGES = {
+      DELAY_ALERT:     "DELAY",
+      PLATFORM_CHANGE: "PLT-CHG",
+      TSR_WARNING:     "TSR",
+      SERVICE_CANCEL:  "CANCEL",
+      ETA_UPDATE:      "ETA-UPD",
+      EMERGENCY:       "EMERGENCY",
+      GENERAL:         "GENERAL",
     };
 
     // Notification feed array
@@ -381,17 +383,16 @@
 
       feed.innerHTML = notifications.slice().reverse().map((n, i) => `
         <div class="notif-card priority-${n.priority}" id="notif-${n.id}">
-          <div class="notif-icon">${TYPE_ICONS[n.type] || "📢"}</div>
           <div class="notif-body">
             <div class="notif-header">
-              <span class="notif-type-tag">${n.type.replace(/_/g," ")}</span>
+              <span class="notif-type-tag">${TYPE_BADGES[n.type] || n.type.replace(/_/g," ")}</span>
               <span class="notif-train">${n.train_label}</span>
               <span class="badge" style="font-size:0.65rem;">${n.priority}</span>
               <span class="notif-time">${n.time}</span>
             </div>
             <div class="notif-message">${n.message}</div>
             <div class="notif-targets">
-              📍 ${n.station} &nbsp;·&nbsp; 📡 ${n.channels.join(" · ")} &nbsp;·&nbsp; ✓ Delivered
+              Station: ${n.station} &middot; Channels: ${n.channels.join(" · ")} &middot; Delivered
             </div>
           </div>
           <button class="notif-dismiss" onclick="dismissNotif(${n.id})" title="Dismiss">✕</button>
@@ -434,7 +435,7 @@
         return;
       }
       if (channels.length === 0) {
-        showToast("⚠ Select at least one broadcast channel.");
+        showToast("Select at least one broadcast channel.");
         return;
       }
 
@@ -458,14 +459,14 @@
 
       // Feedback
       document.getElementById("notif-feed-label").textContent = `SENT: ${notif.type.replace(/_/g," ")} → ${channels.join(", ")}`;
-      showToast(`✓ Notification sent via ${channels.join(", ")}`);
+      showToast(`Notification sent via ${channels.join(", ")}`);
 
       // Pulse send button
       const btn = document.getElementById("send-btn");
-      btn.textContent = "✓ Sent!";
+      btn.textContent = "Sent!";
       btn.style.background = "rgba(255,255,255,0.3)";
       setTimeout(() => {
-        btn.textContent = "▶ Send Notification";
+        btn.textContent = "Send Notification";
         btn.style.background = "rgba(255,255,255,0.15)";
         document.getElementById("notif-feed-label").textContent = "NOTIFICATION ENGINE READY";
       }, 2000);
@@ -509,7 +510,7 @@
       const sysAlerts = trains.filter(t => t.total_delay_min > 15).map(t => {
         const priority = t.total_delay_min >= 50 ? "CRITICAL" : t.total_delay_min >= 30 ? "HIGH" : "MEDIUM";
         const type = t.tsr_penalty_min > 0 ? "TSR_WARNING" : t.cascade_penalty_min > 0 ? "DELAY_ALERT" : t.weather_penalty_min > 0 ? "DELAY_ALERT" : "ETA_UPDATE";
-        const icon = TYPE_ICONS[type];
+        const badge = TYPE_BADGES[type] || type;
         const mins = t.total_delay_min;
         const channels = ["SMS", "PRS"];
         if (priority === "CRITICAL") channels.push("PA");
@@ -526,23 +527,23 @@
         const tp = n => String(n).padStart(2,"0");
         const sentTime = `${tp(d.getHours())}:${tp(d.getMinutes())} IST`;
 
-        return { t, priority, type, icon, mins, channels, causes, sentTime };
+        return { t, priority, type, badge, mins, channels, causes, sentTime };
       });
 
-      tbody.innerHTML = sysAlerts.map(({ t, priority, type, icon, mins, channels, causes, sentTime }) => `
+      tbody.innerHTML = sysAlerts.map(({ t, priority, type, badge, mins, channels, causes, sentTime }) => `
         <tr>
           <td style="font-family:var(--font-mono); color:#94a3b8; font-size:0.75rem;">${sentTime}</td>
           <td>
             <strong style="color:#ffffff; font-family:var(--font-mono);">${t.train_no}</strong>
             <div style="font-size:0.72rem; color:#e2e8f0;">${t.train_name}</div>
           </td>
-          <td><span style="font-size:0.8rem;">${icon}</span> <span style="font-family:var(--font-mono); font-size:0.72rem; color:#e2e8f0;">${type.replace(/_/g," ")}</span></td>
+          <td><span class="badge" style="font-size:0.65rem; padding:2px 6px;">${badge}</span></td>
           <td><span class="badge" style="${priority==="CRITICAL"?"background:rgba(255,255,255,0.2);":""}">${priority}</span></td>
           <td style="font-size:0.78rem; color:#e2e8f0; max-width:260px;">
             Train running +${mins} min late. Causes: ${causes.join(", ")}. Dynamic ETA: ${t.dynamic_eta} IST.
           </td>
           <td style="font-family:var(--font-mono); font-size:0.72rem; color:#cbd5e1;">${channels.join(", ")}</td>
-          <td><span class="badge">DELIVERED ✓</span></td>
+          <td><span class="badge">DELIVERED</span></td>
         </tr>
       `).join("");
     }
