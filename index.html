@@ -51,6 +51,30 @@
       </div>
     </div>
 
+    <!-- Emergency Anomaly Trigger Panel (Wildlife Strike / Cattle Run Over) -->
+    <div class="card" style="background: rgba(239, 68, 68, 0.08); border: 1.5px solid rgba(239, 68, 68, 0.35); border-left: 4px solid #ef4444; margin-bottom: 0; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div style="width: 10px; height: 10px; border-radius: 50%; background: #ef4444; box-shadow: 0 0 10px #ef4444; animation: pulse 1.2s infinite;"></div>
+        <div>
+          <h3 style="font-size: 0.95rem; font-weight: 800; color: #ffffff; margin: 0; display: flex; align-items: center; gap: 8px;">
+            Emergency Anomaly Simulator
+            <span class="badge" style="background: rgba(239, 68, 68, 0.25); color: #fca5a5; border-color: rgba(239, 68, 68, 0.5); font-size: 0.65rem;">CATTLE RUN OVER (CRO) INJECTION</span>
+          </h3>
+          <p style="font-size: 0.76rem; color: #cbd5e1; margin: 2px 0 0 0;">
+            Simulate an acute wildlife incursion or cattle strike on tracks. Immediately halts train (0 km/h), sets signal to RED, and recalculates dynamic ETA with +45 min inspection penalty.
+          </p>
+        </div>
+      </div>
+      <div style="display: flex; gap: 8px; align-items: center;">
+        <button id="btn-cro-trigger" onclick="promptCROIncident()" style="background: #ef4444; color: #ffffff; border: none; font-family: var(--font-mono); font-weight: 800; font-size: 0.8rem; padding: 9px 18px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 0 14px rgba(239, 68, 68, 0.4); transition: all 0.2s ease;" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">
+          Simulate Wildlife Strike (CRO)
+        </button>
+        <button id="btn-cro-reset" onclick="promptResetCRO()" style="background: rgba(255, 255, 255, 0.08); color: #e2e8f0; border: 1px solid rgba(255, 255, 255, 0.2); font-family: var(--font-mono); font-weight: 700; font-size: 0.78rem; padding: 9px 14px; border-radius: 6px; cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.background='rgba(255,255,255,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">
+          Reset Incident
+        </button>
+      </div>
+    </div>
+
     <!-- System Status Cards -->
     <div class="grid-4" style="grid-template-columns: repeat(4, 1fr); gap: 12px;">
       <div class="card" style="border-left: 3px solid #ffffff;">
@@ -237,6 +261,26 @@
         border-color: rgba(255,255,255,0.45);
         color: #ffffff;
       }
+      @keyframes croPulse {
+        0% { background: rgba(239, 68, 68, 0.25); box-shadow: 0 0 4px rgba(239, 68, 68, 0.3); }
+        50% { background: rgba(239, 68, 68, 0.6); box-shadow: 0 0 14px rgba(239, 68, 68, 0.8); }
+        100% { background: rgba(239, 68, 68, 0.25); box-shadow: 0 0 4px rgba(239, 68, 68, 0.3); }
+      }
+      .cro-badge-flashing {
+        background: rgba(239, 68, 68, 0.35) !important;
+        color: #ffffff !important;
+        border: 1px solid #ef4444 !important;
+        animation: croPulse 1.3s infinite !important;
+        font-weight: 800 !important;
+        letter-spacing: 0.04em !important;
+      }
+      .cro-row-highlight {
+        background: rgba(239, 68, 68, 0.12) !important;
+        border-left: 4px solid #ef4444 !important;
+      }
+      .cro-row-highlight:hover {
+        background: rgba(239, 68, 68, 0.18) !important;
+      }
     </style>
 
     <footer class="footer">
@@ -255,20 +299,29 @@
       const trains = await fetchAllETAs();
       const tbody = document.getElementById("eta-watchlist-body");
       tbody.innerHTML = trains.map(t => {
+        const isCRO = (t.cro_penalty_min > 0 || t.cro_active);
         const delta = t.total_delay_min;
         const deltaStr = delta > 0 ? `+${delta}` : delta === 0 ? "On Time" : `${delta}`;
         const weatherBadge = t.weather === "FOG" ? "FOG" : t.weather === "RAIN" ? "RAIN" : t.weather === "HAZE" ? "HAZE" : "CLEAR";
+        
+        const categoryBadge = isCRO
+          ? `<span class="badge cro-badge-flashing">HALTED: CRO</span>`
+          : `<span class="badge">${t.category}</span>`;
+
         return `
-          <tr>
+          <tr class="${isCRO ? 'cro-row-highlight' : ''}">
             <td><strong style="color:#ffffff; font-family:var(--font-mono);">${t.train_no}</strong></td>
-            <td><strong style="color:#ffffff;">${t.train_name}</strong></td>
-            <td><span class="badge">${t.category}</span></td>
+            <td>
+              <strong style="color:#ffffff;">${t.train_name}</strong>
+              ${isCRO ? '<div style="font-size:0.68rem; color:#fca5a5; font-family:var(--font-mono); font-weight:700;">+45 MIN CRO PENALTY (SPEED: 0 KM/H &middot; RED SIGNAL)</div>' : ''}
+            </td>
+            <td>${categoryBadge}</td>
             <td style="color:#e2e8f0; font-size:0.8rem;">${t.current_station}</td>
             <td style="color:#cbd5e1; font-size:0.8rem;">${t.next_station}</td>
             <td><span class="badge">${weatherBadge}</span></td>
             <td style="font-family:var(--font-mono); color:#cbd5e1;">${t.scheduled_arrival}</td>
-            <td style="font-family:var(--font-mono); font-weight:800; color:#ffffff;">${t.dynamic_eta}</td>
-            <td><span class="badge" style="${delta > 30 ? 'background:rgba(255,255,255,0.2);' : ''}">${deltaStr} min</span></td>
+            <td style="font-family:var(--font-mono); font-weight:800; color:${isCRO ? '#fca5a5' : '#ffffff'};">${t.dynamic_eta}</td>
+            <td><span class="badge" style="${isCRO ? 'background:rgba(239,68,68,0.3); border-color:#ef4444; color:#fff;' : delta > 30 ? 'background:rgba(255,255,255,0.2);' : ''}">${deltaStr} min</span></td>
             <td style="font-family:var(--font-mono); color:#ffffff; font-weight:700;">${t.ml_confidence_pct}%</td>
           </tr>
         `;
@@ -276,6 +329,48 @@
     }
 
     loadWatchlist();
+
+    // ── Emergency Wildlife Incursion (CRO) Handlers ──────────────
+    function promptCROIncident() {
+      const trainList = LIVE_TRAIN_REGISTRY.map(t => `${t.train_no} (${t.train_name})`).join("\n");
+      const trainNo = prompt(`EMERGENCY ANOMALY INJECTION\nEnter Train Number for Wildlife Incursion / Cattle Run Over (CRO):\n\nActive Monitored Trains:\n${trainList}`, "12301");
+      if (!trainNo) return;
+
+      const incident = triggerCROIncident(trainNo.trim());
+      if (incident) {
+        loadWatchlist();
+        appendTerminal(`[ANOMALY INJECTED] Train ${incident.train_no} (${incident.train_name}): Wildlife Incursion on ${incident.section}. Speed: 0 km/h, Signal: RED, ETA penalty: +45 min.`, "#ef4444");
+        
+        DASH_NOTIFS.unshift({
+          id: Date.now(),
+          type: "CRITICAL",
+          train: `${incident.train_no} ${incident.train_name}`,
+          msg: incident.message,
+          time: "Just now",
+          border: "#ef4444"
+        });
+        renderDashNotifs();
+        alert(`Wildlife Incursion Simulated!\n\nTrain: ${incident.train_no} (${incident.train_name})\nSpeed: 0 km/h (HALTED)\nSignal Aspect: RED\nML Delay Penalty: +45 Minutes\nDynamic ETA Recalculated.`);
+      } else {
+        alert(`Train "${trainNo}" was not found in the active train registry.`);
+      }
+    }
+
+    function promptResetCRO() {
+      const activeCROs = LIVE_TRAIN_REGISTRY.filter(t => t.cro_penalty_min > 0 || t.cro_active);
+      if (activeCROs.length === 0) {
+        alert("No active CRO incidents currently ongoing.");
+        return;
+      }
+      const tNo = prompt(`Select Train Number to clear CRO incident:\n${activeCROs.map(t => `${t.train_no} (${t.train_name})`).join("\n")}`, activeCROs[0].train_no);
+      if (tNo) {
+        resetCROIncident(tNo.trim());
+        loadWatchlist();
+        appendTerminal(`[INCIDENT CLEARED] Train ${tNo}: Track inspection cleared, speed restored, signal aspect CLEAR.`, "#ffffff");
+        renderDashNotifs();
+        alert(`CRO Incident cleared for Train ${tNo}. Normal speed and signal restored.`);
+      }
+    }
 
     // ── Interactive Dashboard CLI Terminal ────────────────────────
     function appendTerminal(text, color = "#e2e8f0", isHtml = false) {
@@ -297,14 +392,30 @@
       const arg = parts[1] || "";
 
       if (cmd === "help") {
-        appendTerminal("Available Commands: status, list-trains, get-eta <no>, tsr-status, clear", "#cbd5e1");
+        appendTerminal("Available Commands: status, list-trains, get-eta <no>, trigger-cro <no>, tsr-status, clear", "#cbd5e1");
       } else if (cmd === "status") {
-        appendTerminal("CRIS ETA System: ONLINE | Model: GBM-ETA-v3.2 | RTIS: SYNCED (100ms) | Active Trains: 10 | TSRs: 4", "#ffffff");
+        const croCount = LIVE_TRAIN_REGISTRY.filter(t => t.cro_penalty_min > 0).length;
+        appendTerminal(`CRIS ETA System: ONLINE | Model: GBM-ETA-v3.2 | RTIS: SYNCED (100ms) | Active Trains: 10 | TSRs: 4 | CRO Anomalies: ${croCount}`, "#ffffff");
       } else if (cmd === "list-trains") {
-        appendTerminal("Active Trains: 12301 (Rajdhani), 12002 (Shatabdi), 22436 (Vande Bharat), 12952 (Mumbai Raj), 12259 (Sealdah Duronto)", "#cbd5e1");
+        appendTerminal("Active Trains: 12301 (Rajdhani), 12002 (Shatabdi), 12377 (Garib Rath), 22832 (Prasanthi), 12238 (Begampura), 12229 (Lucknow Mail), 12269 (Duronto), 15029 (Gorakhpur), 12604 (Chennai), 15906 (Vivek)", "#cbd5e1");
       } else if (cmd === "get-eta") {
         const tNo = arg || "12301";
-        appendTerminal(`[ETA Engine] Train ${tNo}: Scheduled 10:00 IST -> Dynamic ML ETA 10:43 IST (+43 min delay). Weather: FOG. Confidence: 94%`, "#ffffff");
+        const t = LIVE_TRAIN_REGISTRY.find(tr => tr.train_no === tNo);
+        if (t) {
+          const croNote = t.cro_penalty_min > 0 ? " [HALTED: CRO IN PROGRESS +45m]" : "";
+          appendTerminal(`[ETA Engine] Train ${tNo} (${t.train_name}): Dynamic ML ETA ${t.scheduled_arrival} -> ${t.base_delay_min + t.weather_penalty_min + t.congestion_penalty_min + t.tsr_penalty_min + t.cascade_penalty_min + (t.cro_penalty_min||0)}m delay. Weather: ${t.weather}.${croNote}`, "#ffffff");
+        } else {
+          appendTerminal(`Train ${tNo} not found.`, "#fca5a5");
+        }
+      } else if (cmd === "trigger-cro") {
+        const tNo = arg || "12301";
+        const inc = triggerCROIncident(tNo);
+        if (inc) {
+          loadWatchlist();
+          appendTerminal(`[ANOMALY TRIGGERED] ${inc.message}`, "#ef4444");
+        } else {
+          appendTerminal(`Train ${tNo} not found.`, "#fca5a5");
+        }
       } else if (cmd === "tsr-status") {
         appendTerminal("TSR Registry: 4 active restrictions on NDLS-CNB (30 km/h), NGP-BPQ (20 km/h), GWL-MTJ (45 km/h), MAS-GTL (30 km/h)", "#cbd5e1");
       } else if (cmd === "clear") {
@@ -353,6 +464,15 @@
     }
 
     renderDashNotifs();
+
+    // Listen for external CRO events
+    window.addEventListener("cro-incident-triggered", e => {
+      loadWatchlist();
+      renderDashNotifs();
+    });
+    window.addEventListener("cro-incident-cleared", e => {
+      loadWatchlist();
+    });
   </script>
 </body>
 </html>

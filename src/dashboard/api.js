@@ -20,6 +20,7 @@ const LIVE_TRAIN_REGISTRY = [
     signal_aspect: "CLEAR",
     base_delay_min: 20,
     weather_penalty_min: 15, congestion_penalty_min: 8, tsr_penalty_min: 0, cascade_penalty_min: 0,
+    cro_penalty_min: 0,
     ml_confidence_pct: 94,
     route_sections: ["HWH-DDU-067", "DDU-CNB-072", "CNB-NDLS-084"],
     corridor: "NDLS-HWH", weather: "FOG", visibility_km: 0.3,
@@ -35,6 +36,7 @@ const LIVE_TRAIN_REGISTRY = [
     signal_aspect: "CAUTION",
     base_delay_min: 0,
     weather_penalty_min: 5, congestion_penalty_min: 10, tsr_penalty_min: 12, cascade_penalty_min: 0,
+    cro_penalty_min: 0,
     ml_confidence_pct: 91,
     route_sections: ["NDLS-AGC-031", "AGC-GWL-044", "GWL-BPL-058", "BPL-RKMP-002"],
     corridor: "NDLS-RKMP", weather: "CLEAR", visibility_km: 12.0,
@@ -50,6 +52,7 @@ const LIVE_TRAIN_REGISTRY = [
     signal_aspect: "PROCEED",
     base_delay_min: 35,
     weather_penalty_min: 20, congestion_penalty_min: 15, tsr_penalty_min: 0, cascade_penalty_min: 10,
+    cro_penalty_min: 0,
     ml_confidence_pct: 88,
     route_sections: ["KOAA-HWH-018", "HWH-DDU-067", "DDU-CNB-072", "CNB-NDLS-084"],
     corridor: "NDLS-HWH", weather: "FOG", visibility_km: 0.6,
@@ -65,6 +68,7 @@ const LIVE_TRAIN_REGISTRY = [
     signal_aspect: "PROCEED",
     base_delay_min: 12,
     weather_penalty_min: 0, congestion_penalty_min: 5, tsr_penalty_min: 18, cascade_penalty_min: 0,
+    cro_penalty_min: 0,
     ml_confidence_pct: 92,
     route_sections: ["NZM-GWL-088", "GWL-BPL-044", "BPL-NGP-062", "NGP-PPTN-105"],
     corridor: "NDLS-MAS", weather: "RAIN", visibility_km: 2.5,
@@ -80,6 +84,7 @@ const LIVE_TRAIN_REGISTRY = [
     signal_aspect: "CAUTION",
     base_delay_min: 5,
     weather_penalty_min: 8, congestion_penalty_min: 22, tsr_penalty_min: 0, cascade_penalty_min: 15,
+    cro_penalty_min: 0,
     ml_confidence_pct: 87,
     route_sections: ["JAT-NDLS-042", "NDLS-MTJ-014", "MTJ-AGC-038"],
     corridor: "NDLS-MUM", weather: "HAZE", visibility_km: 3.0,
@@ -95,6 +100,7 @@ const LIVE_TRAIN_REGISTRY = [
     signal_aspect: "PROCEED",
     base_delay_min: 2,
     weather_penalty_min: 10, congestion_penalty_min: 0, tsr_penalty_min: 0, cascade_penalty_min: 0,
+    cro_penalty_min: 0,
     ml_confidence_pct: 96,
     route_sections: ["LKO-CNB-072", "CNB-NDLS-084"],
     corridor: "NDLS-LKO", weather: "FOG", visibility_km: 0.8,
@@ -110,6 +116,7 @@ const LIVE_TRAIN_REGISTRY = [
     signal_aspect: "CLEAR",
     base_delay_min: 23,
     weather_penalty_min: 0, congestion_penalty_min: 12, tsr_penalty_min: 0, cascade_penalty_min: 0,
+    cro_penalty_min: 0,
     ml_confidence_pct: 90,
     route_sections: ["NZM-ADI-088", "ADI-ST-042", "ST-PUNE-062"],
     corridor: "NDLS-MUM", weather: "CLEAR", visibility_km: 15.0,
@@ -125,6 +132,7 @@ const LIVE_TRAIN_REGISTRY = [
     signal_aspect: "PROCEED",
     base_delay_min: 45,
     weather_penalty_min: 5, congestion_penalty_min: 8, tsr_penalty_min: 0, cascade_penalty_min: 25,
+    cro_penalty_min: 0,
     ml_confidence_pct: 82,
     route_sections: ["GKP-ALD-058", "ALD-JBP-042", "JBP-NGP-065", "NGP-PUNE-088"],
     corridor: "GKP-PUNE", weather: "CLEAR", visibility_km: 10.0,
@@ -140,6 +148,7 @@ const LIVE_TRAIN_REGISTRY = [
     signal_aspect: "PROCEED",
     base_delay_min: 18,
     weather_penalty_min: 8, congestion_penalty_min: 0, tsr_penalty_min: 10, cascade_penalty_min: 0,
+    cro_penalty_min: 0,
     ml_confidence_pct: 89,
     route_sections: ["MAS-GTL-072", "GTL-SC-042"],
     corridor: "MAS-HYD", weather: "RAIN", visibility_km: 4.0,
@@ -155,6 +164,7 @@ const LIVE_TRAIN_REGISTRY = [
     signal_aspect: "CAUTION",
     base_delay_min: 62,
     weather_penalty_min: 25, congestion_penalty_min: 10, tsr_penalty_min: 0, cascade_penalty_min: 0,
+    cro_penalty_min: 0,
     ml_confidence_pct: 76,
     route_sections: ["DBRG-GHY-082", "GHY-KGP-044", "KGP-BBS-066", "BBS-CAPE-120"],
     corridor: "DBRG-CAPE", weather: "RAIN", visibility_km: 1.5,
@@ -255,6 +265,107 @@ const CORRIDOR_DELAY_TABLE = [
   { corridor: "GKP-PUNE",  label: "Gorakhpur–Pune (NR/CR)",           avg_delay_min: 55 },
 ];
 
+// ─── Wildlife Incursion / Cattle Run Over (CRO) State ────────
+const ACTIVE_CRO_INCIDENTS = new Map();
+
+// Synchronize CRO state from localStorage if present
+try {
+  if (typeof localStorage !== "undefined") {
+    const savedCRO = localStorage.getItem("cris_cro_incidents");
+    if (savedCRO) {
+      const list = JSON.parse(savedCRO);
+      list.forEach(item => {
+        ACTIVE_CRO_INCIDENTS.set(String(item.train_no), item);
+        const train = LIVE_TRAIN_REGISTRY.find(t => t.train_no === String(item.train_no));
+        if (train) {
+          train.current_speed_kmph = 0;
+          train.cro_penalty_min = item.penalty_min || 45;
+          train.cro_penalty = item.penalty_min || 45;
+          train.signal_aspect = "RED";
+          train.cro_active = true;
+        }
+      });
+    }
+  }
+} catch (e) {
+  console.warn("CRO state sync error:", e);
+}
+
+function syncCROStorage() {
+  try {
+    if (typeof localStorage !== "undefined") {
+      const list = Array.from(ACTIVE_CRO_INCIDENTS.entries()).map(([k, v]) => ({
+        train_no: k,
+        ...v
+      }));
+      localStorage.setItem("cris_cro_incidents", JSON.stringify(list));
+    }
+  } catch (e) {}
+}
+
+/**
+ * Trigger Wildlife Incursion / Cattle Run Over (CRO) Anomaly
+ * 1. Drops train speed to 0 km/h
+ * 2. Injects +45 min inspection penalty into ML delay
+ * 3. Switches signal aspect to RED
+ */
+function triggerCROIncident(trainNo) {
+  const tStr = String(trainNo).trim();
+  const train = LIVE_TRAIN_REGISTRY.find(t => t.train_no === tStr);
+  if (!train) {
+    console.error(`Train ${trainNo} not found in registry.`);
+    return null;
+  }
+
+  // 1. Drops simulated speed to 0
+  train.current_speed_kmph = 0;
+  // 2. Injects cro_penalty of +45 min
+  train.cro_penalty_min = 45;
+  train.cro_penalty = 45;
+  // 3. Changes signal aspect to RED
+  train.signal_aspect = "RED";
+  train.cro_active = true;
+
+  const incident = {
+    train_no: train.train_no,
+    train_name: train.train_name,
+    penalty_min: 45,
+    triggered_at: new Date().toISOString(),
+    section: `${train.current_station} – ${train.next_station}`,
+    message: `ALERT: Wildlife Incursion detected for Train ${train.train_no} (${train.train_name}). Speed reduced to 0 km/h. +45 Min Inspection Penalty Applied.`
+  };
+
+  ACTIVE_CRO_INCIDENTS.set(train.train_no, incident);
+  syncCROStorage();
+
+  // Dispatch global event for listeners (Notifications, Watchlist, Terminal)
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent("cro-incident-triggered", { detail: incident }));
+  }
+
+  return incident;
+}
+
+function resetCROIncident(trainNo) {
+  const tStr = String(trainNo).trim();
+  const train = LIVE_TRAIN_REGISTRY.find(t => t.train_no === tStr);
+  if (!train) return false;
+
+  train.current_speed_kmph = 110.0;
+  train.cro_penalty_min = 0;
+  train.cro_penalty = 0;
+  train.signal_aspect = "CLEAR";
+  train.cro_active = false;
+
+  ACTIVE_CRO_INCIDENTS.delete(train.train_no);
+  syncCROStorage();
+
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent("cro-incident-cleared", { detail: { train_no: train.train_no } }));
+  }
+  return true;
+}
+
 // ─── Async Mock API Functions ─────────────────────────────────
 
 async function fetchLiveTelemetry(trainNo) {
@@ -263,7 +374,8 @@ async function fetchLiveTelemetry(trainNo) {
   if (!train) return null;
   const latDrift = (Math.random() - 0.5) * 0.002;
   const lonDrift = (Math.random() - 0.5) * 0.002;
-  const speedJitter = (Math.random() - 0.5) * 4;
+  const speedJitter = train.cro_active ? 0 : (Math.random() - 0.5) * 4;
+  const currentSpeed = train.cro_active ? 0 : Math.max(20, Math.round((train.current_speed_kmph + speedJitter) * 10) / 10);
   return {
     ...train,
     gps: {
@@ -271,7 +383,7 @@ async function fetchLiveTelemetry(trainNo) {
       lon: parseFloat((train.gps.lon + lonDrift).toFixed(6)),
       heading: train.gps.heading,
     },
-    current_speed_kmph: Math.max(20, Math.round((train.current_speed_kmph + speedJitter) * 10) / 10),
+    current_speed_kmph: currentSpeed,
     fetched_at: new Date().toISOString(),
     source: "ISRO-RTIS-v2",
   };
@@ -281,8 +393,10 @@ async function predictDynamicETA(trainNo) {
   await new Promise(r => setTimeout(r, 350));
   const train = LIVE_TRAIN_REGISTRY.find(t => t.train_no === trainNo);
   if (!train) return null;
+  const cro_penalty = train.cro_penalty_min || 0;
   const total_delay = train.base_delay_min + train.weather_penalty_min
-    + train.congestion_penalty_min + train.tsr_penalty_min + train.cascade_penalty_min;
+    + train.congestion_penalty_min + train.tsr_penalty_min + train.cascade_penalty_min
+    + cro_penalty;
   const [sh, sm] = train.scheduled_arrival.split(":").map(Number);
   const etaMinutes = (sh * 60 + sm) + total_delay;
   const etaH = Math.floor(etaMinutes / 60) % 24;
@@ -298,11 +412,15 @@ async function predictDynamicETA(trainNo) {
       congestion_penalty_min: train.congestion_penalty_min,
       tsr_penalty_min: train.tsr_penalty_min,
       cascade_penalty_min: train.cascade_penalty_min,
+      cro_penalty_min: cro_penalty,
       total_delay_min: total_delay,
     },
     weather: train.weather, visibility_km: train.visibility_km,
     current_station: train.current_station,
-    model: "GBM-ETA-v3.2 | ISRO-RTIS | NWSF-Weather",
+    signal_aspect: train.signal_aspect,
+    current_speed_kmph: train.current_speed_kmph,
+    cro_active: cro_penalty > 0,
+    model: "GBM-ETA-v3.2 | ISRO-RTIS | NWSF-Weather | CRO-Anomaly",
   };
 }
 
@@ -319,14 +437,30 @@ async function fetchCascadeNetwork() {
 async function fetchAllETAs() {
   await new Promise(r => setTimeout(r, 300));
   return LIVE_TRAIN_REGISTRY.map(train => {
+    const cro_penalty = train.cro_penalty_min || 0;
     const total_delay = train.base_delay_min + train.weather_penalty_min
-      + train.congestion_penalty_min + train.tsr_penalty_min + train.cascade_penalty_min;
+      + train.congestion_penalty_min + train.tsr_penalty_min + train.cascade_penalty_min
+      + cro_penalty;
     const [sh, sm] = train.scheduled_arrival.split(":").map(Number);
     const etaMinutes = (sh * 60 + sm) + total_delay;
     const etaH = Math.floor(etaMinutes / 60) % 24;
     const etaM = etaMinutes % 60;
-    return { ...train, total_delay_min: total_delay, dynamic_eta: `${String(etaH).padStart(2,"0")}:${String(etaM).padStart(2,"0")}` };
+    return {
+      ...train,
+      cro_penalty_min: cro_penalty,
+      cro_active: cro_penalty > 0,
+      total_delay_min: total_delay,
+      dynamic_eta: `${String(etaH).padStart(2,"0")}:${String(etaM).padStart(2,"0")}`
+    };
   });
 }
 
 const LIVE_TRAIN_MAP = new Map(LIVE_TRAIN_REGISTRY.map(t => [t.train_no, t]));
+
+// Expose globally
+if (typeof window !== "undefined") {
+  window.triggerCROIncident = triggerCROIncident;
+  window.resetCROIncident = resetCROIncident;
+  window.ACTIVE_CRO_INCIDENTS = ACTIVE_CRO_INCIDENTS;
+}
+

@@ -160,6 +160,7 @@
               <th>Congestion Penalty</th>
               <th>TSR Penalty</th>
               <th>Cascade Penalty</th>
+              <th>CRO Anomaly</th>
               <th>Total Delay</th>
               <th>Dynamic ETA</th>
               <th>Confidence</th>
@@ -198,6 +199,7 @@
       congestion: "rgba(255,255,255,0.58)",
       tsr: "rgba(255,255,255,0.42)",
       cascade: "rgba(255,255,255,0.28)",
+      cro: "rgba(239, 68, 68, 0.92)",
     };
 
     async function runExplain() {
@@ -218,7 +220,7 @@
 
       document.getElementById("xai-train-title").textContent = `ETA Breakdown — ${result.train_name} (${result.train_no})`;
       document.getElementById("xai-description").textContent =
-        `Current Station: ${result.current_station} | Weather: ${result.weather} (Visibility: ${result.visibility_km} km) | Model: ${result.model}`;
+        `Current Station: ${result.current_station} | Weather: ${result.weather} (Visibility: ${result.visibility_km} km) | Signal: ${result.signal_aspect} | Speed: ${result.current_speed_kmph} km/h`;
 
       document.getElementById("xai-sched").textContent = result.scheduled_arrival;
       document.getElementById("xai-total-delay").textContent = `+${total} min`;
@@ -232,15 +234,25 @@
         { label: "+ Cascade Penalty", key: "cascade_penalty_min", val: b.cascade_penalty_min, color: FACTOR_COLORS.cascade },
       ];
 
+      // Dynamically inject Animal Incursion / Inspection Penalty bar if cro_penalty > 0
+      if (b.cro_penalty_min && b.cro_penalty_min > 0) {
+        factors.push({
+          label: "+ Animal Incursion / Inspection Penalty",
+          key: "cro_penalty_min",
+          val: b.cro_penalty_min,
+          color: FACTOR_COLORS.cro,
+        });
+      }
+
       document.getElementById("waterfall").innerHTML = factors.map(f => `
         <div class="wf-row">
-          <div class="wf-label">${f.label}</div>
+          <div class="wf-label" style="${f.key === 'cro_penalty_min' ? 'color:#fca5a5; font-weight:800;' : ''}">${f.label}</div>
           <div class="wf-bar-track">
-            <div class="wf-bar-fill" id="bar-${f.key}" style="width:0%; background:${f.color}; transition: width 0.9s ease;">
+            <div class="wf-bar-fill" id="bar-${f.key}" style="width:0%; background:${f.color}; transition: width 0.9s ease; ${f.key === 'cro_penalty_min' ? 'color:#ffffff; font-weight:800;' : ''}">
               ${f.val > 0 ? f.val + ' min' : ''}
             </div>
           </div>
-          <div class="wf-val">${f.val > 0 ? '+' + f.val : f.val} min</div>
+          <div class="wf-val" style="${f.key === 'cro_penalty_min' ? 'color:#fca5a5;' : ''}">${f.val > 0 ? '+' + f.val : f.val} min</div>
         </div>
       `).join("");
 
@@ -264,13 +276,15 @@
 
       // Train info panel
       const t = LIVE_TRAIN_MAP.get(trainNo);
+      const isCRO = (t.cro_penalty_min > 0 || t.cro_active);
       document.getElementById("xai-train-info").innerHTML = `
         <div style="font-family:var(--font-mono); line-height:1.9; color:#e2e8f0;">
           <div><span style="color:#fff; font-weight:700;">Route:</span> ${t.source} → ${t.destination}</div>
           <div><span style="color:#fff; font-weight:700;">Category:</span> ${t.category}</div>
-          <div><span style="color:#fff; font-weight:700;">Speed:</span> ${t.current_speed_kmph} km/h</div>
-          <div><span style="color:#fff; font-weight:700;">Signal:</span> ${t.signal_aspect}</div>
+          <div><span style="color:#fff; font-weight:700;">Speed:</span> ${t.current_speed_kmph} km/h ${isCRO ? '<span style="color:#ef4444; font-weight:800;">(HALTED)</span>' : ''}</div>
+          <div><span style="color:#fff; font-weight:700;">Signal:</span> <span style="color:${t.signal_aspect === 'RED' ? '#ef4444' : '#fff'}; font-weight:800;">${t.signal_aspect}</span></div>
           <div><span style="color:#fff; font-weight:700;">Corridor:</span> ${t.corridor}</div>
+          ${isCRO ? '<div style="margin-top:4px;"><span class="badge" style="background:rgba(239,68,68,0.3); border-color:#ef4444; color:#fff;">CRO ANOMALY ACTIVE (+45m)</span></div>' : ''}
         </div>
       `;
 
@@ -301,8 +315,9 @@
       const trains = await fetchAllETAs();
       document.getElementById("xai-summary-body").innerHTML = trains.map(t => {
         const total = t.total_delay_min;
+        const isCRO = (t.cro_penalty_min > 0 || t.cro_active);
         return `
-          <tr>
+          <tr style="${isCRO ? 'background:rgba(239,68,68,0.12); border-left:3px solid #ef4444;' : ''}">
             <td><strong style="color:#ffffff; font-family:var(--font-mono);">${t.train_no}</strong></td>
             <td style="color:#e2e8f0;">${t.train_name}</td>
             <td style="font-family:var(--font-mono); color:#94a3b8;">${t.base_delay_min > 0 ? '+' + t.base_delay_min : '0'} min</td>
@@ -310,8 +325,9 @@
             <td style="font-family:var(--font-mono); color:#cbd5e1;">${t.congestion_penalty_min > 0 ? '+' + t.congestion_penalty_min : '0'} min</td>
             <td style="font-family:var(--font-mono); color:#cbd5e1;">${t.tsr_penalty_min > 0 ? '+' + t.tsr_penalty_min : '0'} min</td>
             <td style="font-family:var(--font-mono); color:#cbd5e1;">${t.cascade_penalty_min > 0 ? '+' + t.cascade_penalty_min : '0'} min</td>
-            <td><span class="badge">+${total} min</span></td>
-            <td style="font-family:var(--font-mono); font-weight:800; color:#ffffff;">${t.dynamic_eta}</td>
+            <td style="font-family:var(--font-mono); font-weight:700; color:${isCRO ? '#fca5a5' : '#94a3b8'};">${t.cro_penalty_min > 0 ? '+' + t.cro_penalty_min + ' min (CRO)' : '0 min'}</td>
+            <td><span class="badge" style="${isCRO ? 'background:rgba(239,68,68,0.3); border-color:#ef4444; color:#fff;' : ''}">+${total} min</span></td>
+            <td style="font-family:var(--font-mono); font-weight:800; color:${isCRO ? '#fca5a5' : '#ffffff'};">${t.dynamic_eta}</td>
             <td style="font-family:var(--font-mono); color:#ffffff; font-weight:700;">${t.ml_confidence_pct}%</td>
           </tr>
         `;

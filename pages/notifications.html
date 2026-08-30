@@ -188,6 +188,7 @@
               <label class="form-label" for="notif-type">Notification Type</label>
               <select id="notif-type" class="form-control">
                 <option value="DELAY_ALERT">Delay Alert</option>
+                <option value="CRO_INCIDENT">Wildlife Incursion / CRO</option>
                 <option value="PLATFORM_CHANGE">Platform Change</option>
                 <option value="TSR_WARNING">TSR Speed Restriction</option>
                 <option value="SERVICE_CANCEL">Service Cancellation</option>
@@ -350,6 +351,7 @@
       ETA_UPDATE:      "ETA-UPD",
       EMERGENCY:       "EMERGENCY",
       GENERAL:         "GENERAL",
+      CRO_INCIDENT:    "CRO-ALERT",
     };
 
     // Notification feed array
@@ -385,12 +387,12 @@
         <div class="notif-card priority-${n.priority}" id="notif-${n.id}">
           <div class="notif-body">
             <div class="notif-header">
-              <span class="notif-type-tag">${TYPE_BADGES[n.type] || n.type.replace(/_/g," ")}</span>
+              <span class="notif-type-tag" style="${n.type === 'CRO_INCIDENT' ? 'background:#ef4444; color:#fff;' : ''}">${TYPE_BADGES[n.type] || n.type.replace(/_/g," ")}</span>
               <span class="notif-train">${n.train_label}</span>
-              <span class="badge" style="font-size:0.65rem;">${n.priority}</span>
+              <span class="badge" style="font-size:0.65rem; ${n.priority==='CRITICAL' ? 'background:rgba(239,68,68,0.3); border-color:#ef4444; color:#fff;' : ''}">${n.priority}</span>
               <span class="notif-time">${n.time}</span>
             </div>
-            <div class="notif-message">${n.message}</div>
+            <div class="notif-message" style="${n.type === 'CRO_INCIDENT' ? 'color:#fca5a5; font-weight:600;' : ''}">${n.message}</div>
             <div class="notif-targets">
               Station: ${n.station} &middot; Channels: ${n.channels.join(" · ")} &middot; Delivered
             </div>
@@ -477,6 +479,7 @@
 
     // Auto-fill sample
     const SAMPLE_TEMPLATES = [
+      { type: "CRO_INCIDENT", priority: "CRITICAL", train: "12301", message: "ALERT: Wildlife Incursion detected for Train 12301 (Rajdhani Express). Speed reduced to 0 km/h. +45 Min Inspection Penalty Applied." },
       { type: "DELAY_ALERT", priority: "HIGH", train: "12301", message: "Train 12301 Rajdhani Express is running approximately 43 minutes late due to dense fog conditions on the NDLS-CNB corridor (visibility: 300m). Revised ETA at New Delhi: 10:43 IST. Passengers are requested to check PRS boards for updates." },
       { type: "TSR_WARNING", priority: "CRITICAL", train: "ALL", message: "URGENT: Temporary Speed Restriction (TSR-NDLS-CNB-001) active on Kanpur–New Delhi section (km 412–438). Speed limited to 30 km/h. Trains 12301, 12377, 12229 will be delayed by 15–22 minutes. Staff at CNB, ALD, NDLS to coordinate platform allocation." },
       { type: "PLATFORM_CHANGE", priority: "MEDIUM", train: "12377", message: "Garib Rath Express (12377) arriving New Delhi will use Platform 8 instead of Platform 3 due to operational requirements. Passengers and coolies please note." },
@@ -507,13 +510,14 @@
       const trains = await fetchAllETAs();
       const tbody = document.getElementById("system-notif-table");
 
-      const sysAlerts = trains.filter(t => t.total_delay_min > 15).map(t => {
-        const priority = t.total_delay_min >= 50 ? "CRITICAL" : t.total_delay_min >= 30 ? "HIGH" : "MEDIUM";
-        const type = t.tsr_penalty_min > 0 ? "TSR_WARNING" : t.cascade_penalty_min > 0 ? "DELAY_ALERT" : t.weather_penalty_min > 0 ? "DELAY_ALERT" : "ETA_UPDATE";
+      const sysAlerts = trains.filter(t => t.total_delay_min > 15 || t.cro_penalty_min > 0).map(t => {
+        const isCRO = (t.cro_penalty_min > 0 || t.cro_active);
+        const priority = isCRO ? "CRITICAL" : t.total_delay_min >= 50 ? "CRITICAL" : t.total_delay_min >= 30 ? "HIGH" : "MEDIUM";
+        const type = isCRO ? "CRO_INCIDENT" : t.tsr_penalty_min > 0 ? "TSR_WARNING" : t.cascade_penalty_min > 0 ? "DELAY_ALERT" : t.weather_penalty_min > 0 ? "DELAY_ALERT" : "ETA_UPDATE";
         const badge = TYPE_BADGES[type] || type;
         const mins = t.total_delay_min;
-        const channels = ["SMS", "PRS"];
-        if (priority === "CRITICAL") channels.push("PA");
+        const channels = ["SMS", "PRS", "PA"];
+        if (priority === "CRITICAL") channels.push("APP");
 
         const causes = [];
         if (t.base_delay_min > 0) causes.push(`base +${t.base_delay_min}min`);
@@ -521,26 +525,27 @@
         if (t.congestion_penalty_min > 0) causes.push(`congestion +${t.congestion_penalty_min}min`);
         if (t.tsr_penalty_min > 0) causes.push(`TSR +${t.tsr_penalty_min}min`);
         if (t.cascade_penalty_min > 0) causes.push(`cascade +${t.cascade_penalty_min}min`);
+        if (isCRO) causes.push(`CRO Animal Incursion +45min (HALTED 0 km/h)`);
 
-        // Fake sent time
+        // Sent time
         const d = new Date(); d.setMinutes(d.getMinutes() - Math.floor(Math.random()*45));
         const tp = n => String(n).padStart(2,"0");
         const sentTime = `${tp(d.getHours())}:${tp(d.getMinutes())} IST`;
 
-        return { t, priority, type, badge, mins, channels, causes, sentTime };
+        return { t, priority, type, badge, mins, channels, causes, sentTime, isCRO };
       });
 
-      tbody.innerHTML = sysAlerts.map(({ t, priority, type, badge, mins, channels, causes, sentTime }) => `
-        <tr>
+      tbody.innerHTML = sysAlerts.map(({ t, priority, type, badge, mins, channels, causes, sentTime, isCRO }) => `
+        <tr style="${isCRO ? 'background:rgba(239,68,68,0.12); border-left:3px solid #ef4444;' : ''}">
           <td style="font-family:var(--font-mono); color:#94a3b8; font-size:0.75rem;">${sentTime}</td>
           <td>
             <strong style="color:#ffffff; font-family:var(--font-mono);">${t.train_no}</strong>
             <div style="font-size:0.72rem; color:#e2e8f0;">${t.train_name}</div>
           </td>
-          <td><span class="badge" style="font-size:0.65rem; padding:2px 6px;">${badge}</span></td>
-          <td><span class="badge" style="${priority==="CRITICAL"?"background:rgba(255,255,255,0.2);":""}">${priority}</span></td>
-          <td style="font-size:0.78rem; color:#e2e8f0; max-width:260px;">
-            Train running +${mins} min late. Causes: ${causes.join(", ")}. Dynamic ETA: ${t.dynamic_eta} IST.
+          <td><span class="badge" style="font-size:0.65rem; padding:2px 6px; ${isCRO ? 'background:#ef4444; color:#fff;' : ''}">${badge}</span></td>
+          <td><span class="badge" style="${priority==="CRITICAL" ? "background:rgba(239,68,68,0.3); border-color:#ef4444; color:#fff;" : ""}">${priority}</span></td>
+          <td style="font-size:0.78rem; color:#e2e8f0; max-width:280px;">
+            ${isCRO ? `<strong style="color:#fca5a5;">ALERT: Wildlife Incursion detected for Train ${t.train_no}. Speed reduced to 0 km/h. +45 Min Inspection Penalty Applied.</strong>` : `Train running +${mins} min late. Causes: ${causes.join(", ")}. Dynamic ETA: ${t.dynamic_eta} IST.`}
           </td>
           <td style="font-family:var(--font-mono); font-size:0.72rem; color:#cbd5e1;">${channels.join(", ")}</td>
           <td><span class="badge">DELIVERED</span></td>
@@ -549,6 +554,44 @@
     }
 
     loadSystemAlerts();
+
+    // ── Immediate Push Notification on CRO Incident Trigger ─────
+    window.addEventListener("cro-incident-triggered", e => {
+      const inc = e.detail;
+      const croNotif = {
+        id: notifIdCounter++,
+        type: "CRO_INCIDENT",
+        priority: "CRITICAL",
+        train_label: `${inc.train_name} (${inc.train_no})`,
+        station: inc.section || "Active Section",
+        message: `ALERT: Wildlife Incursion detected for Train ${inc.train_no}. Speed reduced to 0 km/h. +45 Min Inspection Penalty Applied.`,
+        channels: ["SMS", "PRS", "PA", "APP", "EMAIL"],
+        time: getNow(),
+      };
+      notifications.push(croNotif);
+      renderFeed();
+      updateStats();
+      loadSystemAlerts();
+      showToast(`CRITICAL ALERT: Wildlife Incursion on Train ${inc.train_no}`);
+    });
+
+    // Populate active CRO incidents if existing on load
+    if (typeof ACTIVE_CRO_INCIDENTS !== "undefined" && ACTIVE_CRO_INCIDENTS.size > 0) {
+      ACTIVE_CRO_INCIDENTS.forEach(inc => {
+        notifications.push({
+          id: notifIdCounter++,
+          type: "CRO_INCIDENT",
+          priority: "CRITICAL",
+          train_label: `${inc.train_name} (${inc.train_no})`,
+          station: inc.section || "Active Section",
+          message: `ALERT: Wildlife Incursion detected for Train ${inc.train_no}. Speed reduced to 0 km/h. +45 Min Inspection Penalty Applied.`,
+          channels: ["SMS", "PRS", "PA", "APP"],
+          time: getNow(),
+        });
+      });
+      renderFeed();
+      updateStats();
+    }
 
     // Keyboard shortcut: Ctrl+Enter to send
     document.addEventListener("keydown", e => {
